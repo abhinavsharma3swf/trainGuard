@@ -80,4 +80,51 @@ public class ActivityServiceTest {
         verify(activityRepository).save(any(ActivityEntity.class));
 
     }
+
+    @Test
+    void shouldReturnExistingActivityWhenExists() {
+        ActivityEntity existingActivity = ActivityEntity.builder()
+                .id(1L)
+                .externalSource("STRAVA")
+                .externalActivityId("12345")
+                .sportType("RUN")
+                .name("Morning Run")
+                .startDate(LocalDateTime.of(2026, 7, 7, 6, 30))
+                .distanceMeters(8046.72)
+                .movingTimeSeconds(2400)
+                .elapsedTimeSeconds(2450)
+                .totalElevationGain(50.0)
+                .averageHeartbeat(145.0)
+                .maxHeartbeat(170.0)
+                .build();
+
+        ActivityImportRequestRecord request = ActivityImportRequestRecord.builder()
+                .externalSource("STRAVA")
+                .externalActivityId("12345")
+                .sportType("RUN")
+                .name("Morning Run")
+                .startDate(LocalDateTime.of(2026, 7, 7, 6, 30))
+                .distanceMeters(8046.72)
+                .movingTimeSeconds(2400)
+                .elapsedTimeSeconds(2450)
+                .totalElevationGain(50.0)
+                .averageHeartbeat(145.0)
+                .maxHeartbeat(170.0)
+                .build();
+
+        when(activityRepository.findByExternalSourceAndExternalActivityId("STRAVA", "12345")).thenReturn(Optional.of(existingActivity));
+
+        ActivityResponseRecord response = activityService.importActivity(request);
+
+        assertEquals(1L, response.id());
+        assertEquals("STRAVA", response.externalSource());
+        assertEquals("12345", response.externalActivityId());
+        assertEquals("RUN", response.sportType());
+        assertEquals("Morning Run", response.name());
+        assertEquals(5.0, response.distanceMiles());
+        assertEquals(40, response.movingTimeMinutes());
+        assertEquals("8:00", response.pacePerMile());
+
+        verify(activityRepository, never()).save(any(ActivityEntity.class));
+    }
 }
