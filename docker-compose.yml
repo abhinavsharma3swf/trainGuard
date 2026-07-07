@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: trainguard-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: trainguard
+      POSTGRES_USER: trainguard_user
+      POSTGRES_PASSWORD: trainguard_password
+    ports:
+      - "5435:5432"
+    volumes:
+      - trainguard_data:/var/lib/postgresql/data
+
+volumes:
+  trainguard_data:
