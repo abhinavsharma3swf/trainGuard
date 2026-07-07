@@ -1,6 +1,9 @@
 package com.trainguard.backend.activity;
+import lombok.Builder;
+
 import java.time.LocalDateTime;
 
+@Builder
 public record ActivityResponseRecord(
         Long id,
         String externalSource,

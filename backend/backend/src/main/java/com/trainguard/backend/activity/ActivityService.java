@@ -2,16 +2,17 @@ package com.trainguard.backend.activity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @Getter
 @Setter
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ActivityService {
 
     private final ActivityMetricService activityMetricService;
@@ -63,5 +64,11 @@ public class ActivityService {
                 movingTimeMinutes,
                 pacePerMile
         );
+    }
+
+    public List<ActivityResponseRecord> getAllActivities() {
+        return activityRepository.findAll().stream()
+                .map(this::toResponse)
+                .toList();
     }
 }
