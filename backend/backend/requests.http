@@ -1,0 +1,18 @@
+POST http://localhost:8080/api/activities/import
+Content-Type: application/json
+
+{
+  "externalSource": "STRAVA21",
+  "externalActivityId": "12345",
+  "sportType": "RUN",
+  "name": "Morning Run",
+  "startDate": "2026-07-07T06:30:00",
+  "distanceMeters": 8046.72,
+  "movingTimeSeconds": 2400,
+  "elapsedTimeSeconds": 2450,
+  "totalElevationGain": 50.0,
+  "averageHeartbeat": 145.0,
+  "maxHeartbeat": 170.0,
+  "averageWatts": null,
+  "weightedAverageWatts": null
+}

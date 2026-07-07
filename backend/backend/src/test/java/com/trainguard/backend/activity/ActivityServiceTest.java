@@ -3,6 +3,7 @@ package com.trainguard.backend.activity;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -126,5 +127,59 @@ public class ActivityServiceTest {
         assertEquals("8:00", response.pacePerMile());
 
         verify(activityRepository, never()).save(any(ActivityEntity.class));
+    }
+
+    @Test
+    void shouldGetAllActivities() {
+        ActivityEntity activityOne = ActivityEntity.builder()
+                .id(1L)
+                .externalSource("STRAVA")
+                .externalActivityId("12345")
+                .sportType("RUN")
+                .name("Morning Run")
+                .startDate(LocalDateTime.of(2026, 7, 7, 6, 30))
+                .distanceMeters(8046.72)
+                .movingTimeSeconds(2400)
+                .elapsedTimeSeconds(2450)
+                .build();
+
+        ActivityEntity activityTwo = ActivityEntity.builder()
+                .id(2L)
+                .externalSource("STRAVA")
+                .externalActivityId("67890")
+                .sportType("RUN")
+                .name("Evening Run")
+                .startDate(LocalDateTime.of(2026, 7, 8, 18, 0))
+                .distanceMeters(3218.688)
+                .movingTimeSeconds(1800)
+                .elapsedTimeSeconds(1850)
+                .build();
+
+        when(activityRepository.findAll())
+                .thenReturn(List.of(activityOne, activityTwo));
+
+        List<ActivityResponseRecord> response = activityService.getAllActivities();
+
+        assertEquals(2, response.size());
+
+        assertEquals(1L, response.get(0).id());
+        assertEquals("STRAVA", response.get(0).externalSource());
+        assertEquals("12345", response.get(0).externalActivityId());
+        assertEquals("RUN", response.get(0).sportType());
+        assertEquals("Morning Run", response.get(0).name());
+        assertEquals(5.0, response.get(0).distanceMiles());
+        assertEquals(40, response.get(0).movingTimeMinutes());
+        assertEquals("8:00", response.get(0).pacePerMile());
+
+        assertEquals(2L, response.get(1).id());
+        assertEquals("STRAVA", response.get(1).externalSource());
+        assertEquals("67890", response.get(1).externalActivityId());
+        assertEquals("RUN", response.get(1).sportType());
+        assertEquals("Evening Run", response.get(1).name());
+        assertEquals(2.0, response.get(1).distanceMiles());
+        assertEquals(30, response.get(1).movingTimeMinutes());
+        assertEquals("15:00", response.get(1).pacePerMile());
+
+        verify(activityRepository).findAll();
     }
 }
