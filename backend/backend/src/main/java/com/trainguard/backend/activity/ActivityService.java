@@ -1,9 +1,9 @@
 package com.trainguard.backend.activity;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -13,6 +13,7 @@ import java.util.List;
 @Getter
 @Setter
 @RequiredArgsConstructor
+@Slf4j
 public class ActivityService {
 
     private final ActivityMetricService activityMetricService;
@@ -23,6 +24,30 @@ public class ActivityService {
                 .orElseGet(() -> saveNewActivity(requestRecord));
         return toResponse(activity);
     }
+
+    //if you want to log the error//
+//    public ActivityResponseRecord importActivity(ActivityImportRequestRecord requestRecord) {
+//        Optional<ActivityEntity> existingActivity = activityRepository
+//                .findByExternalSourceAndExternalActivityId(
+//                        requestRecord.externalSource(),
+//                        requestRecord.externalActivityId()
+//                );
+//
+//        if (existingActivity.isPresent()) {
+//            log.info("Activity already exists: source={}, externalActivityId={}",
+//                    requestRecord.externalSource(),
+//                    requestRecord.externalActivityId());
+//
+//            return toResponse(existingActivity.get());
+//        }
+//
+//        log.info("Saving new activity: source={}, externalActivityId={}",
+//                requestRecord.externalSource(),
+//                requestRecord.externalActivityId());
+//
+//        ActivityEntity savedActivity = saveNewActivity(requestRecord);
+//        return toResponse(savedActivity);
+//    }
 
     private ActivityEntity saveNewActivity(ActivityImportRequestRecord request) {
         ActivityEntity activity = new ActivityEntity();

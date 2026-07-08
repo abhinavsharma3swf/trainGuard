@@ -2,7 +2,7 @@ POST http://localhost:8080/api/activities/import
 Content-Type: application/json
 
 {
-  "externalSource": "STRAVA21",
+  "externalSource": "STRAVA",
   "externalActivityId": "12345",
   "sportType": "RUN",
   "name": "Morning Run",
@@ -16,3 +16,6 @@ Content-Type: application/json
   "averageWatts": null,
   "weightedAverageWatts": null
 }
+
+###
+GET http://localhost:8080/api/activities

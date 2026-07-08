@@ -9,4 +9,6 @@ public interface ActivityRepository extends JpaRepository<ActivityEntity, Long> 
     Optional<ActivityEntity> findByExternalSourceAndExternalActivityId(
             String externalSource,
             String externalActivityId);
+
+    Optional<ActivityEntity>findActivityEntityByExternalActivityId(String externalActivityId);
 }
