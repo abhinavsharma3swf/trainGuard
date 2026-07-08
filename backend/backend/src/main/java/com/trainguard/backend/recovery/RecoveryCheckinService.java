@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -52,4 +53,11 @@ public class RecoveryCheckinService {
                 checkin.getCreatedAt()
         );
     }
+
+    public List<RecoveryCheckinResponseRecord> getAllRecoveryCheckin() {
+        return recoveryCheckinRepository.findAll().stream()
+                .map(this::toResponse).toList();
+    }
+
+
 }

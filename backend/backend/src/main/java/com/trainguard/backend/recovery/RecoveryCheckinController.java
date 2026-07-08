@@ -1,10 +1,9 @@
 package com.trainguard.backend.recovery;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/recovery-checkins")
@@ -16,5 +15,10 @@ public class RecoveryCheckinController {
     @PostMapping
     public RecoveryCheckinResponseRecord createCheckin(@RequestBody RecoveryCheckinRequestRecord recoveryCheckinRequestRecord) {
         return recoveryCheckinService.saveCheckin(recoveryCheckinRequestRecord);
+    }
+
+    @GetMapping
+    public List<RecoveryCheckinResponseRecord> getAllCheckin() {
+        return recoveryCheckinService.getAllRecoveryCheckin();
     }
 }

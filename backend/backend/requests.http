@@ -19,3 +19,16 @@ Content-Type: application/json
 
 ###
 GET http://localhost:8080/api/activities
+
+### Create recovery check-in
+POST http://localhost:8080/api/recovery-checkins
+Content-Type: application/json
+
+{
+  "activityId": 1,
+  "rpe": 4,
+  "painScore": 0,
+  "painLocation": "hip",
+  "mood": "Good",
+  "note": "Felt fine"
+}

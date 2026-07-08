@@ -9,11 +9,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import tools.jackson.databind.ObjectMapper;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -70,5 +72,51 @@ class RecoveryCheckinControllerTest {
                 .andExpect(jsonPath("$.note").value("Felt fine"));
 
         verify(recoveryCheckinService).saveCheckin(any(RecoveryCheckinRequestRecord.class));
+    }
+
+    @Test
+    void shouldReturnTheListOfRecoveryCheckins() throws Exception {
+        RecoveryCheckinResponseRecord response = new RecoveryCheckinResponseRecord(
+                1L,
+                1L,
+                4,
+                0,
+                "hip",
+                "Good",
+                "Felt fine",
+                LocalDateTime.of(2026, 7, 7, 8, 0)
+        );
+
+        RecoveryCheckinResponseRecord response1 = new RecoveryCheckinResponseRecord(
+                2L,
+                1L,
+                4,
+                0,
+                "Knee",
+                "Low",
+                "Okay",
+                LocalDateTime.of(2026, 7, 8, 8, 0)
+        );
+
+        when(recoveryCheckinService.getAllRecoveryCheckin()).thenReturn(List.of(response, response1));
+        mockMvc.perform(get("/api/recovery-checkins"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(1))
+                .andExpect(jsonPath("$[0].activityId").value(1))
+                .andExpect(jsonPath("$[0].rpe").value(4))
+                .andExpect(jsonPath("$[0].painScore").value(0))
+                .andExpect(jsonPath("$[0].painLocation").value("hip"))
+                .andExpect(jsonPath("$[0].mood").value("Good"))
+                .andExpect(jsonPath("$[0].note").value("Felt fine"))
+
+                .andExpect(jsonPath("$[1].id").value(2))
+                .andExpect(jsonPath("$[1].activityId").value(1))
+                .andExpect(jsonPath("$[1].rpe").value(4))
+                .andExpect(jsonPath("$[1].painScore").value(0))
+                .andExpect(jsonPath("$[1].painLocation").value("Knee"))
+                .andExpect(jsonPath("$[1].mood").value("Low"))
+                .andExpect(jsonPath("$[1].note").value("Okay"));
+        verify(recoveryCheckinService).getAllRecoveryCheckin();
+
     }
 }

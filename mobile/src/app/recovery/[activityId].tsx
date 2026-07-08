@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import {NumberSelector} from "@/components/NumberSelector";
 import {MoodSelector} from "@/components/MoodSelector";
+import {API_BASE_URL} from "@/constants/api";
 
 export default function RecoveryCheckInScreen() {
 
@@ -23,7 +24,7 @@ export default function RecoveryCheckInScreen() {
     const [mood, setMood] = useState("");
     const [error, setError] = useState("");
 
-    const handleSave = () => {
+    const handleSave = async () => {
         if (rpe === null) {
             setError("Select an RPE score.");
             return;
@@ -41,16 +42,36 @@ export default function RecoveryCheckInScreen() {
 
         setError("");
 
-        console.log({
+        const payload = {
             activityId: Number(activityId),
             rpe,
             painScore,
             painLocation,
             mood,
             note,
-        });
+        };
 
-        router.push("/");
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/recovery-checkins`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(payload),
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to save recovery check-in.");
+            }
+
+            const data = await response.json();
+            console.log("Saved recovery check-in:", data);
+
+            router.push("/");
+        } catch (error) {
+            console.error(error);
+            setError("Could not save check-in. Make sure the backend is running.");
+        }
     };
 
     return (
