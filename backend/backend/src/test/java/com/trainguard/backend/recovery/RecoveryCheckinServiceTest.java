@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -74,5 +75,30 @@ class RecoveryCheckinServiceTest {
 
         verify(activityRepository).findById(1L);
         verify(recoveryCheckinRepository).save(any(RecoveryCheckinEntity.class));
+    }
+
+    @Test
+    void shouldThrowExceptionWhenActivityDoesNotExist() {
+        RecoveryCheckinRequestRecord request = RecoveryCheckinRequestRecord.builder()
+                .activityId(999L)
+                .rpe(5)
+                .painScore(2)
+                .painLocation("hip")
+                .mood("okay")
+                .note("Test note")
+                .build();
+
+        when(activityRepository.findById(999L))
+                .thenReturn(Optional.empty());
+
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> recoveryCheckinService.saveCheckin(request)
+        );
+
+        assertEquals("Activity not found", exception.getMessage());
+
+        verify(activityRepository).findById(999L);
+        verify(recoveryCheckinRepository, never()).save(any(RecoveryCheckinEntity.class));
     }
 }
