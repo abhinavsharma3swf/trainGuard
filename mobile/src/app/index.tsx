@@ -1,10 +1,48 @@
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import {SummaryCard} from "../components/SummaryCard";
-import {activities} from "@/data/mockActivities";
-import {ActivityCard} from "../components/ActivityCard";
+
+import { getActivities, ActivityResponse } from "@/services/activityApi";
+
+import {getRecoveryCheckins, RecoveryCheckin} from "@/services/recoveryApi";
+import {useEffect, useState} from "react";
+import {ActivityCard} from "@/components/ActivityCard";
+import {SummaryCard} from "@/components/SummaryCard";
 
 
 export default function HomeScreen() {
+
+  const [recoveryCheckins, setRecoveryCheckins] = useState<RecoveryCheckin[]>([]);
+  const [activities, setActivities] = useState<ActivityResponse[]>([]);
+
+
+  useEffect(() => {
+    async function loadRecoveryCheckins() {
+      try {
+        const data = await getRecoveryCheckins();
+        setRecoveryCheckins(data);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    loadRecoveryCheckins();
+  }, []);
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const activitiesData = await getActivities();
+        const recoveryData = await getRecoveryCheckins();
+
+        setActivities(activitiesData);
+        setRecoveryCheckins(recoveryData);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    loadData();
+  }, []);
+
   return (
       <View style={styles.screen}>
         <ScrollView contentContainerStyle={styles.content}>
@@ -37,9 +75,36 @@ export default function HomeScreen() {
           <Text style={styles.sectionTitle}>Recent Activities</Text>
 
           <View style={styles.activityList}>
-            {activities.map((activity) => (
-                <ActivityCard key={activity.id} activity={activity} />
-            ))}
+            {activities.map((activity) => {
+              // const hasCheckin = recoveryCheckins.some(
+              //     (checkin) => checkin.activityId === activity.id
+              // );
+              const recoveryCheckin = recoveryCheckins.find(
+                  (checkin) => checkin.activityId === activity.id
+              );
+
+              const hasCheckin = recoveryCheckin !== undefined;
+
+              return (
+                  <ActivityCard
+                      key={activity.id}
+                      activity={{
+                        id: activity.id,
+                        type: activity.sportType === "RIDE" ? "RIDE" : "RUN",
+                        name: activity.name,
+                        date: activity.startDate,
+                        distance: `${activity.distanceMiles} mi`,
+                        time: `${activity.movingTimeMinutes} min`,
+                        paceOrPower: activity.pacePerMile,
+                        status: hasCheckin ? "COMPLETED" : "PENDING",
+
+                        rpe: recoveryCheckin ? String(recoveryCheckin.rpe) : undefined,
+                        pain: recoveryCheckin ? String(recoveryCheckin.painScore) : undefined,
+                        mood: recoveryCheckin?.mood,
+                      }}
+                  />
+              );
+            })}
           </View>
         </ScrollView>
       </View>
