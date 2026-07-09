@@ -9,7 +9,8 @@ export type Activity = {
     date: string;
     distance: string;
     time: string;
-    paceOrPower: string;
+    pace: string;
+    averageWatts: string;
     status: ActivityStatus;
     rpe?: string;
     pain?: string;

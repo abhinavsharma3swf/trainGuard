@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 public record DashboardFeedRecord(
         Long activityId,
         String sportType,
+        Double averageWatts,
         String name,
         LocalDateTime startDate,
         Double distanceMiles,

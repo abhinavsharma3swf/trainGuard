@@ -33,10 +33,18 @@ export function ActivityCard({ activity }: ActivityCardProps) {
             <View style={styles.metricsRow}>
                 <Metric label="Distance" value={activity.distance} />
                 <Metric label="Time" value={activity.time} />
-                <Metric
-                    label={activity.type === "RIDE" ? "Power" : "Pace"}
-                    value={activity.paceOrPower}
-                />
+
+                {activity.type === "RIDE" ?
+                    <Metric
+                        label="RIDE"
+                    // label={activity.type === "RIDE" ? "Power" : "Pace"}
+                    value={activity.averageWatts}
+                /> :   <Metric
+                        label="RUN"
+                        // label={activity.type === "RIDE" ? "Power" : "Pace"}
+                        value={activity.pace}
+                    />}
+
             </View>
 
             {isPending ? (

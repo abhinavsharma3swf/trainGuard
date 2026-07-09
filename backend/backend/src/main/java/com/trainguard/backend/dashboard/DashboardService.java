@@ -56,6 +56,7 @@ public class DashboardService {
                 .sportType(activity.getSportType())
                 .name(activity.getName())
                 .startDate(activity.getStartDate())
+                .averageWatts(activity.getAverageWatts())
                 .distanceMiles(distanceMiles)
                 .movingTimeMinutes(movingTimeMinutes)
                 .pacePerMile(pacePerMile)
