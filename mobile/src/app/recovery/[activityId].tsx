@@ -67,7 +67,7 @@ export default function RecoveryCheckInScreen() {
             const data = await response.json();
             console.log("Saved recovery check-in:", data);
 
-            router.push("/");
+            router.push("/dashboard");
         } catch (error) {
             console.error(error);
             setError("Could not save check-in. Make sure the backend is running.");
