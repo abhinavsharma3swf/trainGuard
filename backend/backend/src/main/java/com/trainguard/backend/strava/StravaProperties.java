@@ -7,7 +7,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public record StravaProperties(
         String clientId,
         String clientSecret,
-        String refreshToken
-
+        String refreshToken,
+        String redirectUri
 ) {
 }

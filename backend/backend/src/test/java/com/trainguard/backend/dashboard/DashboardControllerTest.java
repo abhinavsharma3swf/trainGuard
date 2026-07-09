@@ -43,9 +43,9 @@ public class DashboardControllerTest {
                 .note("Felt fine")
                 .build();
 
-        when(dashboardService.getAllActivitiesForDashboard()).thenReturn(List.of(dashboardFeedRecord));
+        when(dashboardService.getAllActivitiesForDashboard(12345L)).thenReturn(List.of(dashboardFeedRecord));
 
-        mockMvc.perform(get("/api/dashboard/feed"))
+        mockMvc.perform(get("/api/dashboard/feed/12345"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(1))
                 .andExpect(jsonPath("$[0].activityId").value(1))
@@ -61,6 +61,6 @@ public class DashboardControllerTest {
                 .andExpect(jsonPath("$[0].mood").value("Good"))
                 .andExpect(jsonPath("$[0].note").value("Felt fine"));
 
-        verify(dashboardService).getAllActivitiesForDashboard();
+        verify(dashboardService).getAllActivitiesForDashboard(12345L);
     }
 }

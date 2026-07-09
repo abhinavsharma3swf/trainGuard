@@ -19,8 +19,8 @@ public class DashboardService {
     private final RecoveryCheckinRepository recoveryCheckinRepository;
     private final ActivityMetricService activityMetricService;
 
-    public List<DashboardFeedRecord> getAllActivitiesForDashboard() {
-        List<ActivityEntity> activities = activityRepository.findAll();
+    public List<DashboardFeedRecord> getAllActivitiesForDashboard(Long athleteId) {
+        List<ActivityEntity> activities = activityRepository.findByAthleteId(athleteId);
         List<RecoveryCheckinEntity> checkins = recoveryCheckinRepository.findAll();
 
         return activities.stream()

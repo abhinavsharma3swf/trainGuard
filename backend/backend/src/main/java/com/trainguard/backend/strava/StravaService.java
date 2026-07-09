@@ -5,6 +5,7 @@ import com.trainguard.backend.activity.ActivityResponseRecord;
 import com.trainguard.backend.activity.ActivityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 
@@ -14,8 +15,9 @@ public class StravaService {
 
     private final StravaClient stravaClient;
     private final ActivityService activityService;
+    private final StravaProperties stravaProperties;
 
-    public List<ActivityResponseRecord> syncLastSevenActivities() {
+    public List<ActivityResponseRecord> syncLastSevenActivities(Long athleteId) {
         List<StravaActivityResponseRecord> stravaActivities =
                 stravaClient.fetchLastSevenActivities();
 
@@ -55,5 +57,17 @@ public class StravaService {
             case "ride", "virtualride" -> "RIDE";
             default -> sportType.toUpperCase();
         };
+    }
+
+    public String getAuthorizationUrl() {
+        return UriComponentsBuilder
+                .fromUriString("https://www.strava.com/oauth/authorize")
+                .queryParam("client_id", stravaProperties.clientId())
+                .queryParam("response_type", "code")
+                .queryParam("redirect_uri", stravaProperties.redirectUri())
+                .queryParam("approval_prompt", "force")
+                .queryParam("scope", "read,activity:read_all")
+                .build()
+                .toUriString();
     }
 }

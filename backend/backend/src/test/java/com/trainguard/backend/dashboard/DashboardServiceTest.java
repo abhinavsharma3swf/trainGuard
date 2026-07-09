@@ -41,6 +41,7 @@ class DashboardServiceTest {
                 .startDate(LocalDateTime.of(2026, 7, 7, 8, 0))
                 .distanceMeters(8046.72)
                 .movingTimeSeconds(2400)
+                .athleteId(12345L)
                 .build();
 
         ActivityEntity activityWithoutCheckin = ActivityEntity.builder()
@@ -50,6 +51,7 @@ class DashboardServiceTest {
                 .startDate(LocalDateTime.of(2026, 7, 8, 8, 0))
                 .distanceMeters(32186.88)
                 .movingTimeSeconds(5400)
+                .athleteId(12345L)
                 .build();
 
         RecoveryCheckinEntity checkin = RecoveryCheckinEntity.builder()
@@ -63,7 +65,7 @@ class DashboardServiceTest {
                 .createdAt(LocalDateTime.of(2026, 7, 7, 9, 0))
                 .build();
 
-        when(activityRepository.findAll())
+        when(activityRepository.findByAthleteId(12345L))
                 .thenReturn(List.of(activityWithCheckin, activityWithoutCheckin));
 
         when(recoveryCheckinRepository.findAll())
@@ -88,7 +90,7 @@ class DashboardServiceTest {
                 .thenReturn("4:30");
 
         List<DashboardFeedRecord> result =
-                dashboardService.getAllActivitiesForDashboard();
+                dashboardService.getAllActivitiesForDashboard(12345L);
 
         assertEquals(2, result.size());
 
@@ -122,7 +124,7 @@ class DashboardServiceTest {
         assertNull(pendingActivity.mood());
         assertNull(pendingActivity.note());
 
-        verify(activityRepository).findAll();
+        verify(activityRepository).findByAthleteId(12345L);
         verify(recoveryCheckinRepository).findAll();
 
         verify(activityMetricService).convertMetersToMiles(8046.72);

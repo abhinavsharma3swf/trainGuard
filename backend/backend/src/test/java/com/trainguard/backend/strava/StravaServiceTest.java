@@ -14,8 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -70,7 +69,7 @@ class StravaServiceTest {
                 .thenReturn(importedActivity);
 
         List<ActivityResponseRecord> result =
-                stravaService.syncLastSevenActivities();
+                stravaService.syncLastSevenActivities(12345L);
 
         assertEquals(1, result.size());
 
@@ -123,7 +122,7 @@ class StravaServiceTest {
         when(activityService.importActivity(any(ActivityImportRequestRecord.class)))
                 .thenReturn(importedActivity);
 
-        stravaService.syncLastSevenActivities();
+        stravaService.syncLastSevenActivities(12345L);
 
         ArgumentCaptor<ActivityImportRequestRecord> captor = ArgumentCaptor.forClass(ActivityImportRequestRecord.class);
 
@@ -144,5 +143,31 @@ class StravaServiceTest {
 //
         assertNull(request.averageWatts());
         assertNull(request.weightedAverageWatts());
+    }
+
+    @Test
+    void shouldBuildStravaAuthorizationUrl() {
+        StravaProperties stravaProperties = new StravaProperties(
+                "12345",
+                "Client-secret",
+                "Refresh-token",
+                "Http://localhost:8080/api/strava/callback"
+        );
+
+
+        StravaService stravaService = new StravaService(
+                stravaClient,
+                activityService,
+                stravaProperties
+        );
+
+        String authorizationUrl = stravaService.getAuthorizationUrl();
+
+        assertTrue(authorizationUrl.startsWith("https://www.strava.com/oauth/authorize"));
+        assertTrue(authorizationUrl.contains("client_id=12345"));
+        assertTrue(authorizationUrl.contains("response_type=code"));
+        assertTrue(authorizationUrl.contains("redirect_uri=Http://localhost:8080/api/strava/callback"));
+        assertTrue(authorizationUrl.contains("approval_prompt=force"));
+        assertTrue(authorizationUrl.contains("scope=read,activity:read_all"));
     }
 }

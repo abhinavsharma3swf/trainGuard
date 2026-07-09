@@ -45,4 +45,6 @@ public class ActivityEntity {
     private Double weightedAverageWatts;
 
     private LocalDateTime importedAt;
+
+    private Long athleteId;
 }

@@ -10,10 +10,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.time.LocalDateTime;
 import java.util.List;
 
+
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -40,10 +42,10 @@ public class StravaControllerTest {
                 "8:00"
         );
 
-        when(stravaService.syncLastSevenActivities())
+        when(stravaService.syncLastSevenActivities(12345L))
                 .thenReturn(List.of(activityResponse));
 
-        mockMvc.perform(post("/api/strava/sync"))
+        mockMvc.perform(post("/api/strava/sync/12345"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(1))
                 .andExpect(jsonPath("$[0].id").value(1))
@@ -55,6 +57,17 @@ public class StravaControllerTest {
                 .andExpect(jsonPath("$[0].movingTimeMinutes").value(40))
                 .andExpect(jsonPath("$[0].pacePerMile").value("8:00"));
 
-        verify(stravaService).syncLastSevenActivities();
+        verify(stravaService).syncLastSevenActivities(12345L);
+    }
+
+    @Test
+    void shouldReturnStravaAuthorizationUrl() throws Exception {
+        String authorizationUrl = "https://www.strava.com/oauth/authorize?client_id=12345";
+
+        when(stravaService.getAuthorizationUrl()).thenReturn(authorizationUrl);
+        mockMvc.perform(get("/api/strava/authorization-url"))
+                        .andExpect(status().isOk())
+                .andExpect(jsonPath("$").value(authorizationUrl));
+        verify(stravaService).getAuthorizationUrl();
     }
 }
