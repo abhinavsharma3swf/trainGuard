@@ -11,8 +11,6 @@ type ActivityCardProps = {
 export function ActivityCard({ activity }: ActivityCardProps) {
     const isPending = activity.status === "PENDING";
 
-    console.log(activity, "ac");
-
 
     return (
         <View style={styles.activityCard}>

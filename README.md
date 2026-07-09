@@ -22,3 +22,9 @@ TrainGuard/
 ├── README.md
 └── .gitignore
 
+To load the .env variables
+
+set -a
+source .env
+set +a
+./gradlew bR

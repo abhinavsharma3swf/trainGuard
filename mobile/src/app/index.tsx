@@ -5,6 +5,7 @@ import { getDashboardFeed, DashboardFeedItem } from "@/services/dashboardApi";
 import {useEffect, useState} from "react";
 import {ActivityCard} from "@/components/ActivityCard";
 import {SummaryCard} from "@/components/SummaryCard";
+import {syncStravaActivities} from "@/services/stravaApi";
 
 
 export default function HomeScreen() {
@@ -12,6 +13,8 @@ export default function HomeScreen() {
   // const [recoveryCheckins, setRecoveryCheckins] = useState<RecoveryCheckin[]>([]);
   // const [activities, setActivities] = useState<ActivityResponse[]>([]);
   const [feedItems, setFeedItems] = useState<DashboardFeedItem[]>([]);
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [error, setError] = useState("");
 
 
   // useEffect(() => {
@@ -43,18 +46,47 @@ export default function HomeScreen() {
   //   loadData();
   // }, []);
 
-  useEffect(() => {
-    async function loadDashboardFeed() {
-      try {
-        const data = await getDashboardFeed();
-        setFeedItems(data);
-      } catch (error) {
-        console.error(error);
-      }
+  const loadDashboardFeed = async () => {
+    try {
+      const data = await getDashboardFeed();
+      setFeedItems(data);
+    } catch (error) {
+      console.error(error);
+      setError("Could not load dashboard feed.");
     }
+  };
 
+  useEffect(() => {
     loadDashboardFeed();
   }, []);
+
+  const handleSync = async () => {
+    try {
+      setIsSyncing(true);
+      setError("");
+
+      await syncStravaActivities();
+      await loadDashboardFeed();
+    } catch (error) {
+      console.error(error);
+      setError("Could not sync Strava activities.");
+    } finally {
+      setIsSyncing(false);
+    }
+  };
+
+  // useEffect(() => {
+  //   async function loadDashboardFeed() {
+  //     try {
+  //       const data = await getDashboardFeed();
+  //       setFeedItems(data);
+  //     } catch (error) {
+  //       console.error(error);
+  //     }
+  //   }
+  //
+  //   loadDashboardFeed();
+  // }, []);
 
   const runMiles = feedItems
       .filter((item) => item.sportType === "RUN")
@@ -86,11 +118,21 @@ export default function HomeScreen() {
               <Text style={styles.subtitle}>Activity Feed</Text>
             </View>
 
-            <TouchableOpacity style={styles.syncButton}>
-              <Text style={styles.syncText}>Sync</Text>
+            <TouchableOpacity
+                style={styles.syncButton}
+                onPress={handleSync}
+                disabled={isSyncing}
+            >
+              <Text style={styles.syncText}>
+                {isSyncing ? "Syncing..." : "Sync"}
+              </Text>
             </TouchableOpacity>
-          </View>
 
+            {/*<TouchableOpacity style={styles.syncButton}>*/}
+            {/*  <Text style={styles.syncText}>Sync</Text>*/}
+            {/*</TouchableOpacity>*/}
+          </View>
+          {error ? <Text style={styles.errorText}>{error}</Text> : null}
           <View style={styles.statusCard}>
             <Text style={styles.label}>Training Status</Text>
             <Text style={styles.statusTitle}>
@@ -282,5 +324,11 @@ const styles = StyleSheet.create({
   },
   activityList: {
     gap: 14,
+  },
+  errorText: {
+    color: "#ffb4ab",
+    fontSize: 14,
+    fontWeight: "700",
+    marginBottom: 12,
   },
 });

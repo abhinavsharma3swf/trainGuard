@@ -19,3 +19,8 @@ spring:
 
 server:
   port: 8080
+
+strava:
+  client-id: ${STRAVA_CLIENT_ID}
+  client-secret: ${STRAVA_CLIENT_SECRET}
+  refresh-token: ${STRAVA_REFRESH_TOKEN}
