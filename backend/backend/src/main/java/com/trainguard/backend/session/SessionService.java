@@ -43,4 +43,13 @@ public class SessionService {
 
         return session.getStravaUser().getAthleteId();
     }
+
+    public Long getAthleteIdFromAuthorizationHeader(String authorizationHeader) {
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+            throw new IllegalArgumentException("Missing or invalid Authorization header.");
+        }
+
+        String token = authorizationHeader.substring(7);
+        return getAthleteIdFromToken(token);
+    }
 }

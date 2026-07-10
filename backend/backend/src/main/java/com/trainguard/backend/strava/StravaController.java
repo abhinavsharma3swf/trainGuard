@@ -31,9 +31,9 @@ public class StravaController {
     public List<ActivityResponseRecord> syncLastSevenActivities(
             @RequestHeader("Authorization") String authorizationHeader
     ) {
-        String token = authorizationHeader.replace("Bearer ", "");
-        Long athleteId = sessionService.getAthleteIdFromToken(token);
-
+//        String token = authorizationHeader.replace("Bearer ", "");
+//        Long athleteId = sessionService.getAthleteIdFromToken(token);
+        Long athleteId = sessionService.getAthleteIdFromAuthorizationHeader(authorizationHeader);
         return stravaService.syncLastSevenActivities(athleteId);
     }
 

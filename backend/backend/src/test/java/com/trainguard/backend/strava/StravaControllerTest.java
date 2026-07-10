@@ -45,8 +45,8 @@ public class StravaControllerTest {
                 40,
                 "8:00"
         );
-
-        when(sessionService.getAthleteIdFromToken("testToken")).thenReturn(12345L);
+        sessionService.getAthleteIdFromAuthorizationHeader("testToken");
+        when(sessionService.getAthleteIdFromAuthorizationHeader("testToken")).thenReturn(12345L);
         when(stravaService.syncLastSevenActivities(12345L))
                 .thenReturn(List.of(activityResponse));
 

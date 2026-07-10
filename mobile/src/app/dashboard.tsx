@@ -80,7 +80,7 @@ export default function HomeScreen() {
     };
 
     useEffect(() => {
-        loadDashboardFeed();
+        // loadDashboardFeed();
     }, []);
 
     // const handleSync = async () => {

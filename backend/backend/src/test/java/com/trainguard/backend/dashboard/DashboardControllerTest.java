@@ -46,7 +46,8 @@ public class DashboardControllerTest {
                 .mood("Good")
                 .note("Felt fine")
                 .build();
-        when(sessionService.getAthleteIdFromToken("testToken")).thenReturn(12345L);
+        sessionService.getAthleteIdFromAuthorizationHeader("testToken");
+        when(sessionService.getAthleteIdFromAuthorizationHeader("testToken")).thenReturn(12345L);
         when(dashboardService.getAllActivitiesForDashboard(12345L)).thenReturn(List.of(dashboardFeedRecord));
 
         mockMvc.perform(get("/api/dashboard/feed").header("Authorization", "testToken"))
