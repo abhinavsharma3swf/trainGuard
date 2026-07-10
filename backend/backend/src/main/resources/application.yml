@@ -3,9 +3,9 @@ spring:
     name: trainguard-backend
 
   datasource:
-    url: jdbc:postgresql://localhost:5435/trainguard
-    username: trainguard_user
-    password: trainguard_password
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5435/trainguard}
+    username: ${SPRING_DATASOURCE_USERNAME:trainguard_user}
+    password: ${SPRING_DATASOURCE_PASSWORD:trainguard_password}
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -24,6 +24,6 @@ strava:
   client-id: ${STRAVA_CLIENT_ID}
   client-secret: ${STRAVA_CLIENT_SECRET}
   refresh-token: ${STRAVA_REFRESH_TOKEN}
-  redirect-uri: ${STRAVA_REDIRECT_URI}
+  redirect-uri: ${STRAVA_REDIRECT_URI:http://localhost:8080/api/strava/callback}
 train-guard:
-  app-redirect-uri: ${TRAIN_GUARD_APP_REDIRECT_URI}
+  app-redirect-uri: ${TRAIN_GUARD_APP_REDIRECT_URI:http://localhost:8081/strava-connected}
