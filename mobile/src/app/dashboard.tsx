@@ -7,8 +7,9 @@ import {ActivityCard} from "@/components/ActivityCard";
 import {SummaryCard} from "@/components/SummaryCard";
 import {syncStravaActivities} from "@/services/stravaApi";
 import {router} from "expo-router";
-import {clearAthleteId, getAthleteId} from "@/services/athleteStorage";
 import {BottomNav} from "@/components/BottomNav";
+import {getSessionToken} from "@/services/athleteStorage";
+import {API_BASE_URL} from "@/constants/api";
 
 
 export default function HomeScreen() {
@@ -64,23 +65,15 @@ export default function HomeScreen() {
     //         setIsLoading(false);
     //     }
     // };
-
     const loadDashboardFeed = async () => {
+
         try {
             setError("");
-
-            const athleteId = await getAthleteId();
-
-            if (!athleteId) {
-                router.replace("/");
-                return;
-            }
-
-            const data = await getDashboardFeed(athleteId);
+            const data = await getDashboardFeed();
             setFeedItems(data);
         } catch (error) {
             console.error(error);
-            setError("Could not load dashboard feed. Make sure the backend is running.");
+            router.replace("/");
         } finally {
             setIsLoading(false);
         }
@@ -110,14 +103,7 @@ export default function HomeScreen() {
             setIsSyncing(true);
             setError("");
 
-            const athleteId = await getAthleteId();
-
-            if (!athleteId) {
-                router.replace("/");
-                return;
-            }
-
-            await syncStravaActivities(athleteId);
+            await syncStravaActivities();
             await loadDashboardFeed();
         } catch (error) {
             console.error(error);

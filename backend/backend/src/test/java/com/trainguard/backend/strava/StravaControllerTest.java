@@ -1,6 +1,7 @@
 package com.trainguard.backend.strava;
 
 import com.trainguard.backend.activity.ActivityResponseRecord;
+import com.trainguard.backend.session.SessionService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -28,6 +29,9 @@ public class StravaControllerTest {
     @MockitoBean
     private StravaService stravaService;
 
+    @MockitoBean
+    private SessionService sessionService;
+
     @Test
     void shouldSyncStravaActivities() throws Exception {
         ActivityResponseRecord activityResponse = new ActivityResponseRecord(
@@ -42,10 +46,11 @@ public class StravaControllerTest {
                 "8:00"
         );
 
+        when(sessionService.getAthleteIdFromToken("testToken")).thenReturn(12345L);
         when(stravaService.syncLastSevenActivities(12345L))
                 .thenReturn(List.of(activityResponse));
 
-        mockMvc.perform(post("/api/strava/sync/12345"))
+        mockMvc.perform(post("/api/strava/sync").header("Authorization", "testToken"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(1))
                 .andExpect(jsonPath("$[0].id").value(1))

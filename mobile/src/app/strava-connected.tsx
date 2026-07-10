@@ -1,34 +1,28 @@
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
+import {saveSessionToken} from "@/services/athleteStorage";
 
-import { saveAthleteId } from "@/services/athleteStorage";
 
-export default function StravaConnected() {
+export default function StravaConnectedScreen() {
     const params = useLocalSearchParams();
 
     useEffect(() => {
         async function saveConnection() {
-            const athleteIdParam = Array.isArray(params.athleteId)
-                ? params.athleteId[0]
-                : params.athleteId;
+            const tokenParam = Array.isArray(params.token)
+                ? params.token[0]
+                : params.token;
 
-            if (!athleteIdParam) {
+            if (!tokenParam) {
                 return;
             }
 
-            const athleteId = Number(athleteIdParam);
-
-            if (Number.isNaN(athleteId)) {
-                return;
-            }
-
-            await saveAthleteId(athleteId);
+            await saveSessionToken(tokenParam);
             router.replace("/dashboard");
         }
 
         saveConnection();
-    }, [params.athleteId]);
+    }, [params.token]);
 
     return (
         <View style={styles.screen}>

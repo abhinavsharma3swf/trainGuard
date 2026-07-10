@@ -1,10 +1,11 @@
 import { router } from "expo-router";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import {clearAthleteId} from "@/services/athleteStorage";
+import {clearSessionToken} from "@/services/athleteStorage";
+
 
 type BottomNavProps = {
     activeRoute: "login" | "dashboard" | "analysis";
-    storedAthleteId?: number;
+    storedAthleteId?: any;
 };
 
 export function BottomNav({ activeRoute, storedAthleteId }: BottomNavProps) {
@@ -21,7 +22,7 @@ export function BottomNav({ activeRoute, storedAthleteId }: BottomNavProps) {
                         activeRoute === "login" && styles.activeText,
                     ]}
                     onPress={()=> {
-                        clearAthleteId()
+                        clearSessionToken()
                         router.replace("/")}}>
                     Logout
                 </Text>

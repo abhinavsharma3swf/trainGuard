@@ -1,6 +1,7 @@
 package com.trainguard.backend.dashboard;
 
 
+import com.trainguard.backend.session.SessionService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -25,6 +26,9 @@ public class DashboardControllerTest {
     @MockitoBean
     private DashboardService dashboardService;
 
+    @MockitoBean
+    private SessionService sessionService;
+
     @Test
     void shouldGetTheActivitiesWithTheCheckinToDisplayOnTheDashboard() throws Exception {
         DashboardFeedRecord dashboardFeedRecord = DashboardFeedRecord.builder()
@@ -42,10 +46,10 @@ public class DashboardControllerTest {
                 .mood("Good")
                 .note("Felt fine")
                 .build();
-
+        when(sessionService.getAthleteIdFromToken("testToken")).thenReturn(12345L);
         when(dashboardService.getAllActivitiesForDashboard(12345L)).thenReturn(List.of(dashboardFeedRecord));
 
-        mockMvc.perform(get("/api/dashboard/feed/12345"))
+        mockMvc.perform(get("/api/dashboard/feed").header("Authorization", "testToken"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(1))
                 .andExpect(jsonPath("$[0].activityId").value(1))

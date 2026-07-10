@@ -2,6 +2,7 @@ package com.trainguard.backend.strava;
 
 
 import com.trainguard.backend.activity.ActivityResponseRecord;
+import com.trainguard.backend.session.SessionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,8 +20,20 @@ public class StravaController {
 
     private final TrainGuardProperties smartGaugeProperties;
 
-    @PostMapping("/sync/{athleteId}")
-    public List<ActivityResponseRecord> syncLastSevenActivities(@PathVariable Long athleteId) {
+    private final SessionService sessionService;
+
+//    @PostMapping("/sync/{athleteId}")
+//    public List<ActivityResponseRecord> syncLastSevenActivities(@PathVariable Long athleteId) {
+//        return stravaService.syncLastSevenActivities(athleteId);
+//    }
+
+    @PostMapping("/sync")
+    public List<ActivityResponseRecord> syncLastSevenActivities(
+            @RequestHeader("Authorization") String authorizationHeader
+    ) {
+        String token = authorizationHeader.replace("Bearer ", "");
+        Long athleteId = sessionService.getAthleteIdFromToken(token);
+
         return stravaService.syncLastSevenActivities(athleteId);
     }
 
@@ -58,9 +71,14 @@ public class StravaController {
     @GetMapping("/callback")
     public ResponseEntity<Void> handleCallback(@RequestParam String code) {
         Long athleteId = stravaService.exchangeAuthorizationCode(code);
+        String sessionToken = sessionService.createSessionForAthlete(athleteId);
+
+//        URI redirectUri = URI.create(
+//                smartGaugeProperties.appRedirectUri() + "?athleteId=" + athleteId
+//        );
 
         URI redirectUri = URI.create(
-                smartGaugeProperties.appRedirectUri() + "?athleteId=" + athleteId
+                smartGaugeProperties.appRedirectUri() + "?token=" + sessionToken
         );
 
         return ResponseEntity

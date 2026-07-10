@@ -176,21 +176,22 @@ import {router} from "expo-router";
 import {useEffect, useState} from "react";
 import {Linking, Pressable, StyleSheet, Text, View,} from "react-native";
 
-import {getStravaAuthorizationUrl} from "@/services/stravaApi";
-import {getAthleteId, saveAthleteId} from "@/services/athleteStorage";
+
 import {BottomNav} from "@/components/BottomNav";
+import {getSessionToken} from "@/services/athleteStorage";
+import {getStravaAuthorizationUrl} from "@/services/stravaApi";
 
 export default function ConnectScreen() {
     const [error, setError] = useState("");
     const [isConnecting, setIsConnecting] = useState(false);
-    const [athleteId, setAthleteId] = useState<number | undefined>();
+    const [athleteId, setAthleteId] = useState("");
 
 
     async function checkExistingConnection() {
-        const storedAthleteId = await getAthleteId();
+        const accessToken = await getSessionToken();
 
-        if (storedAthleteId) {
-            setAthleteId(storedAthleteId);
+        if (accessToken) {
+            setAthleteId(accessToken);
             router.replace("/dashboard");
         }
     }
@@ -218,29 +219,29 @@ export default function ConnectScreen() {
     //     };
     // }, []);
 
-    const handleDeepLink = async (url: string) => {
-        if (!url.includes("strava-connected")) {
-            return;
-        }
-
-        const parsedUrl = new URL(url);
-        const athleteIdParam = parsedUrl.searchParams.get("athleteId");
-
-        if (!athleteIdParam) {
-            setError("Strava connected, but athlete ID was missing.");
-            return;
-        }
-
-        const athleteId = Number(athleteIdParam);
-
-        if (Number.isNaN(athleteId)) {
-            setError("Invalid athlete ID returned from Strava.");
-            return;
-        }
-
-        await saveAthleteId(athleteId);
-        router.replace("/dashboard");
-    };
+    // const handleDeepLink = async (url: string) => {
+    //     if (!url.includes("strava-connected")) {
+    //         return;
+    //     }
+    //
+    //     const parsedUrl = new URL(url);
+    //     const athleteIdParam = parsedUrl.searchParams.get("athleteId");
+    //
+    //     if (!athleteIdParam) {
+    //         setError("Strava connected, but athlete ID was missing.");
+    //         return;
+    //     }
+    //
+    //     const athleteId = Number(athleteIdParam);
+    //
+    //     if (Number.isNaN(athleteId)) {
+    //         setError("Invalid athlete ID returned from Strava.");
+    //         return;
+    //     }
+    //
+    //     await saveAthleteId(athleteId);
+    //     router.replace("/dashboard");
+    // };
 
     const handleConnectStrava = async () => {
         try {
@@ -248,6 +249,11 @@ export default function ConnectScreen() {
             setError("");
 
             const url = await getStravaAuthorizationUrl();
+
+            if (!url) {
+                setError("Could not get Strava authorization URL.");
+                return;
+            }
 
             console.log("strava", url);
             await Linking.openURL(url);
