@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 public class StravaUserEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long athleteId;
 
     private String firstname;

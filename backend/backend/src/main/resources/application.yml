@@ -25,3 +25,5 @@ strava:
   client-secret: ${STRAVA_CLIENT_SECRET}
   refresh-token: ${STRAVA_REFRESH_TOKEN}
   redirect-uri: ${STRAVA_REDIRECT_URI}
+train-guard:
+  app-redirect-uri: ${TRAIN_GUARD_APP_REDIRECT_URI}

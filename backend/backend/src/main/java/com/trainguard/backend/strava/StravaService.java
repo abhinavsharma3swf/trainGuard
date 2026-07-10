@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -16,20 +17,24 @@ public class StravaService {
     private final StravaClient stravaClient;
     private final ActivityService activityService;
     private final StravaProperties stravaProperties;
+    private final StravaUserRepository stravaUserRepository;
 
     public List<ActivityResponseRecord> syncLastSevenActivities(Long athleteId) {
+        StravaUserEntity stravaUser = stravaUserRepository.findById(athleteId)
+                .orElseThrow(() -> new IllegalArgumentException("Strava user not connected."));
+
         List<StravaActivityResponseRecord> stravaActivities =
-                stravaClient.fetchLastSevenActivities();
+                stravaClient.fetchLastSevenActivities(stravaUser.getRefreshToken());
 
         return stravaActivities.stream()
-                .map(this::toActivityImportRequest)
+                .map(stravaActivity -> toActivityImportRequest(stravaActivity, athleteId))
                 .map(activityService::importActivity)
                 .toList();
     }
 
     private ActivityImportRequestRecord toActivityImportRequest(
-            StravaActivityResponseRecord stravaActivity
-    ) {
+            StravaActivityResponseRecord stravaActivity,
+            Long athleteId) {
         return ActivityImportRequestRecord.builder()
                 .externalSource("STRAVA")
                 .externalActivityId(String.valueOf(stravaActivity.id()))
@@ -44,6 +49,8 @@ public class StravaService {
                 .maxHeartbeat(stravaActivity.maxHeartbeat())
                 .averageWatts(stravaActivity.averageWatts())
                 .weightedAverageWatts(stravaActivity.weightedAverageWatts())
+                .athleteId(athleteId)
+
                 .build();
     }
 
@@ -69,5 +76,45 @@ public class StravaService {
                 .queryParam("scope", "read,activity:read_all")
                 .build()
                 .toUriString();
+    }
+
+//    public Long exchangeAuthorizationCode(String code) {
+//        StravaTokenResponseRecord response = stravaClient.exchangeAuthorizationCode(code);
+//
+//        Long athleteId = response.athlete().id();
+//
+//        StravaUserEntity user = StravaUserEntity.builder()
+//                .athleteId(athleteId)
+//                .firstname(response.athlete().firstname())
+//                .lastname(response.athlete().lastname())
+//                .refreshToken(response.refreshToken())
+//                .connectedAt(LocalDateTime.now())
+//                .updatedAt(LocalDateTime.now())
+//                .build();
+//
+//        stravaUserRepository.save(user);
+//
+//        return athleteId;
+//    }
+
+    public Long exchangeAuthorizationCode(String code) {
+        StravaTokenResponseRecord response = stravaClient.exchangeAuthorizationCode(code);
+
+        Long athleteId = response.athlete().id();
+
+        StravaUserEntity user = stravaUserRepository.findById(athleteId)
+                .orElseGet(() -> StravaUserEntity.builder()
+                        .athleteId(athleteId)
+                        .connectedAt(LocalDateTime.now())
+                        .build());
+
+        user.setFirstname(response.athlete().firstname());
+        user.setLastname(response.athlete().lastname());
+        user.setRefreshToken(response.refreshToken());
+        user.setUpdatedAt(LocalDateTime.now());
+
+        stravaUserRepository.save(user);
+
+        return athleteId;
     }
 }

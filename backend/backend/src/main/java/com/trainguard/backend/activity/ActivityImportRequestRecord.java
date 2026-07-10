@@ -18,6 +18,7 @@ public record ActivityImportRequestRecord(
         Double averageHeartbeat,
         Double maxHeartbeat,
         Double averageWatts,
-        Double weightedAverageWatts
+        Double weightedAverageWatts,
+        Long athleteId
 ) {
 }

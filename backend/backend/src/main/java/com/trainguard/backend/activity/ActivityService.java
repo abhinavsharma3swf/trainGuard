@@ -20,7 +20,7 @@ public class ActivityService {
     private final ActivityRepository activityRepository;
 
     public ActivityResponseRecord importActivity(ActivityImportRequestRecord requestRecord) {
-        ActivityEntity activity = activityRepository.findByExternalSourceAndExternalActivityId(requestRecord.externalSource(), requestRecord.externalActivityId())
+        ActivityEntity activity = activityRepository.findByExternalSourceAndExternalActivityId(requestRecord.externalSource(), requestRecord.externalActivityId(), requestRecord.athleteId())
                 .orElseGet(() -> saveNewActivity(requestRecord));
         return toResponse(activity);
     }
@@ -66,6 +66,7 @@ public class ActivityService {
         activity.setAverageWatts(request.averageWatts());
         activity.setWeightedAverageWatts(request.weightedAverageWatts());
         activity.setImportedAt(LocalDateTime.now());
+        activity.setAthleteId(request.athleteId());
 
         return activityRepository.save(activity);
     }

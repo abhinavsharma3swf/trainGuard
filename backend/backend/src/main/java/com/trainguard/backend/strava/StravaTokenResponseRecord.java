@@ -10,6 +10,8 @@ public record StravaTokenResponseRecord(
         String refreshToken,
 
         @JsonProperty("expires_at")
-        Long expiresAt
+        Long expiresAt,
+
+        StravaAthleteRecord athlete
 ) {
 }

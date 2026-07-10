@@ -6,6 +6,9 @@ import {useEffect, useState} from "react";
 import {ActivityCard} from "@/components/ActivityCard";
 import {SummaryCard} from "@/components/SummaryCard";
 import {syncStravaActivities} from "@/services/stravaApi";
+import {router} from "expo-router";
+import {clearAthleteId, getAthleteId} from "@/services/athleteStorage";
+import {BottomNav} from "@/components/BottomNav";
 
 
 export default function HomeScreen() {
@@ -47,11 +50,32 @@ export default function HomeScreen() {
     //   loadData();
     // }, []);
 
-    const athleteId = 49461647
+    // const athleteId = 49461647
+
+    // const loadDashboardFeed = async () => {
+    //     try {
+    //         setError("");
+    //         const data = await getDashboardFeed(athleteId);
+    //         setFeedItems(data);
+    //     } catch (error) {
+    //         console.error(error);
+    //         setError("Could not load dashboard feed. Make sure the backend is running.");
+    //     } finally {
+    //         setIsLoading(false);
+    //     }
+    // };
 
     const loadDashboardFeed = async () => {
         try {
             setError("");
+
+            const athleteId = await getAthleteId();
+
+            if (!athleteId) {
+                router.replace("/");
+                return;
+            }
+
             const data = await getDashboardFeed(athleteId);
             setFeedItems(data);
         } catch (error) {
@@ -66,10 +90,32 @@ export default function HomeScreen() {
         loadDashboardFeed();
     }, []);
 
+    // const handleSync = async () => {
+    //     try {
+    //         setIsSyncing(true);
+    //         setError("");
+    //
+    //         await syncStravaActivities(athleteId);
+    //         await loadDashboardFeed();
+    //     } catch (error) {
+    //         console.error(error);
+    //         setError("Could not sync Strava activities. Check your Strava connection and backend.");
+    //     } finally {
+    //         setIsSyncing(false);
+    //     }
+    // };
+
     const handleSync = async () => {
         try {
             setIsSyncing(true);
             setError("");
+
+            const athleteId = await getAthleteId();
+
+            if (!athleteId) {
+                router.replace("/");
+                return;
+            }
 
             await syncStravaActivities(athleteId);
             await loadDashboardFeed();
@@ -143,7 +189,7 @@ export default function HomeScreen() {
                 <View style={styles.statusCard}>
                     <Text style={styles.label}>Training Status</Text>
                     <Text style={styles.statusTitle}>
-                        {pendingCheckins > 0 ? "Yellow" : "Green"}
+                        {pendingCheckins > 5 ? "Red" : pendingCheckins >=0 ? "Yellow" : "Green"}
                     </Text>
                     {/*<Text style={styles.statusTitle}>Yellow</Text>*/}
                     {/*<Text style={styles.statusMessage}>*/}
@@ -266,6 +312,7 @@ export default function HomeScreen() {
                     </View>
                 )}
             </ScrollView>
+            <BottomNav activeRoute="dashboard" />
         </View>
     );
 }
@@ -277,7 +324,7 @@ const styles = StyleSheet.create({
     },
     content: {
         padding: 20,
-        paddingBottom: 40,
+        paddingBottom: 110,
     },
     header: {
         marginTop: 32,
