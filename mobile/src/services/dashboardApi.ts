@@ -17,8 +17,8 @@ export type DashboardFeedItem = {
     note: string | null;
 };
 
-export async function getDashboardFeed(): Promise<DashboardFeedItem[]> {
-    const response = await fetch(`${API_BASE_URL}/api/dashboard/feed`);
+export async function getDashboardFeed(athleteId: number): Promise<DashboardFeedItem[]> {
+    const response = await fetch(`${API_BASE_URL}/api/dashboard/feed/${athleteId}`);
 
     if (!response.ok) {
         throw new Error("Failed to fetch dashboard feed.");

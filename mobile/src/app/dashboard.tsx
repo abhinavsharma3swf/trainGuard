@@ -47,10 +47,12 @@ export default function HomeScreen() {
     //   loadData();
     // }, []);
 
+    const athleteId = 49461647
+
     const loadDashboardFeed = async () => {
         try {
             setError("");
-            const data = await getDashboardFeed();
+            const data = await getDashboardFeed(athleteId);
             setFeedItems(data);
         } catch (error) {
             console.error(error);
@@ -69,7 +71,7 @@ export default function HomeScreen() {
             setIsSyncing(true);
             setError("");
 
-            await syncStravaActivities();
+            await syncStravaActivities(athleteId);
             await loadDashboardFeed();
         } catch (error) {
             console.error(error);
