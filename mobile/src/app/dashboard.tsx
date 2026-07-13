@@ -8,7 +8,7 @@ import {SummaryCard} from "@/components/SummaryCard";
 import {syncStravaActivities} from "@/services/stravaApi";
 import {router} from "expo-router";
 import {BottomNav} from "@/components/BottomNav";
-import {getSessionToken} from "@/services/athleteStorage";
+import {clearSessionToken, getSessionToken} from "@/services/athleteStorage";
 import {API_BASE_URL} from "@/constants/api";
 
 
@@ -65,22 +65,24 @@ export default function HomeScreen() {
     //         setIsLoading(false);
     //     }
     // };
-    const loadDashboardFeed = async () => {
 
-        try {
-            setError("");
-            const data = await getDashboardFeed();
-            setFeedItems(data);
-        } catch (error) {
-            console.error(error);
-            router.replace("/");
-        } finally {
-            setIsLoading(false);
-        }
-    };
 
     useEffect(() => {
         // loadDashboardFeed();
+        const loadDashboardFeed = async () => {
+
+            try {
+                setError("");
+                const data = await getDashboardFeed();
+                setFeedItems(data);
+            } catch (error) {
+                console.error(error);
+                router.replace("/");
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        loadDashboardFeed();
     }, []);
 
     // const handleSync = async () => {
@@ -98,6 +100,15 @@ export default function HomeScreen() {
     //     }
     // };
 
+    async function loadDashboardFeed() {
+        try {
+            const data = await getDashboardFeed();
+            setFeedItems(data);
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
     const handleSync = async () => {
         try {
             setIsSyncing(true);
@@ -113,18 +124,9 @@ export default function HomeScreen() {
         }
     };
 
-    // useEffect(() => {
-    //   async function loadDashboardFeed() {
-    //     try {
-    //       const data = await getDashboardFeed();
-    //       setFeedItems(data);
-    //     } catch (error) {
-    //       console.error(error);
-    //     }
-    //   }
-    //
-    //   loadDashboardFeed();
-    // }, []);
+    useEffect(() => {
+      loadDashboardFeed();
+    }, []);
 
     const runMiles = feedItems
         .filter((item) => item.sportType === "RUN")
