@@ -8,8 +8,6 @@ import {SummaryCard} from "@/components/SummaryCard";
 import {syncStravaActivities} from "@/services/stravaApi";
 import {router} from "expo-router";
 import {BottomNav} from "@/components/BottomNav";
-import {clearSessionToken, getSessionToken} from "@/services/athleteStorage";
-import {API_BASE_URL} from "@/constants/api";
 
 
 export default function HomeScreen() {
@@ -65,23 +63,32 @@ export default function HomeScreen() {
     //         setIsLoading(false);
     //     }
     // };
+    const loadDashboardFeed = async () => {
 
+        try {
+            setError("");
+            const data = await getDashboardFeed();
+            console.log("Dashboard feed data:", data);
+            const startdate = data.map((e)=> e.startDate);
+            console.log(
+                "Start dates:",
+                startdate.map((e) => new Date(e).toLocaleDateString())
+            )
+            const ascendingFeedData = [...data].sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime());
+            const test = [...startdate].sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
+            console.log("Sorted start dates:", test);
+            setFeedItems(ascendingFeedData);
+        } catch (error) {
+            console.error(error);
+            router.replace("/");
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     useEffect(() => {
         // loadDashboardFeed();
-        const loadDashboardFeed = async () => {
 
-            try {
-                setError("");
-                const data = await getDashboardFeed();
-                setFeedItems(data);
-            } catch (error) {
-                console.error(error);
-                router.replace("/");
-            } finally {
-                setIsLoading(false);
-            }
-        };
         loadDashboardFeed();
     }, []);
 
@@ -99,15 +106,15 @@ export default function HomeScreen() {
     //         setIsSyncing(false);
     //     }
     // };
-
-    async function loadDashboardFeed() {
-        try {
-            const data = await getDashboardFeed();
-            setFeedItems(data);
-        } catch (error) {
-            console.error(error);
-        }
-    }
+    //
+    // async function loadDashboardFeed() {
+    //     try {
+    //         const data = await getDashboardFeed();
+    //         setFeedItems(data);
+    //     } catch (error) {
+    //         console.error(error);
+    //     }
+    // }
 
     const handleSync = async () => {
         try {
@@ -125,16 +132,20 @@ export default function HomeScreen() {
     };
 
     useEffect(() => {
-      loadDashboardFeed();
+        loadDashboardFeed();
     }, []);
 
     const runMiles = feedItems
         .filter((item) => item.sportType === "RUN")
         .reduce((total, item) => total + item.distanceMiles, 0);
 
+    // const bikeHours = feedItems
+    //     .filter((item) => item.sportType === "RIDE")
+    //     .reduce((total, item) => total + item.movingTimeMinutes, 0) / 60;
+
     const bikeHours = feedItems
         .filter((item) => item.sportType === "RIDE")
-        .reduce((total, item) => total + item.movingTimeMinutes, 0) / 60;
+        .reduce((total, item) => total + item.distanceMiles, 0);
 
     const pendingCheckins = feedItems.filter(
         (item) => item.checkinStatus === "PENDING"
@@ -148,6 +159,8 @@ export default function HomeScreen() {
         painScores.length > 0
             ? painScores.reduce((total, pain) => total + pain, 0) / painScores.length
             : 0;
+
+
 
     return (
         <View style={styles.screen}>
@@ -174,135 +187,155 @@ export default function HomeScreen() {
                     {/*</TouchableOpacity>*/}
                 </View>
                 {error ? <Text style={styles.errorText}>{error}</Text> : null}
-                <View style={styles.statusCard}>
-                    <Text style={styles.label}>Training Status</Text>
-                    <Text style={styles.statusTitle}>
-                        {pendingCheckins > 5 ? "Red" : pendingCheckins >=0 ? "Yellow" : "Green"}
-                    </Text>
-                    {/*<Text style={styles.statusTitle}>Yellow</Text>*/}
-                    {/*<Text style={styles.statusMessage}>*/}
-                    {/*  One activity needs a recovery check-in. Complete it to update your risk status.*/}
-                    {/*</Text>*/}
+                <View
+                    style={
+                        pendingCheckins > 5
+                            ? styles.statusCardRed
+                            : pendingCheckins > 1
+                                ? styles.statusCardYellow
+                                : styles.statusCardGreen
+                    }
+                >
+                <Text style={styles.label}>Check-in Status</Text>
+                <Text style={styles.statusTitle}>
+                    {pendingCheckins > 5 ? "Red" : pendingCheckins > 1 ? "Yellow" : "Green"}
+                </Text>
+                {/*<Text style={styles.statusTitle}>Yellow</Text>*/}
+                {/*<Text style={styles.statusMessage}>*/}
+                {/*  One activity needs a recovery check-in. Complete it to update your risk status.*/}
+                {/*</Text>*/}
 
-                    <Text style={styles.statusMessage}>
-                        {pendingCheckins > 0
-                            ? `${pendingCheckins} activity${pendingCheckins > 1 ? "ies need" : " needs"} a recovery check-in. Complete ${pendingCheckins > 1 ? "them" : "it"} to update your risk status.`
-                            : "All recent activities have recovery check-ins."}
-                    </Text>
+                <Text style={styles.statusMessage}>
+                    {pendingCheckins > 0
+                        ? `${pendingCheckins} activit${pendingCheckins > 1 ? "ies need" : " needs"} a recovery check-in. Complete ${pendingCheckins > 1 ? "them" : "it"} to update your risk status.`
+                        : "All recent activities have recovery check-ins."}
+                </Text>
 
-                </View>
-
-                {/*<View style={styles.summaryGrid}>*/}
-                {/*  <SummaryCard label="Run Miles" value="32.4" unit="mi" />*/}
-                {/*  <SummaryCard label="Bike Time" value="5.2" unit="hr" />*/}
-                {/*  <SummaryCard label="Pending" value="2" unit="check-ins" />*/}
-                {/*  <SummaryCard label="Pain" value="3" unit="/10" />*/}
-                {/*</View>*/}
-
-                <View style={styles.summaryGrid}>
-                    <SummaryCard
-                        label="Run Miles"
-                        value={runMiles.toFixed(1)}
-                        unit="mi"
-                    />
-
-                    <SummaryCard
-                        label="Bike Time"
-                        value={bikeHours.toFixed(1)}
-                        unit="hr"
-                    />
-
-                    <SummaryCard
-                        label="Pending"
-                        value={String(pendingCheckins)}
-                        unit="check-ins"
-                    />
-
-                    <SummaryCard
-                        label="Pain"
-                        value={averagePain.toFixed(1)}
-                        unit="/10"
-                    />
-                </View>
-
-                <Text style={styles.sectionTitle}>Recent Activities</Text>
-
-                {isLoading ? (
-                    <View style={styles.emptyStateCard}>
-                        <Text style={styles.emptyStateTitle}>Loading activities...</Text>
-                        <Text style={styles.emptyStateMessage}>
-                            Fetching your latest dashboard feed.
-                        </Text>
-                    </View>
-                ) : feedItems.length === 0 ? (
-                    <View style={styles.emptyStateCard}>
-                        <Text style={styles.emptyStateTitle}>No activities yet</Text>
-                        <Text style={styles.emptyStateMessage}>
-                            Tap Sync to import your latest Strava activities.
-                        </Text>
-                    </View>
-                ) : (
-
-                    <View style={styles.activityList}>
-
-                        {feedItems.map((item) => {
-                            return (
-                                <ActivityCard
-                                    key={item.activityId}
-                                    activity={{
-                                        id: item.activityId,
-                                        type: item.sportType === "RIDE" ? "RIDE" : "RUN",
-                                        name: item.name,
-                                        date: item.startDate,
-                                        distance: `${item.distanceMiles} mi`,
-                                        time: `${item.movingTimeMinutes} min`,
-                                        pace: item.pacePerMile,
-                                        averageWatts: item.averageWatts,
-                                        status: item.checkinStatus,
-                                        rpe: item.rpe !== null ? String(item.rpe) : undefined,
-                                        pain: item.painScore !== null ? String(item.painScore) : undefined,
-                                        mood: item.mood ?? undefined,
-                                    }}
-                                />
-                            );
-                        })}
-
-                        {/*{activities.map((activity) => {*/}
-                        {/*  // const hasCheckin = recoveryCheckins.some(*/}
-                        {/*  //     (checkin) => checkin.activityId === activity.id*/}
-                        {/*  // );*/}
-                        {/*  const recoveryCheckin = recoveryCheckins.find(*/}
-                        {/*      (checkin) => checkin.activityId === activity.id*/}
-                        {/*  );*/}
-
-                        {/*  const hasCheckin = recoveryCheckin !== undefined;*/}
-
-                        {/*  return (*/}
-                        {/*      <ActivityCard*/}
-                        {/*          key={activity.id}*/}
-                        {/*          activity={{*/}
-                        {/*            id: activity.id,*/}
-                        {/*            type: activity.sportType === "RIDE" ? "RIDE" : "RUN",*/}
-                        {/*            name: activity.name,*/}
-                        {/*            date: activity.startDate,*/}
-                        {/*            distance: `${activity.distanceMiles} mi`,*/}
-                        {/*            time: `${activity.movingTimeMinutes} min`,*/}
-                        {/*            paceOrPower: activity.pacePerMile,*/}
-                        {/*            status: hasCheckin ? "COMPLETED" : "PENDING",*/}
-
-                        {/*            rpe: recoveryCheckin ? String(recoveryCheckin.rpe) : undefined,*/}
-                        {/*            pain: recoveryCheckin ? String(recoveryCheckin.painScore) : undefined,*/}
-                        {/*            mood: recoveryCheckin?.mood,*/}
-                        {/*          }}*/}
-                        {/*      />*/}
-                        {/*  );*/}
-                        {/*})}*/}
-                    </View>
-                )}
-            </ScrollView>
-            <BottomNav activeRoute="dashboard" />
         </View>
-    );
+
+{/*<View style={styles.summaryGrid}>*/
+}
+{/*  <SummaryCard label="Run Miles" value="32.4" unit="mi" />*/
+}
+{/*  <SummaryCard label="Bike Time" value="5.2" unit="hr" />*/
+}
+{/*  <SummaryCard label="Pending" value="2" unit="check-ins" />*/
+}
+{/*  <SummaryCard label="Pain" value="3" unit="/10" />*/
+}
+{/*</View>*/
+}
+
+    <View style={styles.summaryGrid}>
+
+        <SummaryCard
+            label="Pending"
+            value={String(pendingCheckins)}
+            unit="check-ins"
+        />
+
+        <SummaryCard
+            label="Physical Pain"
+            value={averagePain.toFixed(1)}
+            unit="/10"
+        />
+
+        <SummaryCard
+            label="Run Miles"
+            value={runMiles.toFixed(1)}
+            unit="mi"
+        />
+
+        <SummaryCard
+            label="Bike Miles"
+            value={bikeHours.toFixed(1)}
+            unit="mi"
+        />
+
+
+    </View>
+
+    <Text style={styles.sectionTitle}>Recent Activities</Text>
+
+{
+    isLoading ? (
+        <View style={styles.emptyStateCard}>
+            <Text style={styles.emptyStateTitle}>Loading activities...</Text>
+            <Text style={styles.emptyStateMessage}>
+                Fetching your latest dashboard feed.
+            </Text>
+        </View>
+    ) : feedItems.length === 0 ? (
+        <View style={styles.emptyStateCard}>
+            <Text style={styles.emptyStateTitle}>No activities yet</Text>
+            <Text style={styles.emptyStateMessage}>
+                Tap Sync to import your latest Strava activities.
+            </Text>
+        </View>
+    ) : (
+
+        <View style={styles.activityList}>
+
+            {feedItems.map((item) => {
+                return (
+                    <ActivityCard
+                        key={item.activityId}
+                        activity={{
+                            id: item.activityId,
+                            type: item.sportType === "RIDE" ? "RIDE" : "RUN",
+                            name: item.name,
+                            date: item.startDate,
+                            distance: `${item.distanceMiles} mi`,
+                            time: `${item.movingTimeMinutes} min`,
+                            pace: item.pacePerMile,
+                            averageWatts: item.averageWatts,
+                            status: item.checkinStatus,
+                            rpe: item.rpe !== null ? String(item.rpe) : undefined,
+                            pain: item.painScore !== null ? String(item.painScore) : undefined,
+                            mood: item.mood ?? undefined,
+                        }}
+                    />
+                );
+            })}
+
+            {/*{activities.map((activity) => {*/}
+            {/*  // const hasCheckin = recoveryCheckins.some(*/}
+            {/*  //     (checkin) => checkin.activityId === activity.id*/}
+            {/*  // );*/}
+            {/*  const recoveryCheckin = recoveryCheckins.find(*/}
+            {/*      (checkin) => checkin.activityId === activity.id*/}
+            {/*  );*/}
+
+            {/*  const hasCheckin = recoveryCheckin !== undefined;*/}
+
+            {/*  return (*/}
+            {/*      <ActivityCard*/}
+            {/*          key={activity.id}*/}
+            {/*          activity={{*/}
+            {/*            id: activity.id,*/}
+            {/*            type: activity.sportType === "RIDE" ? "RIDE" : "RUN",*/}
+            {/*            name: activity.name,*/}
+            {/*            date: activity.startDate,*/}
+            {/*            distance: `${activity.distanceMiles} mi`,*/}
+            {/*            time: `${activity.movingTimeMinutes} min`,*/}
+            {/*            paceOrPower: activity.pacePerMile,*/}
+            {/*            status: hasCheckin ? "COMPLETED" : "PENDING",*/}
+
+            {/*            rpe: recoveryCheckin ? String(recoveryCheckin.rpe) : undefined,*/}
+            {/*            pain: recoveryCheckin ? String(recoveryCheckin.painScore) : undefined,*/}
+            {/*            mood: recoveryCheckin?.mood,*/}
+            {/*          }}*/}
+            {/*      />*/}
+            {/*  );*/}
+            {/*})}*/}
+        </View>
+    )
+}
+</ScrollView>
+    <BottomNav activeRoute="dashboard"/>
+</View>
+)
+
 }
 
 const styles = StyleSheet.create({
@@ -341,13 +374,29 @@ const styles = StyleSheet.create({
         color: "#501600",
         fontWeight: "800",
     },
-    statusCard: {
+    statusCardRed: {
         backgroundColor: "#16253b",
         borderRadius: 18,
         padding: 18,
         marginBottom: 14,
         borderLeftWidth: 4,
         borderLeftColor: "#fd5900",
+    },
+    statusCardYellow: {
+        backgroundColor: "#16253b",
+        borderRadius: 18,
+        padding: 18,
+        marginBottom: 14,
+        borderLeftWidth: 4,
+        borderLeftColor: "#c1952a",
+    },
+    statusCardGreen: {
+        backgroundColor: "#16253b",
+        borderRadius: 18,
+        padding: 18,
+        marginBottom: 14,
+        borderLeftWidth: 4,
+        borderLeftColor: "#568c04",
     },
     label: {
         color: "#c5c6cd",

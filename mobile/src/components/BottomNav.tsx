@@ -39,7 +39,7 @@ export function BottomNav({ activeRoute, storedAthleteId }: BottomNavProps) {
                         activeRoute === "dashboard" && styles.activeText,
                     ]}
                 >
-                    Dashboard
+                    Activities
                 </Text>
             </Pressable>
 

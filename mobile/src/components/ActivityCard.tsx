@@ -11,6 +11,14 @@ type ActivityCardProps = {
 export function ActivityCard({ activity }: ActivityCardProps) {
     const isPending = activity.status === "PENDING";
 
+    function formatActivityDate(startDate: string) {
+        return new Date(startDate).toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+        });
+    }
+
 
     return (
         <View style={styles.activityCard}>
@@ -18,7 +26,7 @@ export function ActivityCard({ activity }: ActivityCardProps) {
                 <View>
                     <Text style={styles.activityType}>{activity.type}</Text>
                     <Text style={styles.activityName}>{activity.name}</Text>
-                    <Text style={styles.activityDate}>{activity.date}</Text>
+                    <Text style={styles.activityDate}>{formatActivityDate(activity.date)}</Text>
                 </View>
 
                 {isPending ? (
@@ -30,15 +38,15 @@ export function ActivityCard({ activity }: ActivityCardProps) {
 
             <View style={styles.metricsRow}>
                 <Metric label="Distance" value={activity.distance} />
-                <Metric label="Time" value={activity.time} />
+                <Metric label="Activity Minutes" value={activity.time} />
 
                 {activity.type === "RIDE" ?
                     <Metric
-                        label="RIDE"
+                        label="WATTS"
                     // label={activity.type === "RIDE" ? "Power" : "Pace"}
                     value={activity.averageWatts}
                 /> :   <Metric
-                        label="RUN"
+                        label="PACE"
                         // label={activity.type === "RIDE" ? "Power" : "Pace"}
                         value={activity.pace}
                     />}
