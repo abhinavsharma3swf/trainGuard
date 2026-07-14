@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
     },
     navText: {
         color: "#7d8a91",
-        fontSize: 13,
+        fontSize: 18,
         fontWeight: "800",
     },
     activeText: {

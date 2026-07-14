@@ -16,18 +16,10 @@ public class DashboardController {
 
     private final SessionService sessionService;
 
-//    @GetMapping("/{athleteId}")
-//    public List<DashboardFeedRecord> getDashboardFeedRecord(@PathVariable Long athleteId) {
-//        return dashboardService.getAllActivitiesForDashboard(athleteId);
-//    }
-
-
     @GetMapping
     public List<DashboardFeedRecord> getDashboardFeedRecord(
             @RequestHeader("Authorization") String authorizationHeader
     ) {
-//        String token = authorizationHeader.replace("Bearer ", "");
-//        Long athleteId = sessionService.getAthleteIdFromToken(token);
         Long athleteId = sessionService.getAthleteIdFromAuthorizationHeader(authorizationHeader);
         return dashboardService.getAllActivitiesForDashboard(athleteId);
     }

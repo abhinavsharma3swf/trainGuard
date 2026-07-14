@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {Activity} from "@/types/activity";
 import {Metric} from "./Metric";
 import {router} from "expo-router";
@@ -8,7 +8,7 @@ type ActivityCardProps = {
     activity: Activity;
 };
 
-export function ActivityCard({ activity }: ActivityCardProps) {
+export function ActivityCard({activity}: ActivityCardProps) {
     const isPending = activity.status === "PENDING";
 
     function formatActivityDate(startDate: string) {
@@ -37,17 +37,15 @@ export function ActivityCard({ activity }: ActivityCardProps) {
             </View>
 
             <View style={styles.metricsRow}>
-                <Metric label="Distance" value={activity.distance} />
-                <Metric label="Activity Minutes" value={activity.time} />
+                <Metric label="Distance" value={activity.distance}/>
+                <Metric label="Activity Minutes" value={activity.time}/>
 
                 {activity.type === "RIDE" ?
                     <Metric
                         label="WATTS"
-                    // label={activity.type === "RIDE" ? "Power" : "Pace"}
-                    value={activity.averageWatts}
-                /> :   <Metric
+                        value={activity.averageWatts}
+                    /> : <Metric
                         label="PACE"
-                        // label={activity.type === "RIDE" ? "Power" : "Pace"}
                         value={activity.pace}
                     />}
 
@@ -60,30 +58,22 @@ export function ActivityCard({ activity }: ActivityCardProps) {
                     <TouchableOpacity
                         style={styles.checkInButton}
                         onPress={() => router.push(`/recovery/${activity.id}`)}
-                        // onPress={() =>
-                        //     router.push({
-                        //         pathname: "/recovery/$[activityId]",
-                        //         params: {
-                        //             activityId: String(activity.id),
-                        //         },
-                        //     })
-                        // }
                     >
                         <Text style={styles.checkInButtonText}>Check in</Text>
                     </TouchableOpacity>
                 </View>
             ) : (
                 <View style={styles.chipRow}>
-                    <Chip label={`RPE ${activity.rpe}`} />
-                    <Chip label={`Pain ${activity.pain}`} />
-                    <Chip label={activity.mood ?? "Good"} />
+                    <Chip label={`RPE ${activity.rpe}`}/>
+                    <Chip label={`Pain ${activity.pain}`}/>
+                    <Chip label={activity.mood ?? "Good"}/>
                 </View>
             )}
         </View>
     );
 }
 
-function Chip({ label }: { label: string }) {
+function Chip({label}: { label: string }) {
     return (
         <View style={styles.chip}>
             <Text style={styles.chipText}>{label}</Text>

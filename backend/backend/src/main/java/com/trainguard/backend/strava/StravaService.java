@@ -78,25 +78,6 @@ public class StravaService {
                 .toUriString();
     }
 
-//    public Long exchangeAuthorizationCode(String code) {
-//        StravaTokenResponseRecord response = stravaClient.exchangeAuthorizationCode(code);
-//
-//        Long athleteId = response.athlete().id();
-//
-//        StravaUserEntity user = StravaUserEntity.builder()
-//                .athleteId(athleteId)
-//                .firstname(response.athlete().firstname())
-//                .lastname(response.athlete().lastname())
-//                .refreshToken(response.refreshToken())
-//                .connectedAt(LocalDateTime.now())
-//                .updatedAt(LocalDateTime.now())
-//                .build();
-//
-//        stravaUserRepository.save(user);
-//
-//        return athleteId;
-//    }
-
     public Long exchangeAuthorizationCode(String code) {
         StravaTokenResponseRecord response = stravaClient.exchangeAuthorizationCode(code);
 

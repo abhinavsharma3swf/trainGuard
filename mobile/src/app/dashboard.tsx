@@ -1,6 +1,4 @@
 import {ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
-
-// import { getActivities, ActivityResponse } from "@/services/activityApi";
 import {DashboardFeedItem, getDashboardFeed} from "@/services/dashboardApi";
 import {useEffect, useState} from "react";
 import {ActivityCard} from "@/components/ActivityCard";
@@ -11,58 +9,12 @@ import {BottomNav} from "@/components/BottomNav";
 
 
 export default function HomeScreen() {
-
-    // const [recoveryCheckins, setRecoveryCheckins] = useState<RecoveryCheckin[]>([]);
-    // const [activities, setActivities] = useState<ActivityResponse[]>([]);
     const [feedItems, setFeedItems] = useState<DashboardFeedItem[]>([]);
     const [isSyncing, setIsSyncing] = useState(false);
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(true);
 
 
-    // useEffect(() => {
-    //   async function loadRecoveryCheckins() {
-    //     try {
-    //       const data = await getRecoveryCheckins();
-    //       setRecoveryCheckins(data);
-    //     } catch (error) {
-    //       console.error(error);
-    //     }
-    //   }
-    //
-    //   loadRecoveryCheckins();
-    // }, []);
-
-    // useEffect(() => {
-    //   async function loadData() {
-    //     try {
-    //       const activitiesData = await getActivities();
-    //       const recoveryData = await getRecoveryCheckins();
-    //
-    //       setActivities(activitiesData);
-    //       setRecoveryCheckins(recoveryData);
-    //     } catch (error) {
-    //       console.error(error);
-    //     }
-    //   }
-    //
-    //   loadData();
-    // }, []);
-
-    // const athleteId = 49461647
-
-    // const loadDashboardFeed = async () => {
-    //     try {
-    //         setError("");
-    //         const data = await getDashboardFeed(athleteId);
-    //         setFeedItems(data);
-    //     } catch (error) {
-    //         console.error(error);
-    //         setError("Could not load dashboard feed. Make sure the backend is running.");
-    //     } finally {
-    //         setIsLoading(false);
-    //     }
-    // };
     const loadDashboardFeed = async () => {
 
         try {
@@ -87,34 +39,8 @@ export default function HomeScreen() {
     };
 
     useEffect(() => {
-        // loadDashboardFeed();
-
         loadDashboardFeed();
     }, []);
-
-    // const handleSync = async () => {
-    //     try {
-    //         setIsSyncing(true);
-    //         setError("");
-    //
-    //         await syncStravaActivities(athleteId);
-    //         await loadDashboardFeed();
-    //     } catch (error) {
-    //         console.error(error);
-    //         setError("Could not sync Strava activities. Check your Strava connection and backend.");
-    //     } finally {
-    //         setIsSyncing(false);
-    //     }
-    // };
-    //
-    // async function loadDashboardFeed() {
-    //     try {
-    //         const data = await getDashboardFeed();
-    //         setFeedItems(data);
-    //     } catch (error) {
-    //         console.error(error);
-    //     }
-    // }
 
     const handleSync = async () => {
         try {
@@ -169,7 +95,6 @@ export default function HomeScreen() {
                     <View>
                         <Text style={styles.appName}>Smart Gauge</Text>
                         <Text style={styles.subtitle}>Effort tracked. Injury skipped</Text>
-                        {/*<Text style={styles.subtitle}>Activity Feed</Text>*/}
                     </View>
 
                     <TouchableOpacity
@@ -181,10 +106,6 @@ export default function HomeScreen() {
                             {isSyncing ? "Syncing..." : "Sync"}
                         </Text>
                     </TouchableOpacity>
-
-                    {/*<TouchableOpacity style={styles.syncButton}>*/}
-                    {/*  <Text style={styles.syncText}>Sync</Text>*/}
-                    {/*</TouchableOpacity>*/}
                 </View>
                 {error ? <Text style={styles.errorText}>{error}</Text> : null}
                 <View
@@ -200,31 +121,13 @@ export default function HomeScreen() {
                 <Text style={styles.statusTitle}>
                     {pendingCheckins > 5 ? "Red" : pendingCheckins > 1 ? "Yellow" : "Green"}
                 </Text>
-                {/*<Text style={styles.statusTitle}>Yellow</Text>*/}
-                {/*<Text style={styles.statusMessage}>*/}
-                {/*  One activity needs a recovery check-in. Complete it to update your risk status.*/}
-                {/*</Text>*/}
-
                 <Text style={styles.statusMessage}>
                     {pendingCheckins > 0
-                        ? `${pendingCheckins} activit${pendingCheckins > 1 ? "ies need" : " needs"} a recovery check-in. Complete ${pendingCheckins > 1 ? "them" : "it"} to update your risk status.`
+                        ? `${pendingCheckins} activit${pendingCheckins > 1 ? "ies need" : " needs"} a recovery check-in. Complete ${pendingCheckins > 1 ? "them" : "it"} to update the status.`
                         : "All recent activities have recovery check-ins."}
                 </Text>
 
         </View>
-
-{/*<View style={styles.summaryGrid}>*/
-}
-{/*  <SummaryCard label="Run Miles" value="32.4" unit="mi" />*/
-}
-{/*  <SummaryCard label="Bike Time" value="5.2" unit="hr" />*/
-}
-{/*  <SummaryCard label="Pending" value="2" unit="check-ins" />*/
-}
-{/*  <SummaryCard label="Pain" value="3" unit="/10" />*/
-}
-{/*</View>*/
-}
 
     <View style={styles.summaryGrid}>
 
@@ -297,37 +200,6 @@ export default function HomeScreen() {
                     />
                 );
             })}
-
-            {/*{activities.map((activity) => {*/}
-            {/*  // const hasCheckin = recoveryCheckins.some(*/}
-            {/*  //     (checkin) => checkin.activityId === activity.id*/}
-            {/*  // );*/}
-            {/*  const recoveryCheckin = recoveryCheckins.find(*/}
-            {/*      (checkin) => checkin.activityId === activity.id*/}
-            {/*  );*/}
-
-            {/*  const hasCheckin = recoveryCheckin !== undefined;*/}
-
-            {/*  return (*/}
-            {/*      <ActivityCard*/}
-            {/*          key={activity.id}*/}
-            {/*          activity={{*/}
-            {/*            id: activity.id,*/}
-            {/*            type: activity.sportType === "RIDE" ? "RIDE" : "RUN",*/}
-            {/*            name: activity.name,*/}
-            {/*            date: activity.startDate,*/}
-            {/*            distance: `${activity.distanceMiles} mi`,*/}
-            {/*            time: `${activity.movingTimeMinutes} min`,*/}
-            {/*            paceOrPower: activity.pacePerMile,*/}
-            {/*            status: hasCheckin ? "COMPLETED" : "PENDING",*/}
-
-            {/*            rpe: recoveryCheckin ? String(recoveryCheckin.rpe) : undefined,*/}
-            {/*            pain: recoveryCheckin ? String(recoveryCheckin.painScore) : undefined,*/}
-            {/*            mood: recoveryCheckin?.mood,*/}
-            {/*          }}*/}
-            {/*      />*/}
-            {/*  );*/}
-            {/*})}*/}
         </View>
     )
 }
@@ -380,7 +252,7 @@ const styles = StyleSheet.create({
         padding: 18,
         marginBottom: 14,
         borderLeftWidth: 4,
-        borderLeftColor: "#fd5900",
+        borderLeftColor: "#e31c0a",
     },
     statusCardYellow: {
         backgroundColor: "#16253b",

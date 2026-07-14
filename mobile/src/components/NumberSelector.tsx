@@ -1,4 +1,5 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import {KeyboardAwareScrollView} from "react-native-keyboard-controller"
 
 type NumberSelectorProps = {
     label: string;

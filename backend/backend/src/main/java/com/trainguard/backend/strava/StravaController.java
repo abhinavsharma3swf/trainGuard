@@ -22,17 +22,10 @@ public class StravaController {
 
     private final SessionService sessionService;
 
-//    @PostMapping("/sync/{athleteId}")
-//    public List<ActivityResponseRecord> syncLastSevenActivities(@PathVariable Long athleteId) {
-//        return stravaService.syncLastSevenActivities(athleteId);
-//    }
-
     @PostMapping("/sync")
     public List<ActivityResponseRecord> syncLastSevenActivities(
             @RequestHeader("Authorization") String authorizationHeader
     ) {
-//        String token = authorizationHeader.replace("Bearer ", "");
-//        Long athleteId = sessionService.getAthleteIdFromToken(token);
         Long athleteId = sessionService.getAthleteIdFromAuthorizationHeader(authorizationHeader);
         return stravaService.syncLastSevenActivities(athleteId);
     }
@@ -42,40 +35,11 @@ public class StravaController {
         return stravaService.getAuthorizationUrl();
     }
 
-//    @GetMapping("/callback")
-//    public String handleCallback(@RequestParam String code) {
-//        Long athleteId = stravaService.exchangeAuthorizationCode(code);
-//
-//        return """
-//            Strava connected successfully.
-//            Athlete ID: %s
-//            You can return to Smart Gauge.
-//            """.formatted(athleteId);
-//    }
-
-//    @GetMapping("/callback")
-//    public ResponseEntity<Void> handleCallback(@RequestParam String code) {
-//        Long athleteId = stravaService.exchangeAuthorizationCode(code);
-//
-//        URI redirectUri = URI.create(
-//                "smartgauge://strava-connected?athleteId=" + athleteId
-//        );
-//
-//        return ResponseEntity
-//                .status(HttpStatus.FOUND)
-//                .location(redirectUri)
-//                .build();
-//    }
-
     //this one is to redirect it to the local environment//
     @GetMapping("/callback")
     public ResponseEntity<Void> handleCallback(@RequestParam String code) {
         Long athleteId = stravaService.exchangeAuthorizationCode(code);
         String sessionToken = sessionService.createSessionForAthlete(athleteId);
-
-//        URI redirectUri = URI.create(
-//                smartGaugeProperties.appRedirectUri() + "?athleteId=" + athleteId
-//        );
 
         URI redirectUri = URI.create(
                 smartGaugeProperties.appRedirectUri() + "?token=" + sessionToken

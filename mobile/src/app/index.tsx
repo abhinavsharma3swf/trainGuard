@@ -1,191 +1,22 @@
-// import { router } from "expo-router";
-// import { useState } from "react";
-// import {
-//     KeyboardAvoidingView,
-//     Platform,
-//     Pressable,
-//     StyleSheet,
-//     Text,
-//     TextInput,
-//     View,
-// } from "react-native";
-//
-// export default function LoginScreen() {
-//     const [email, setEmail] = useState("");
-//     const [error, setError] = useState("");
-//
-//     const handleLogin = () => {
-//         if (!email.trim()) {
-//             setError("Enter your email to continue.");
-//             return;
-//         }
-//
-//         setError("");
-//         router.push("/");
-//     };
-//
-//     return (
-//         <KeyboardAvoidingView
-//             style={styles.screen}
-//             behavior={Platform.OS === "ios" ? "padding" : undefined}
-//         >
-//             <View style={styles.card}>
-//                 <View style={styles.logoMark}>
-//                     <Text style={styles.logoText}>SG</Text>
-//                 </View>
-//
-//                 <Text style={styles.appName}>Smart Gauge</Text>
-//
-//                 <Text style={styles.subtitle}>
-//                     Connect your training data, track recovery, and monitor risk before your next workout.
-//                 </Text>
-//
-//                 <View style={styles.form}>
-//                     {/*<Text style={styles.label}>Email</Text>*/}
-//
-//                     {/*<TextInput*/}
-//                     {/*    style={styles.input}*/}
-//                     {/*    placeholder="you@example.com"*/}
-//                     {/*    placeholderTextColor="#6f7a80"*/}
-//                     {/*    value={email}*/}
-//                     {/*    onChangeText={(value) => {*/}
-//                     {/*        setEmail(value);*/}
-//                     {/*        setError("");*/}
-//                     {/*    }}*/}
-//                     {/*    autoCapitalize="none"*/}
-//                     {/*    keyboardType="email-address"*/}
-//                     {/*/>*/}
-//
-//                     {error ? <Text style={styles.errorText}>{error}</Text> : null}
-//
-//                     {/*<Pressable style={styles.primaryButton} onPress={handleLogin}>*/}
-//                     {/*    <Text style={styles.primaryButtonText}>Continue</Text>*/}
-//                     {/*</Pressable>*/}
-//
-//                     <Pressable onPress={()=> router.push("/dashboard")} style={styles.secondaryButton}>
-//                         <Text style={styles.secondaryButtonText}>Continue with Strava</Text>
-//                     </Pressable>
-//                 </View>
-//
-//                 <Text style={styles.footerText}>
-//                     Smart Gauge uses your recent activities and recovery check-ins to help you make better training decisions.
-//                 </Text>
-//             </View>
-//         </KeyboardAvoidingView>
-//     );
-// }
-//
-// const styles = StyleSheet.create({
-//     screen: {
-//         flex: 1,
-//         backgroundColor: "#101415",
-//         justifyContent: "center",
-//         padding: 20,
-//     },
-//     card: {
-//         backgroundColor: "#151b1f",
-//         borderRadius: 24,
-//         padding: 24,
-//         borderWidth: 1,
-//         borderColor: "#263238",
-//     },
-//     logoMark: {
-//         width: 64,
-//         height: 64,
-//         borderRadius: 20,
-//         backgroundColor: "#fd5900",
-//         alignItems: "center",
-//         justifyContent: "center",
-//         marginBottom: 18,
-//     },
-//     logoText: {
-//         color: "#501600",
-//         fontSize: 24,
-//         fontWeight: "900",
-//     },
-//     appName: {
-//         color: "#e0e3e5",
-//         fontSize: 34,
-//         fontWeight: "900",
-//         marginBottom: 10,
-//     },
-//     subtitle: {
-//         color: "#c5c6cd",
-//         fontSize: 16,
-//         lineHeight: 24,
-//         marginBottom: 28,
-//     },
-//     form: {
-//         gap: 12,
-//     },
-//     label: {
-//         color: "#c5c6cd",
-//         fontSize: 13,
-//         fontWeight: "700",
-//         textTransform: "uppercase",
-//         letterSpacing: 1,
-//     },
-//     input: {
-//         backgroundColor: "#101415",
-//         borderWidth: 1,
-//         borderColor: "#263238",
-//         borderRadius: 14,
-//         paddingHorizontal: 14,
-//         paddingVertical: 14,
-//         color: "#e0e3e5",
-//         fontSize: 16,
-//     },
-//     errorText: {
-//         color: "#ffb4ab",
-//         fontSize: 14,
-//         fontWeight: "700",
-//     },
-//     primaryButton: {
-//         backgroundColor: "#fd5900",
-//         borderRadius: 14,
-//         paddingVertical: 15,
-//         alignItems: "center",
-//         marginTop: 8,
-//     },
-//     primaryButtonText: {
-//         color: "#501600",
-//         fontSize: 16,
-//         fontWeight: "900",
-//     },
-//     secondaryButton: {
-//         borderWidth: 1,
-//         borderColor: "#fd5900",
-//         borderRadius: 14,
-//         paddingVertical: 15,
-//         alignItems: "center",
-//     },
-//     secondaryButtonText: {
-//         color: "#fd5900",
-//         fontSize: 16,
-//         fontWeight: "800",
-//     },
-//     footerText: {
-//         color: "#7d8a91",
-//         fontSize: 13,
-//         lineHeight: 20,
-//         marginTop: 24,
-//     },
-// });
+import { router } from "expo-router";
+import { useEffect, useState } from "react";
+import {
+    Linking,
+    Pressable,
+    ScrollView,
+    StyleSheet,
+    Text,
+    View,
+} from "react-native";
 
-import {router} from "expo-router";
-import {useEffect, useState} from "react";
-import {Linking, Pressable, StyleSheet, Text, View,} from "react-native";
-
-
-import {BottomNav} from "@/components/BottomNav";
-import {getSessionToken} from "@/services/athleteStorage";
-import {getStravaAuthorizationUrl} from "@/services/stravaApi";
+import { BottomNav } from "@/components/BottomNav";
+import { getSessionToken } from "@/services/athleteStorage";
+import { getStravaAuthorizationUrl } from "@/services/stravaApi";
 
 export default function ConnectScreen() {
     const [error, setError] = useState("");
     const [isConnecting, setIsConnecting] = useState(false);
     const [athleteId, setAthleteId] = useState("");
-
 
     async function checkExistingConnection() {
         const accessToken = await getSessionToken();
@@ -196,52 +27,9 @@ export default function ConnectScreen() {
         }
     }
 
-
     useEffect(() => {
         checkExistingConnection();
     }, []);
-
-    // useEffect(() => {
-    //     function handleUrl(event: { url: string }) {
-    //         handleDeepLink(event.url);
-    //     }
-    //
-    //     const subscription = Linking.addEventListener("url", handleUrl);
-    //
-    //     Linking.getInitialURL().then((url) => {
-    //         if (url) {
-    //             handleDeepLink(url);
-    //         }
-    //     });
-    //
-    //     return () => {
-    //         subscription.remove();
-    //     };
-    // }, []);
-
-    // const handleDeepLink = async (url: string) => {
-    //     if (!url.includes("strava-connected")) {
-    //         return;
-    //     }
-    //
-    //     const parsedUrl = new URL(url);
-    //     const athleteIdParam = parsedUrl.searchParams.get("athleteId");
-    //
-    //     if (!athleteIdParam) {
-    //         setError("Strava connected, but athlete ID was missing.");
-    //         return;
-    //     }
-    //
-    //     const athleteId = Number(athleteIdParam);
-    //
-    //     if (Number.isNaN(athleteId)) {
-    //         setError("Invalid athlete ID returned from Strava.");
-    //         return;
-    //     }
-    //
-    //     await saveAthleteId(athleteId);
-    //     router.replace("/dashboard");
-    // };
 
     const handleConnectStrava = async () => {
         try {
@@ -254,8 +42,6 @@ export default function ConnectScreen() {
                 setError("Could not get Strava authorization URL.");
                 return;
             }
-
-            console.log("strava", url);
             await Linking.openURL(url);
         } catch (error) {
             console.error(error);
@@ -275,8 +61,90 @@ export default function ConnectScreen() {
                 <Text style={styles.appName}>Smart Gauge</Text>
 
                 <Text style={styles.subtitle}>
-                    Connect Strava to import your latest activities and track your recovery status.
+                    Connect Strava to import your latest activities and track your recovery
+                    status.
                 </Text>
+
+                <View style={styles.disclaimerCard}>
+                    <Text style={styles.disclaimerTitle}>
+                        Beta Disclaimer and User Acknowledgement
+                    </Text>
+
+                    <ScrollView
+                        style={styles.disclaimerScroll}
+                        nestedScrollEnabled
+                        showsVerticalScrollIndicator
+                    >
+                        <Text style={styles.disclaimerText}>
+                            Smart Gauge is a beta fitness tracking and training analysis
+                            application. By using this app, you acknowledge and agree that the
+                            app is provided for informational, educational, and personal
+                            tracking purposes only.
+                        </Text>
+
+                        <Text style={styles.disclaimerText}>
+                            Smart Gauge is not a medical device, healthcare service, coaching
+                            service, emergency service, or substitute for professional medical
+                            advice, diagnosis, treatment, or training guidance. Any information
+                            displayed in the app, including activity history, recovery
+                            check-ins, pain scores, training trends, performance metrics, or
+                            alerts, should not be relied upon as medical, safety, or
+                            professional training advice.
+                        </Text>
+
+                        <Text style={styles.disclaimerText}>
+                            You are responsible for your own training decisions, physical
+                            activity, health choices, and use of the information displayed in
+                            the app. You should consult a qualified medical professional,
+                            coach, or other appropriate professional before making decisions
+                            that may affect your health, injury risk, training load, or
+                            physical performance.
+                        </Text>
+
+                        <Text style={styles.disclaimerText}>
+                            Smart Gauge may connect to third-party services, including Strava,
+                            to import activity data. By connecting your Strava account, you
+                            authorize Smart Gauge to access and store the activity data needed
+                            to provide the app’s features. This may include activity names,
+                            sport types, dates, distances, durations, elevation, heart rate,
+                            power, recovery check-ins, pain scores, notes, and related training
+                            information.
+                        </Text>
+
+                        <Text style={styles.disclaimerText}>
+                            Although reasonable efforts are made to protect user data, no
+                            software system, network, server, database, or third-party
+                            integration can be guaranteed to be completely secure,
+                            uninterrupted, or error-free. You acknowledge that data may be
+                            delayed, incomplete, inaccurate, unavailable, or affected by
+                            third-party service changes, outages, user permissions, API
+                            limitations, or technical issues.
+                        </Text>
+
+                        <Text style={styles.disclaimerText}>
+                            You are responsible for reviewing your own data and determining
+                            whether it is accurate and appropriate for your personal use. Smart
+                            Gauge and its developer are not responsible for decisions,
+                            injuries, losses, damages, training outcomes, data inaccuracies,
+                            service interruptions, third-party service issues, or other
+                            consequences arising from your use of the app or reliance on
+                            information displayed in the app.
+                        </Text>
+
+                        <Text style={styles.disclaimerText}>
+                            Because this is a beta product, features may change, break, be
+                            removed, or behave unexpectedly. Data may be modified, deleted,
+                            reset, or lost during testing, development, hosting changes,
+                            database migrations, or app updates.
+                        </Text>
+
+                        <Text style={styles.disclaimerText}>
+                            By continuing to use Smart Gauge, you agree that you understand
+                            these limitations and accept responsibility for your use of the app
+                            and any decisions you make based on its information.
+                        </Text>
+                    </ScrollView>
+                </View>
 
                 {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
@@ -286,11 +154,16 @@ export default function ConnectScreen() {
                     disabled={isConnecting}
                 >
                     <Text style={styles.primaryButtonText}>
-                        {isConnecting ? "Connecting..." : "Connect with Strava"}
+                        {isConnecting ? "Connecting..." : "I Understand — Connect with Strava"}
                     </Text>
                 </Pressable>
+
+                <Text style={styles.footerText}>
+                    By tapping Connect with Strava, you acknowledge the beta disclaimer.
+                </Text>
             </View>
-            <BottomNav activeRoute="login" storedAthleteId={athleteId}/>
+
+            <BottomNav activeRoute="login" storedAthleteId={athleteId} />
         </View>
     );
 }
@@ -301,7 +174,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#101415",
         justifyContent: "center",
         padding: 20,
-        paddingBottom: 110
+        paddingBottom: 110,
     },
     card: {
         backgroundColor: "#151b1f",
@@ -317,7 +190,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#fd5900",
         alignItems: "center",
         justifyContent: "center",
-        marginBottom: 18,
+        marginBottom: 14,
     },
     logoText: {
         color: "#501600",
@@ -328,13 +201,36 @@ const styles = StyleSheet.create({
         color: "#e0e3e5",
         fontSize: 34,
         fontWeight: "900",
-        marginBottom: 10,
+        marginBottom: 8,
     },
     subtitle: {
         color: "#c5c6cd",
+        fontSize: 15,
+        lineHeight: 22,
+        marginBottom: 16,
+    },
+    disclaimerCard: {
+        backgroundColor: "#101415",
+        borderRadius: 16,
+        padding: 14,
+        borderWidth: 1,
+        borderColor: "#2a3033",
+        marginBottom: 16,
+    },
+    disclaimerTitle: {
+        color: "#e0e3e5",
         fontSize: 16,
-        lineHeight: 24,
-        marginBottom: 28,
+        fontWeight: "900",
+        marginBottom: 10,
+    },
+    disclaimerScroll: {
+        maxHeight: 190,
+    },
+    disclaimerText: {
+        color: "#c5c6cd",
+        fontSize: 13,
+        lineHeight: 19,
+        marginBottom: 12,
     },
     primaryButton: {
         backgroundColor: "#fd5900",
@@ -355,5 +251,12 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontWeight: "700",
         marginBottom: 12,
+    },
+    footerText: {
+        color: "#8b949e",
+        fontSize: 12,
+        lineHeight: 18,
+        textAlign: "center",
+        marginTop: 10,
     },
 });
