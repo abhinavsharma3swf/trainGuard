@@ -8,7 +8,7 @@
     "scheme": "smartgauge",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "icon": "./assets/expo.icon",
+      "icon": "./assets/images/smartGaugeAppIcon.png",
       "bundleIdentifier": "com.abhinavsharma3steam.smartgauge",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
