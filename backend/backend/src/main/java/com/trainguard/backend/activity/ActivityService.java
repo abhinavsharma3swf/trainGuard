@@ -19,33 +19,66 @@ public class ActivityService {
     private final ActivityMetricService activityMetricService;
     private final ActivityRepository activityRepository;
 
+//    public ActivityResponseRecord importActivity(ActivityImportRequestRecord requestRecord) {
+//        ActivityEntity activity = activityRepository.findByAthleteIdAndExternalSourceAndExternalActivityId(requestRecord.externalSource(), requestRecord.externalActivityId(), requestRecord.athleteId())
+//                .orElseGet(() -> saveNewActivity(requestRecord));
+//        return toResponse(activity);
+//    }
+
     public ActivityResponseRecord importActivity(ActivityImportRequestRecord requestRecord) {
-        ActivityEntity activity = activityRepository.findByExternalSourceAndExternalActivityId(requestRecord.externalSource(), requestRecord.externalActivityId(), requestRecord.athleteId())
-                .orElseGet(() -> saveNewActivity(requestRecord));
-        return toResponse(activity);
+        ActivityEntity activity = activityRepository
+                .findByAthleteIdAndExternalSourceAndExternalActivityId(
+                        requestRecord.athleteId(),
+                        requestRecord.externalSource(),
+                        requestRecord.externalActivityId()
+                )
+                .orElseGet(ActivityEntity::new);
+
+        activity.setAthleteId(requestRecord.athleteId());
+        activity.setExternalSource(requestRecord.externalSource());
+        activity.setExternalActivityId(requestRecord.externalActivityId());
+        activity.setSportType(requestRecord.sportType());
+        activity.setName(requestRecord.name());
+        activity.setStartDate(requestRecord.startDate());
+        activity.setDistanceMeters(requestRecord.distanceMeters());
+        activity.setMovingTimeSeconds(requestRecord.movingTimeSeconds());
+        activity.setElapsedTimeSeconds(requestRecord.elapsedTimeSeconds());
+        activity.setTotalElevationGain(requestRecord.totalElevationGain());
+        activity.setAverageHeartbeat(requestRecord.averageHeartbeat());
+        activity.setMaxHeartbeat(requestRecord.maxHeartbeat());
+        activity.setAverageWatts(requestRecord.averageWatts());
+        activity.setWeightedAverageWatts(requestRecord.weightedAverageWatts());
+
+        if (activity.getImportedAt() == null) {
+            activity.setImportedAt(LocalDateTime.now());
+        }
+
+        ActivityEntity savedActivity = activityRepository.save(activity);
+
+        return toResponse(savedActivity);
     }
-
-    private ActivityEntity saveNewActivity(ActivityImportRequestRecord request) {
-        ActivityEntity activity = new ActivityEntity();
-
-        activity.setExternalSource(request.externalSource());
-        activity.setExternalActivityId(request.externalActivityId());
-        activity.setSportType(request.sportType());
-        activity.setName(request.name());
-        activity.setStartDate(request.startDate());
-        activity.setDistanceMeters(request.distanceMeters());
-        activity.setMovingTimeSeconds(request.movingTimeSeconds());
-        activity.setElapsedTimeSeconds(request.elapsedTimeSeconds());
-        activity.setTotalElevationGain(request.totalElevationGain());
-        activity.setAverageHeartbeat(request.averageHeartbeat());
-        activity.setMaxHeartbeat(request.maxHeartbeat());
-        activity.setAverageWatts(request.averageWatts());
-        activity.setWeightedAverageWatts(request.weightedAverageWatts());
-        activity.setImportedAt(LocalDateTime.now());
-        activity.setAthleteId(request.athleteId());
-
-        return activityRepository.save(activity);
-    }
+//
+//    private ActivityEntity saveNewActivity(ActivityImportRequestRecord request) {
+//        ActivityEntity activity = new ActivityEntity();
+//
+//        activity.setExternalSource(request.externalSource());
+//        activity.setExternalActivityId(request.externalActivityId());
+//        activity.setSportType(request.sportType());
+//        activity.setName(request.name());
+//        activity.setStartDate(request.startDate());
+//        activity.setDistanceMeters(request.distanceMeters());
+//        activity.setMovingTimeSeconds(request.movingTimeSeconds());
+//        activity.setElapsedTimeSeconds(request.elapsedTimeSeconds());
+//        activity.setTotalElevationGain(request.totalElevationGain());
+//        activity.setAverageHeartbeat(request.averageHeartbeat());
+//        activity.setMaxHeartbeat(request.maxHeartbeat());
+//        activity.setAverageWatts(request.averageWatts());
+//        activity.setWeightedAverageWatts(request.weightedAverageWatts());
+//        activity.setImportedAt(LocalDateTime.now());
+//        activity.setAthleteId(request.athleteId());
+//
+//        return activityRepository.save(activity);
+//    }
 
     private ActivityResponseRecord toResponse(ActivityEntity activity) {
         Double distanceMiles = activityMetricService.convertMetersToMiles(activity.getDistanceMeters());
@@ -72,5 +105,15 @@ public class ActivityService {
         return activityRepository.findAll().stream()
                 .map(this::toResponse)
                 .toList();
+    }
+
+    public void deleteActivityFromWebhook(Long athleteId, String externalActivityId) {
+        activityRepository
+                .findByAthleteIdAndExternalSourceAndExternalActivityId(
+                        athleteId,
+                        "STRAVA",
+                        externalActivityId
+                )
+                .ifPresent(activityRepository::delete);
     }
 }

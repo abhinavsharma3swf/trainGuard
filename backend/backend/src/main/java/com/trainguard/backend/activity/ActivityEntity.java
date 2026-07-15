@@ -1,9 +1,12 @@
 package com.trainguard.backend.activity;
 
+import com.trainguard.backend.recovery.RecoveryCheckinEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -47,4 +50,11 @@ public class ActivityEntity {
     private LocalDateTime importedAt;
 
     private Long athleteId;
+
+    @OneToMany(
+            mappedBy = "activity",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<RecoveryCheckinEntity> recoveryCheckins = new ArrayList<>();
 }

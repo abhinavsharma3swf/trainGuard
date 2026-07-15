@@ -34,7 +34,7 @@ public class ActivityServiceTest {
                 .maxHeartbeat(170.0)
                 .build();
 
-        when(activityRepository.findByExternalSourceAndExternalActivityId("STRAVA", "12345", 12345L)).thenReturn(Optional.empty());
+        when(activityRepository.findByAthleteIdAndExternalSourceAndExternalActivityId("STRAVA", "12345", 12345L)).thenReturn(Optional.empty());
 
         //invocation is useful because it returns the actual object that the service built.
         //That means the test also indirectly checks that the service correctly copied fields from the request into the entity.
@@ -115,7 +115,7 @@ public class ActivityServiceTest {
                 .athleteId(12345L)
                 .build();
 
-        when(activityRepository.findByExternalSourceAndExternalActivityId("STRAVA", "12345", 12345L)).thenReturn(Optional.of(existingActivity));
+        when(activityRepository.findByAthleteIdAndExternalSourceAndExternalActivityId("STRAVA", "12345", 12345L)).thenReturn(Optional.of(existingActivity));
 
         ActivityResponseRecord response = activityService.importActivity(request);
 

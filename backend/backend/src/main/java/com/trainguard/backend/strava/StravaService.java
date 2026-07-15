@@ -99,7 +99,77 @@ public class StravaService {
         return athleteId;
     }
 
-    public ActivityResponseRecord importSingleActivityFromWebhook(
+//    public void importSingleActivityFromWebhook(
+//            Long athleteId,
+//            Long stravaActivityId
+//    ) {
+//        StravaUserEntity stravaUser = stravaUserRepository.findById(athleteId)
+//                .orElseThrow(() -> new IllegalArgumentException("Strava user not found."));
+//
+//        StravaActivityResponseRecord stravaActivity =
+//                stravaClient.fetchActivityById(
+//                        stravaActivityId,
+//                        stravaUser.getRefreshToken()
+//                );
+//
+//        ActivityImportRequestRecord request =
+//                toActivityImportRequest(stravaActivity, athleteId);
+//
+//        activityService.importActivity(request);
+//    }
+//
+//    public void updateSingleActivityFromWebhook(
+//            Long athleteId,
+//            Long stravaActivityId
+//    ) {
+//        StravaUserEntity stravaUser = stravaUserRepository.findById(athleteId)
+//                .orElseThrow(() -> new IllegalArgumentException("Strava user not found."));
+//        StravaActivityResponseRecord stravaActivity =
+//                stravaClient.fetchActivityById(
+//                        stravaActivityId,
+//                        stravaUser.getRefreshToken()
+//                );
+//        ActivityImportRequestRecord request =
+//                toActivityImportRequest(stravaActivity, athleteId);
+//
+//        activityService.importActivity(request);
+//    }
+//
+//    public void deleteSingleActivityFromWebhook(
+//            Long athleteId,
+//            Long stravaActivityId
+//    ) {
+//        activityService.deleteActivityFromWebhook(
+//                athleteId,
+//                String.valueOf(stravaActivityId)
+//        );
+//    }
+
+    public void importSingleActivityFromWebhook(
+            Long athleteId,
+            Long stravaActivityId
+    ) {
+        importOrUpdateActivityFromWebhook(athleteId, stravaActivityId);
+    }
+
+    public void updateSingleActivityFromWebhook(
+            Long athleteId,
+            Long stravaActivityId
+    ) {
+        importOrUpdateActivityFromWebhook(athleteId, stravaActivityId);
+    }
+
+    public void deleteSingleActivityFromWebhook(
+            Long athleteId,
+            Long stravaActivityId
+    ) {
+        activityService.deleteActivityFromWebhook(
+                athleteId,
+                String.valueOf(stravaActivityId)
+        );
+    }
+
+    private void importOrUpdateActivityFromWebhook(
             Long athleteId,
             Long stravaActivityId
     ) {
@@ -115,6 +185,6 @@ public class StravaService {
         ActivityImportRequestRecord request =
                 toActivityImportRequest(stravaActivity, athleteId);
 
-        return activityService.importActivity(request);
+        activityService.importActivity(request);
     }
 }
