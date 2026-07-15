@@ -75,4 +75,21 @@ public class StravaClient {
 
         return response;
     }
+
+    public StravaActivityResponseRecord fetchActivityById(
+            Long activityId,
+            String refreshToken
+    ) {
+        String accessToken = refreshAccessToken(refreshToken);
+
+        RestClient restClient = restClientBuilder
+                .baseUrl("https://www.strava.com/api/v3")
+                .build();
+
+        return restClient.get()
+                .uri("/activities/{id}", activityId)
+                .header("Authorization", "Bearer " + accessToken)
+                .retrieve()
+                .body(StravaActivityResponseRecord.class);
+    }
 }

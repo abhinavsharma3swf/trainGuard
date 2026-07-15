@@ -98,4 +98,23 @@ public class StravaService {
 
         return athleteId;
     }
+
+    public ActivityResponseRecord importSingleActivityFromWebhook(
+            Long athleteId,
+            Long stravaActivityId
+    ) {
+        StravaUserEntity stravaUser = stravaUserRepository.findById(athleteId)
+                .orElseThrow(() -> new IllegalArgumentException("Strava user not found."));
+
+        StravaActivityResponseRecord stravaActivity =
+                stravaClient.fetchActivityById(
+                        stravaActivityId,
+                        stravaUser.getRefreshToken()
+                );
+
+        ActivityImportRequestRecord request =
+                toActivityImportRequest(stravaActivity, athleteId);
+
+        return activityService.importActivity(request);
+    }
 }

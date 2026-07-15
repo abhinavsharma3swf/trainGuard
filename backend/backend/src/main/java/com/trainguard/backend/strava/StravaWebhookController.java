@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 public class StravaWebhookController {
 
     private final StravaWebhookProperties stravaWebhookProperties;
+    private final StravaWebhookService stravaWebhookService;
 
     @GetMapping
     public ResponseEntity<StravaWebhookVerificationResponse> verifyWebHook(
@@ -32,7 +33,8 @@ public class StravaWebhookController {
     public ResponseEntity<Void> receiveWebhookEvent(
             @RequestBody StravaWebhookEventRecord event
     ){
-        System.out.println("Received Strava webhook event: " +event);
+//        System.out.println("Received Strava webhook event: " +event);
+        stravaWebhookService.handleWebhookEvent(event);
         return ResponseEntity.ok().build();
     }
 }
