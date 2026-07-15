@@ -64,7 +64,7 @@ export default function HomeScreen() {
     useFocusEffect(
         useCallback(() => {
             refreshDashboardFeed();
-        }, [refreshDashboardFeed])
+        }, [])
     );
 
     const pendingCheckins = feedItems.filter(
