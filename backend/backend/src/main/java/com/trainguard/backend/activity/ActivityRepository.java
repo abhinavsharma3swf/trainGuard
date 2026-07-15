@@ -7,12 +7,6 @@ import java.util.Optional;
 
 public interface ActivityRepository extends JpaRepository<ActivityEntity, Long> {
 
-    Optional<ActivityEntity> findByAthleteIdAndExternalSourceAndExternalActivityId(
-            String externalSource,
-            String externalActivityId,
-            Long athleteId
-    );
-
     Optional<ActivityEntity>findActivityEntityByExternalActivityId(String externalActivityId);
 
     List<ActivityEntity> findByAthleteId(Long athleteId);

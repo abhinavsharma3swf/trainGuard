@@ -24,6 +24,9 @@ public class StravaWebhookControllerTest {
     @MockitoBean
     private StravaWebhookProperties stravaWebhookProperties;
 
+    @MockitoBean
+    private StravaWebhookService stravaWebhookService;
+
     @Test
     void shouldVerifyWebhookSubscription () throws Exception {
         when(stravaWebhookProperties.verifyToken()).thenReturn("test-token");

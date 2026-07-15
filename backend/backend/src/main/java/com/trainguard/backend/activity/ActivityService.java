@@ -19,12 +19,6 @@ public class ActivityService {
     private final ActivityMetricService activityMetricService;
     private final ActivityRepository activityRepository;
 
-//    public ActivityResponseRecord importActivity(ActivityImportRequestRecord requestRecord) {
-//        ActivityEntity activity = activityRepository.findByAthleteIdAndExternalSourceAndExternalActivityId(requestRecord.externalSource(), requestRecord.externalActivityId(), requestRecord.athleteId())
-//                .orElseGet(() -> saveNewActivity(requestRecord));
-//        return toResponse(activity);
-//    }
-
     public ActivityResponseRecord importActivity(ActivityImportRequestRecord requestRecord) {
         ActivityEntity activity = activityRepository
                 .findByAthleteIdAndExternalSourceAndExternalActivityId(
@@ -57,28 +51,6 @@ public class ActivityService {
 
         return toResponse(savedActivity);
     }
-//
-//    private ActivityEntity saveNewActivity(ActivityImportRequestRecord request) {
-//        ActivityEntity activity = new ActivityEntity();
-//
-//        activity.setExternalSource(request.externalSource());
-//        activity.setExternalActivityId(request.externalActivityId());
-//        activity.setSportType(request.sportType());
-//        activity.setName(request.name());
-//        activity.setStartDate(request.startDate());
-//        activity.setDistanceMeters(request.distanceMeters());
-//        activity.setMovingTimeSeconds(request.movingTimeSeconds());
-//        activity.setElapsedTimeSeconds(request.elapsedTimeSeconds());
-//        activity.setTotalElevationGain(request.totalElevationGain());
-//        activity.setAverageHeartbeat(request.averageHeartbeat());
-//        activity.setMaxHeartbeat(request.maxHeartbeat());
-//        activity.setAverageWatts(request.averageWatts());
-//        activity.setWeightedAverageWatts(request.weightedAverageWatts());
-//        activity.setImportedAt(LocalDateTime.now());
-//        activity.setAthleteId(request.athleteId());
-//
-//        return activityRepository.save(activity);
-//    }
 
     private ActivityResponseRecord toResponse(ActivityEntity activity) {
         Double distanceMiles = activityMetricService.convertMetersToMiles(activity.getDistanceMeters());

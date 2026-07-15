@@ -36,6 +36,8 @@ public record StravaActivityResponseRecord(
         Double averageWatts,
 
         @JsonProperty("weighted_average_watts")
-        Double weightedAverageWatts
+        Double weightedAverageWatts,
+
+        StravaAthleteSummaryRecord athlete
 ) {
 }

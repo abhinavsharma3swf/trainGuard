@@ -11,6 +11,16 @@ public class StravaWebhookService {
     private final StravaService stravaService;
 
     public void handleWebhookEvent(StravaWebhookEventRecord event) {
+
+        if (event == null ||
+                event.objectType() == null ||
+                event.aspectType() == null ||
+                event.ownerId() == null ||
+                event.objectId() == null) {
+            return;
+        }
+
+
         if (!"activity".equals(event.objectType())) {
             return;
         }
@@ -30,13 +40,6 @@ public class StravaWebhookService {
                     event.objectId()
             );
             default -> System.out.println("Unhandled webhook event: " + event);
-
-//        ActivityResponseRecord response = stravaService.importSingleActivityFromWebhook(
-//                event.ownerId(),
-//                event.objectId()
-//        );
-
-//        System.out.println(response + "response");
         }
     }
 }

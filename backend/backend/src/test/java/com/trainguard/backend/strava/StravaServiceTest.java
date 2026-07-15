@@ -31,9 +31,6 @@ class StravaServiceTest {
     @Mock
     private StravaUserRepository stravaUserRepository;
 
-//    @Mock
-//    private ActivityService activityService;
-
     @InjectMocks
     private StravaService stravaService;
 
@@ -51,7 +48,9 @@ class StravaServiceTest {
                 145.0,
                 170.0,
                 null,
-                null
+                null,
+                new StravaAthleteSummaryRecord(12345L)
+
         );
 
         ActivityResponseRecord importedActivity = new ActivityResponseRecord(
@@ -115,7 +114,8 @@ class StravaServiceTest {
                 145.0,
                 170.0,
                 null,
-                null
+                null,
+                new StravaAthleteSummaryRecord(12345L)
         );
 
         ActivityResponseRecord importedActivity = new ActivityResponseRecord(

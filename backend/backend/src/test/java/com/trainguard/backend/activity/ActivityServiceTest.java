@@ -34,7 +34,7 @@ public class ActivityServiceTest {
                 .maxHeartbeat(170.0)
                 .build();
 
-        when(activityRepository.findByAthleteIdAndExternalSourceAndExternalActivityId("STRAVA", "12345", 12345L)).thenReturn(Optional.empty());
+        when(activityRepository.findByAthleteIdAndExternalSourceAndExternalActivityId(12345L, "STRAVA", "12345")).thenReturn(Optional.empty());
 
         //invocation is useful because it returns the actual object that the service built.
         //That means the test also indirectly checks that the service correctly copied fields from the request into the entity.
@@ -44,28 +44,6 @@ public class ActivityServiceTest {
                     saved.setId(1L);
                     return saved;
                 });
-
-        //If you don't want to use the invocation, we can simplify it by using the code below; however, we won't be able to indirectly check if the service copied fields correctly from the request//
-
-//        ActivityEntity savedActivity = ActivityEntity.builder()
-//                .id(1L)
-//                .externalSource("STRAVA")
-//                .externalActivityId("12345")
-//                .sportType("RUN")
-//                .name("Morning Run")
-//                .startDate(LocalDateTime.of(2026, 7, 7, 6, 30))
-//                .distanceMeters(8046.72)
-//                .movingTimeSeconds(2400)
-//                .elapsedTimeSeconds(2450)
-//                .totalElevationGain(50.0)
-//                .averageHeartbeat(145.0)
-//                .maxHeartbeat(170.0)
-//                .build();
-//
-//        when(activityRepository.save(any(ActivityEntity.class)))
-//                .thenReturn(savedActivity);
-
-        //end of simplification
 
         ActivityResponseRecord response = activityService.importActivity(request);
 
@@ -83,7 +61,7 @@ public class ActivityServiceTest {
     }
 
     @Test
-    void shouldReturnExistingActivityWhenExists() {
+    void shouldUpdateExistingActivityWhenExists() {
         ActivityEntity existingActivity = ActivityEntity.builder()
                 .id(1L)
                 .externalSource("STRAVA")
@@ -115,7 +93,12 @@ public class ActivityServiceTest {
                 .athleteId(12345L)
                 .build();
 
-        when(activityRepository.findByAthleteIdAndExternalSourceAndExternalActivityId("STRAVA", "12345", 12345L)).thenReturn(Optional.of(existingActivity));
+        when(activityRepository.findByAthleteIdAndExternalSourceAndExternalActivityId(
+                12345L,
+                "STRAVA",
+                "12345"
+        )).thenReturn(Optional.of(existingActivity));
+        when(activityRepository.save(existingActivity)).thenReturn(existingActivity);
 
         ActivityResponseRecord response = activityService.importActivity(request);
 
@@ -128,7 +111,13 @@ public class ActivityServiceTest {
         assertEquals(40, response.movingTimeMinutes());
         assertEquals("8:00", response.pacePerMile());
 
-        verify(activityRepository, never()).save(any(ActivityEntity.class));
+        verify(activityRepository).findByAthleteIdAndExternalSourceAndExternalActivityId(
+                12345L,
+                "STRAVA",
+                "12345"
+        );
+
+        verify(activityRepository).save(existingActivity);
     }
 
     @Test

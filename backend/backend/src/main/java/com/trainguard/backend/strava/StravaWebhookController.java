@@ -33,7 +33,6 @@ public class StravaWebhookController {
     public ResponseEntity<Void> receiveWebhookEvent(
             @RequestBody StravaWebhookEventRecord event
     ){
-//        System.out.println("Received Strava webhook event: " +event);
         stravaWebhookService.handleWebhookEvent(event);
         return ResponseEntity.ok().build();
     }
