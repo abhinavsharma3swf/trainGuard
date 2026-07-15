@@ -27,5 +27,7 @@ strava:
   client-secret: ${STRAVA_CLIENT_SECRET}
   refresh-token: ${STRAVA_REFRESH_TOKEN}
   redirect-uri: ${STRAVA_REDIRECT_URI:http://localhost:8080/api/strava/callback}
+  webhook:
+    verify-token: ${STRAVA_WEBHOOK_VERIFY_TOKEN:local-smart-gauge-webhook-token}
 train-guard:
   app-redirect-uri: ${TRAIN_GUARD_APP_REDIRECT_URI:http://localhost:8081/strava-connected}
