@@ -131,9 +131,7 @@ export default function HomeScreen() {
                     />
 
                     <SummaryCard
-                        label="Physical Pain"
-                        value={averagePain.toFixed(1)}
-                        unit="/10"
+                       label="Still brain storming what needs to be here"
                     />
 
                 </View>

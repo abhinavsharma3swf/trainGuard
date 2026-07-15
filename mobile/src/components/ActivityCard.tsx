@@ -19,6 +19,10 @@ export function ActivityCard({activity}: ActivityCardProps) {
         });
     }
 
+    const handleEdit = () => {
+        router.push(`/recovery/${activity.id}`)
+    }
+
 
     return (
         <View style={styles.activityCard}>
@@ -67,6 +71,9 @@ export function ActivityCard({activity}: ActivityCardProps) {
                     <Chip label={`RPE ${activity.rpe}`}/>
                     <Chip label={`Pain ${activity.pain}`}/>
                     <Chip label={activity.mood ?? "Good"}/>
+
+                    <TouchableOpacity onPress={handleEdit}><Chip label="Edit"/></TouchableOpacity>
+
                 </View>
             )}
         </View>
@@ -160,7 +167,7 @@ const styles = StyleSheet.create({
     },
     chipRow: {
         flexDirection: "row",
-        gap: 8,
+        gap: 12,
         paddingHorizontal: 16,
         paddingBottom: 16,
     },

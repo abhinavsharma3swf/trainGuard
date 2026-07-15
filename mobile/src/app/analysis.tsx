@@ -44,6 +44,8 @@ export default function AnalysisScreen() {
         painScores.length === 0
             ? 0
             : painScores.reduce((sum, score) => sum + score, 0) / painScores.length;
+
+    const pain = averagePain.toFixed(0);
     // calculate average pain score code end //
 
     return (
@@ -96,7 +98,7 @@ export default function AnalysisScreen() {
                     <Text style={styles.subtitle}>Recovery analysis </Text>
                     <SummaryCard
                         label="Pain"
-                        value={averagePain.toLocaleString()}
+                        value={pain.toLocaleString()}
                         // unit="hr"
                         // instructions="Click for miles"
                     />

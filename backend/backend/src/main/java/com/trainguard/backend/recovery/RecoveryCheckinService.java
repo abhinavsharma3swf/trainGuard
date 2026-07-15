@@ -28,15 +28,32 @@ public class RecoveryCheckinService {
             RecoveryCheckinRequestRecord request,
             ActivityEntity activity
     ) {
-        RecoveryCheckinEntity checkin = RecoveryCheckinEntity.builder()
-                .activity(activity)
-                .rpe(request.rpe())
-                .painScore(request.painScore())
-                .painLocation(request.painLocation())
-                .mood(request.mood())
-                .note(request.note())
-                .createdAt(LocalDateTime.now())
-                .build();
+
+//        RecoveryCheckinEntity checkin = recoveryCheckinRepository.findByActivityId(activity.getId())
+//                .orElseGet(() -> RecoveryCheckinEntity.builder()
+//                .activity(activity)
+//                .rpe(request.rpe())
+//                .painScore(request.painScore())
+//                .painLocation(request.painLocation())
+//                .mood(request.mood())
+//                .note(request.note())
+//                .createdAt(LocalDateTime.now())
+//                .build());
+//
+//        return recoveryCheckinRepository.save(checkin);
+
+        RecoveryCheckinEntity checkin = recoveryCheckinRepository
+                .findByActivityId(activity.getId())
+                .orElseGet(() -> RecoveryCheckinEntity.builder()
+                        .activity(activity)
+                        .createdAt(LocalDateTime.now())
+                        .build());
+
+        checkin.setRpe(request.rpe());
+        checkin.setPainScore(request.painScore());
+        checkin.setPainLocation(request.painLocation());
+        checkin.setMood(request.mood());
+        checkin.setNote(request.note());
 
         return recoveryCheckinRepository.save(checkin);
     }
