@@ -10,17 +10,6 @@ export async function getStravaAuthorizationUrl(): Promise<string> {
 
     return response.text();
 }
-//
-// export async function syncStravaActivities(athleteId: number): Promise<void> {
-//     const response = await fetch(`${API_BASE_URL}/api/strava/sync/${athleteId}`, {
-//         method: "POST",
-//     });
-//
-//     if (!response.ok) {
-//         throw new Error("Failed to sync Strava activities.");
-//     }
-// }
-
 
 export async function syncStravaActivities(): Promise<void> {
     const token = await getSessionToken();

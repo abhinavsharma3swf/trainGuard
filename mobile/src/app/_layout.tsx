@@ -1,5 +1,11 @@
 import { Stack } from "expo-router";
+import {DashboardDataProvider} from "@/context/DashboardDataContext";
+
 
 export default function RootLayout() {
-    return <Stack screenOptions={{ headerShown: false }} />;
+    return (
+        <DashboardDataProvider>
+            <Stack screenOptions={{ headerShown: false }} />
+        </DashboardDataProvider>
+    );
 }

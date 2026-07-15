@@ -1,12 +1,13 @@
 import { StyleSheet, Text, View } from "react-native";
 
 type SummaryCardProps = {
-    label: string;
-    value: string;
-    unit: string;
+    label?: string;
+    value?: string;
+    unit?: string;
+    instructions?: string;
 };
 
-export function SummaryCard({ label, value, unit }: SummaryCardProps) {
+export function SummaryCard({ label, value, unit, instructions }: SummaryCardProps) {
     return (
         <View style={styles.summaryCard}>
             <Text style={styles.summaryLabel}>{label}</Text>
@@ -15,6 +16,7 @@ export function SummaryCard({ label, value, unit }: SummaryCardProps) {
                 <Text style={styles.summaryValue}>{value}</Text>
                 <Text style={styles.summaryUnit}>{unit}</Text>
             </View>
+            <Text style={styles.instructionLabel}>{instructions}</Text>
         </View>
     );
 }
@@ -48,6 +50,13 @@ const styles = StyleSheet.create({
     summaryUnit: {
         color: "#4edea3",
         fontSize: 13,
+        fontWeight: "700",
+    },
+    instructionLabel: {
+        color: "#8f9097",
+        fontSize: 10,
+        // textTransform: "uppercase",
+        letterSpacing: 1,
         fontWeight: "700",
     },
 });

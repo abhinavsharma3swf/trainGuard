@@ -11,6 +11,7 @@ import {
 import {NumberSelector} from "@/components/NumberSelector";
 import {MoodSelector} from "@/components/MoodSelector";
 import {API_BASE_URL} from "@/constants/api";
+import {getDashboardFeed} from "@/services/dashboardApi";
 
 export default function RecoveryCheckInScreen() {
 
@@ -65,8 +66,7 @@ export default function RecoveryCheckInScreen() {
             }
 
             const data = await response.json();
-            console.log("Saved recovery check-in:", data);
-
+            console.log("Recovery check-in saved:", data);
             router.push("/dashboard");
         } catch (error) {
             console.error(error);

@@ -1,46 +1,50 @@
 import {ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
-import {DashboardFeedItem, getDashboardFeed} from "@/services/dashboardApi";
-import {useEffect, useState} from "react";
+import {useCallback, useState} from "react";
 import {ActivityCard} from "@/components/ActivityCard";
 import {SummaryCard} from "@/components/SummaryCard";
 import {syncStravaActivities} from "@/services/stravaApi";
-import {router} from "expo-router";
 import {BottomNav} from "@/components/BottomNav";
+import {useDashboardData} from "@/context/DashboardDataContext";
+import {useFocusEffect} from "expo-router";
 
 
 export default function HomeScreen() {
-    const [feedItems, setFeedItems] = useState<DashboardFeedItem[]>([]);
+
     const [isSyncing, setIsSyncing] = useState(false);
     const [error, setError] = useState("");
-    const [isLoading, setIsLoading] = useState(true);
+    const {feedItems, isLoading, refreshDashboardFeed} = useDashboardData();
 
 
-    const loadDashboardFeed = async () => {
+    // const loadDashboardFeed = async () => {
+    //     try {
+    //         setIsSyncing(true);
+    //         setError("");
+    //         await getDashboardFeed();
+    //     } catch (error) {
+    //         console.error(error);
+    //         router.replace("/");
+    //     } finally {
+    //         setIsSyncing(false);
+    //     }
+    // };
+    //
+    // const handleSync = async () => {
+    //     try {
+    //         setIsSyncing(true);
+    //         setError("");
+    //         await syncStravaActivities();
+    //         await loadDashboardFeed();
+    //     } catch (error) {
+    //         console.error(error);
+    //         setError("Could not sync Strava activities. Check your Strava connection and backend.");
+    //     } finally {
+    //         setIsSyncing(false);
+    //     }
+    // };
 
-        try {
-            setError("");
-            const data = await getDashboardFeed();
-            console.log("Dashboard feed data:", data);
-            const startdate = data.map((e)=> e.startDate);
-            console.log(
-                "Start dates:",
-                startdate.map((e) => new Date(e).toLocaleDateString())
-            )
-            const ascendingFeedData = [...data].sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime());
-            const test = [...startdate].sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
-            console.log("Sorted start dates:", test);
-            setFeedItems(ascendingFeedData);
-        } catch (error) {
-            console.error(error);
-            router.replace("/");
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        loadDashboardFeed();
-    }, []);
+    // useEffect(() => {
+    //     loadDashboardFeed();
+    // }, []);
 
     const handleSync = async () => {
         try {
@@ -48,7 +52,7 @@ export default function HomeScreen() {
             setError("");
 
             await syncStravaActivities();
-            await loadDashboardFeed();
+            await refreshDashboardFeed();
         } catch (error) {
             console.error(error);
             setError("Could not sync Strava activities. Check your Strava connection and backend.");
@@ -57,21 +61,11 @@ export default function HomeScreen() {
         }
     };
 
-    useEffect(() => {
-        loadDashboardFeed();
-    }, []);
-
-    const runMiles = feedItems
-        .filter((item) => item.sportType === "RUN")
-        .reduce((total, item) => total + item.distanceMiles, 0);
-
-    // const bikeHours = feedItems
-    //     .filter((item) => item.sportType === "RIDE")
-    //     .reduce((total, item) => total + item.movingTimeMinutes, 0) / 60;
-
-    const bikeHours = feedItems
-        .filter((item) => item.sportType === "RIDE")
-        .reduce((total, item) => total + item.distanceMiles, 0);
+    useFocusEffect(
+        useCallback(() => {
+            refreshDashboardFeed();
+        }, [refreshDashboardFeed])
+    );
 
     const pendingCheckins = feedItems.filter(
         (item) => item.checkinStatus === "PENDING"
@@ -85,7 +79,6 @@ export default function HomeScreen() {
         painScores.length > 0
             ? painScores.reduce((total, pain) => total + pain, 0) / painScores.length
             : 0;
-
 
 
     return (
@@ -117,96 +110,83 @@ export default function HomeScreen() {
                                 : styles.statusCardGreen
                     }
                 >
-                <Text style={styles.label}>Check-in Status</Text>
-                <Text style={styles.statusTitle}>
-                    {pendingCheckins > 5 ? "Red" : pendingCheckins > 1 ? "Yellow" : "Green"}
-                </Text>
-                <Text style={styles.statusMessage}>
-                    {pendingCheckins > 0
-                        ? `${pendingCheckins} activit${pendingCheckins > 1 ? "ies need" : " needs"} a recovery check-in. Complete ${pendingCheckins > 1 ? "them" : "it"} to update the status.`
-                        : "All recent activities have recovery check-ins."}
-                </Text>
+                    <Text style={styles.label}>Check-in Status</Text>
+                    <Text style={styles.statusTitle}>
+                        {pendingCheckins > 5 ? "Red" : pendingCheckins > 1 ? "Yellow" : "Green"}
+                    </Text>
+                    <Text style={styles.statusMessage}>
+                        {pendingCheckins > 0
+                            ? `${pendingCheckins} activit${pendingCheckins > 1 ? "ies need" : " needs"} a recovery check-in. Complete ${pendingCheckins > 1 ? "them" : "it"} to update the status.`
+                            : "All recent activities have recovery check-ins."}
+                    </Text>
 
-        </View>
+                </View>
 
-    <View style={styles.summaryGrid}>
+                <View style={styles.summaryGrid}>
 
-        <SummaryCard
-            label="Pending"
-            value={String(pendingCheckins)}
-            unit="check-ins"
-        />
-
-        <SummaryCard
-            label="Physical Pain"
-            value={averagePain.toFixed(1)}
-            unit="/10"
-        />
-
-        <SummaryCard
-            label="Run Miles"
-            value={runMiles.toFixed(1)}
-            unit="mi"
-        />
-
-        <SummaryCard
-            label="Bike Miles"
-            value={bikeHours.toFixed(1)}
-            unit="mi"
-        />
-
-
-    </View>
-
-    <Text style={styles.sectionTitle}>Recent Activities</Text>
-
-{
-    isLoading ? (
-        <View style={styles.emptyStateCard}>
-            <Text style={styles.emptyStateTitle}>Loading activities...</Text>
-            <Text style={styles.emptyStateMessage}>
-                Fetching your latest dashboard feed.
-            </Text>
-        </View>
-    ) : feedItems.length === 0 ? (
-        <View style={styles.emptyStateCard}>
-            <Text style={styles.emptyStateTitle}>No activities yet</Text>
-            <Text style={styles.emptyStateMessage}>
-                Tap Sync to import your latest Strava activities.
-            </Text>
-        </View>
-    ) : (
-
-        <View style={styles.activityList}>
-
-            {feedItems.map((item) => {
-                return (
-                    <ActivityCard
-                        key={item.activityId}
-                        activity={{
-                            id: item.activityId,
-                            type: item.sportType === "RIDE" ? "RIDE" : "RUN",
-                            name: item.name,
-                            date: item.startDate,
-                            distance: `${item.distanceMiles} mi`,
-                            time: `${item.movingTimeMinutes} min`,
-                            pace: item.pacePerMile,
-                            averageWatts: item.averageWatts,
-                            status: item.checkinStatus,
-                            rpe: item.rpe !== null ? String(item.rpe) : undefined,
-                            pain: item.painScore !== null ? String(item.painScore) : undefined,
-                            mood: item.mood ?? undefined,
-                        }}
+                    <SummaryCard
+                        label="Pending"
+                        value={String(pendingCheckins)}
+                        unit="check-ins"
                     />
-                );
-            })}
+
+                    <SummaryCard
+                        label="Physical Pain"
+                        value={averagePain.toFixed(1)}
+                        unit="/10"
+                    />
+
+                </View>
+
+                <Text style={styles.sectionTitle}>Recent Activities</Text>
+
+                {
+                    isLoading ? (
+                        <View style={styles.emptyStateCard}>
+                            <Text style={styles.emptyStateTitle}>Loading activities...</Text>
+                            <Text style={styles.emptyStateMessage}>
+                                Fetching your latest dashboard feed.
+                            </Text>
+                        </View>
+                    ) : feedItems.length === 0 ? (
+                        <View style={styles.emptyStateCard}>
+                            <Text style={styles.emptyStateTitle}>No activities yet</Text>
+                            <Text style={styles.emptyStateMessage}>
+                                Tap Sync to import your latest Strava activities.
+                            </Text>
+                        </View>
+                    ) : (
+
+                        <View style={styles.activityList}>
+
+                            {feedItems.map((item) => {
+                                return (
+                                    <ActivityCard
+                                        key={item.activityId}
+                                        activity={{
+                                            id: item.activityId,
+                                            type: item.sportType === "RIDE" ? "RIDE" : "RUN",
+                                            name: item.name,
+                                            date: item.startDate,
+                                            distance: `${item.distanceMiles} mi`,
+                                            time: `${item.movingTimeMinutes} min`,
+                                            pace: item.pacePerMile,
+                                            averageWatts: item.averageWatts,
+                                            status: item.checkinStatus,
+                                            rpe: item.rpe !== null ? String(item.rpe) : undefined,
+                                            pain: item.painScore !== null ? String(item.painScore) : undefined,
+                                            mood: item.mood ?? undefined,
+                                        }}
+                                    />
+                                );
+                            })}
+                        </View>
+                    )
+                }
+            </ScrollView>
+            <BottomNav activeRoute="dashboard"/>
         </View>
     )
-}
-</ScrollView>
-    <BottomNav activeRoute="dashboard"/>
-</View>
-)
 
 }
 
