@@ -95,7 +95,7 @@ export default function RecoveryCheckInScreen() {
             painLocation: formValues.painLocation.trim().toUpperCase() ?? '',
             mood: formValues.mood ?? '',
             note: formValues.note.trim() ?? '',
-            sportType: currentActivity?.sportType,
+            sportType: currentActivity?.sportType
         };
 
         try {

@@ -3,6 +3,7 @@ package com.trainguard.backend.activity;
 import com.trainguard.backend.recovery.RecoveryCheckinEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -53,8 +54,7 @@ public class ActivityEntity {
 
     @OneToMany(
             mappedBy = "activity",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
+            cascade = CascadeType.DETACH
     )
     @Builder.Default
     private List<RecoveryCheckinEntity> recoveryCheckins = new ArrayList<>();

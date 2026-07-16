@@ -20,7 +20,7 @@ public class RecoveryCheckinEntity {
     private Long id;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "activity_id", nullable = false)
+    @JoinColumn(name = "activity_id")
     private ActivityEntity activity;
 
     private Integer rpe;
@@ -34,6 +34,11 @@ public class RecoveryCheckinEntity {
     private String note;
 
     private String sportType;
+
+//    private Integer activityDuration;
+
+    //Temporary id for the strava activity
+    private Long activityId;
 
     private LocalDateTime createdAt;
 
