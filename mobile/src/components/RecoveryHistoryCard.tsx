@@ -1,9 +1,10 @@
 import { StyleSheet, Text, View } from "react-native";
-import {RecoveryHistoryItem} from "@/services/recoveryHistoryApi";
+import {RecoveryCheckin} from "@/services/recoveryApi";
+
 
 
 type RecoveryHistoryCardProps = {
-    item: RecoveryHistoryItem;
+    item: RecoveryCheckin;
 };
 
 export function RecoveryHistoryCard({ item }: RecoveryHistoryCardProps) {
@@ -15,7 +16,8 @@ export function RecoveryHistoryCard({ item }: RecoveryHistoryCardProps) {
 
     return (
         <View style={styles.card}>
-            <Text style={styles.title}>Recovery Check-in</Text>
+            {item.sportType === "RUN" ? <Text style={styles.title}>🏃 {item.sportType} - Check-in</Text> :
+                <Text style={styles.title}>🚴 {item.sportType} - Check-in</Text> }
             <Text style={styles.date}>{date}</Text>
 
             <View style={styles.chipRow}>

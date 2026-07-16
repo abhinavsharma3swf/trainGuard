@@ -31,11 +31,11 @@ export default function HomeScreen() {
         }
     };
 
-    // useFocusEffect(
-    //     useCallback(() => {
-    //         // refreshDashboardFeed();
-    //     }, [])
-    // );
+    useFocusEffect(
+        useCallback(() => {
+            refreshDashboardFeed();
+        }, [])
+    );
 
     const pendingCheckins = feedItems.filter(
         (item) => item.checkinStatus === "PENDING"

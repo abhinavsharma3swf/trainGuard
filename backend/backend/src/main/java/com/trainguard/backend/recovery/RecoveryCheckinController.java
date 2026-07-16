@@ -15,24 +15,27 @@ public class RecoveryCheckinController {
     private final SessionService sessionService;
 
     @PostMapping
-    public RecoveryCheckinResponseRecord createCheckin(@RequestBody RecoveryCheckinRequestRecord recoveryCheckinRequestRecord) {
-        return recoveryCheckinService.saveCheckin(recoveryCheckinRequestRecord);
+    public RecoveryCheckinResponseRecord createCheckin(
+            @RequestHeader("Authorization") String authorizationHeader,
+            @RequestBody RecoveryCheckinRequestRecord recoveryCheckinRequestRecord
+    ) {
+        Long athleteId = sessionService.getAthleteIdFromAuthorizationHeader(authorizationHeader);
+
+        return recoveryCheckinService.saveCheckin(
+                athleteId,
+                recoveryCheckinRequestRecord
+        );
     }
 
     @GetMapping
-    public List<RecoveryCheckinResponseRecord> getAllCheckin() {
-        return recoveryCheckinService.getAllRecoveryCheckin();
-    }
-
-    @GetMapping("/history")
-    public List<RecoveryHistoryResponseRecord> getRecoveryHistory(
+    public List<RecoveryCheckinResponseRecord> getAllCheckin(
             @RequestHeader("Authorization") String authorizationHeader,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size
     ) {
         Long athleteId = sessionService.getAthleteIdFromAuthorizationHeader(authorizationHeader);
 
-        return recoveryCheckinService.getRecoveryHistory(
+        return recoveryCheckinService.getAllRecoveryCheckin(
                 athleteId,
                 page,
                 size

@@ -1,25 +1,25 @@
 package com.trainguard.backend.recovery;
 
 
+import com.trainguard.backend.session.SessionService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import tools.jackson.databind.ObjectMapper;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-
-
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(RecoveryCheckinController.class)
@@ -34,6 +34,9 @@ class RecoveryCheckinControllerTest {
     @MockitoBean
     private RecoveryCheckinService recoveryCheckinService;
 
+    @MockitoBean
+    private SessionService sessionService;
+
     @Test
     void shouldCreateRecoveryCheckin() throws Exception {
         RecoveryCheckinRequestRecord request = RecoveryCheckinRequestRecord.builder()
@@ -43,6 +46,7 @@ class RecoveryCheckinControllerTest {
                 .painLocation("hip")
                 .mood("Good")
                 .note("Felt fine")
+                .sportType("Run")
                 .build();
 
         RecoveryCheckinResponseRecord response = new RecoveryCheckinResponseRecord(
@@ -53,13 +57,20 @@ class RecoveryCheckinControllerTest {
                 "hip",
                 "Good",
                 "Felt fine",
+                "Run",
                 LocalDateTime.of(2026, 7, 7, 8, 0)
         );
 
-        when(recoveryCheckinService.saveCheckin(any(RecoveryCheckinRequestRecord.class)))
-                .thenReturn(response);
+        when(sessionService.getAthleteIdFromAuthorizationHeader("Bearer test-token"))
+                .thenReturn(1L);
+
+        when(recoveryCheckinService.saveCheckin(
+                eq(1L),
+                any(RecoveryCheckinRequestRecord.class)
+        )).thenReturn(response);
 
         mockMvc.perform(post("/api/recovery-checkins")
+                        .header("Authorization", "Bearer test-token")
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
@@ -69,10 +80,17 @@ class RecoveryCheckinControllerTest {
                 .andExpect(jsonPath("$.painScore").value(0))
                 .andExpect(jsonPath("$.painLocation").value("hip"))
                 .andExpect(jsonPath("$.mood").value("Good"))
-                .andExpect(jsonPath("$.note").value("Felt fine"));
+                .andExpect(jsonPath("$.note").value("Felt fine"))
+                .andExpect(jsonPath("$.sportType").value("Run"));
 
-        verify(recoveryCheckinService).saveCheckin(any(RecoveryCheckinRequestRecord.class));
+        verify(sessionService).getAthleteIdFromAuthorizationHeader("Bearer test-token");
+
+        verify(recoveryCheckinService).saveCheckin(
+                eq(1L),
+                any(RecoveryCheckinRequestRecord.class)
+        );
     }
+
 
     @Test
     void shouldReturnTheListOfRecoveryCheckins() throws Exception {
@@ -84,6 +102,7 @@ class RecoveryCheckinControllerTest {
                 "hip",
                 "Good",
                 "Felt fine",
+                "Run",
                 LocalDateTime.of(2026, 7, 7, 8, 0)
         );
 
@@ -95,11 +114,18 @@ class RecoveryCheckinControllerTest {
                 "Knee",
                 "Low",
                 "Okay",
+                "Run",
                 LocalDateTime.of(2026, 7, 8, 8, 0)
         );
 
-        when(recoveryCheckinService.getAllRecoveryCheckin()).thenReturn(List.of(response, response1));
-        mockMvc.perform(get("/api/recovery-checkins"))
+        when(sessionService.getAthleteIdFromAuthorizationHeader("Bearer test-token"))
+                .thenReturn(1L);
+
+
+        when(recoveryCheckinService.getAllRecoveryCheckin(1L, 0, 20)).thenReturn(List.of(response, response1));
+        mockMvc.perform(get("/api/recovery-checkins")
+                        .header("Authorization", "Bearer test-token")
+                        .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(1))
                 .andExpect(jsonPath("$[0].activityId").value(1))
@@ -108,6 +134,7 @@ class RecoveryCheckinControllerTest {
                 .andExpect(jsonPath("$[0].painLocation").value("hip"))
                 .andExpect(jsonPath("$[0].mood").value("Good"))
                 .andExpect(jsonPath("$[0].note").value("Felt fine"))
+                .andExpect(jsonPath("$[0].sportType").value("Run"))
 
                 .andExpect(jsonPath("$[1].id").value(2))
                 .andExpect(jsonPath("$[1].activityId").value(1))
@@ -115,8 +142,9 @@ class RecoveryCheckinControllerTest {
                 .andExpect(jsonPath("$[1].painScore").value(0))
                 .andExpect(jsonPath("$[1].painLocation").value("Knee"))
                 .andExpect(jsonPath("$[1].mood").value("Low"))
-                .andExpect(jsonPath("$[1].note").value("Okay"));
-        verify(recoveryCheckinService).getAllRecoveryCheckin();
+                .andExpect(jsonPath("$[1].note").value("Okay"))
+                .andExpect(jsonPath("$[1].sportType").value("Run"));
+        verify(recoveryCheckinService).getAllRecoveryCheckin(1L, 0, 20);
 
     }
 }

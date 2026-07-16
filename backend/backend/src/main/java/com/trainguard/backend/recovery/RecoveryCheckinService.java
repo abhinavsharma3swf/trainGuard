@@ -17,8 +17,14 @@ public class RecoveryCheckinService {
     private final RecoveryCheckinRepository recoveryCheckinRepository;
     private final ActivityRepository activityRepository;
 
-    public RecoveryCheckinResponseRecord saveCheckin(RecoveryCheckinRequestRecord request) {
-        ActivityEntity activity = activityRepository.findById(request.activityId())
+    public RecoveryCheckinResponseRecord saveCheckin(
+            Long athleteId,
+            RecoveryCheckinRequestRecord request
+    ) {
+        ActivityEntity activity = activityRepository.findByIdAndAthleteId(
+                        request.activityId(),
+                        athleteId
+                )
                 .orElseThrow(() -> new IllegalArgumentException("Activity not found"));
 
         RecoveryCheckinEntity savedCheckin = saveActivityCheckin(request, activity);
@@ -75,12 +81,12 @@ public class RecoveryCheckinService {
         );
     }
 
-    public List<RecoveryCheckinResponseRecord> getAllRecoveryCheckin() {
-        return recoveryCheckinRepository.findAll().stream()
-                .map(this::toResponse).toList();
-    }
+//    public List<RecoveryCheckinResponseRecord> getAllRecoveryCheckin() {
+//        return recoveryCheckinRepository.findAll().stream()
+//                .map(this::toResponse).toList();
+//    }
 
-    public List<RecoveryHistoryResponseRecord> getRecoveryHistory(
+    public List<RecoveryCheckinResponseRecord> getAllRecoveryCheckin(
             Long athleteId,
             int page,
             int size
@@ -92,17 +98,33 @@ public class RecoveryCheckinService {
                 );
 
         return checkins.stream()
-                .map(checkin -> new RecoveryHistoryResponseRecord(
-                        checkin.getId(),
-                        checkin.getCreatedAt(),
-                        checkin.getRpe(),
-                        checkin.getPainScore(),
-                        checkin.getPainLocation(),
-                        checkin.getMood(),
-                        checkin.getNote()
-                ))
+                .map(this::toResponse)
                 .toList();
     }
+
+//    public List<RecoveryHistoryResponseRecord> getRecoveryHistory(
+//            Long athleteId,
+//            int page,
+//            int size
+//    ) {
+//        Page<RecoveryCheckinEntity> checkins =
+//                recoveryCheckinRepository.findByActivityAthleteIdOrderByCreatedAtDesc(
+//                        athleteId,
+//                        PageRequest.of(page, size)
+//                );
+//
+//        return checkins.stream()
+//                .map(checkin -> new RecoveryHistoryResponseRecord(
+//                        checkin.getId(),
+//                        checkin.getCreatedAt(),
+//                        checkin.getRpe(),
+//                        checkin.getPainScore(),
+//                        checkin.getPainLocation(),
+//                        checkin.getMood(),
+//                        checkin.getNote()
+//                ))
+//                .toList();
+//    }
 
 
 }

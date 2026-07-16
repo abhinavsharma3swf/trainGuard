@@ -27,6 +27,7 @@ class RecoveryCheckinServiceTest {
     void shouldCreateRecoveryCheckinForActivity() {
         ActivityEntity activity = ActivityEntity.builder()
                 .id(1L)
+                .athleteId(1L)
                 .externalSource("STRAVA")
                 .externalActivityId("12345")
                 .sportType("RUN")
@@ -43,6 +44,7 @@ class RecoveryCheckinServiceTest {
                 .painLocation("hip")
                 .mood("great")
                 .note("Felt tight after cooldown")
+                .sportType("RUN")
                 .build();
 
         RecoveryCheckinEntity savedCheckin = RecoveryCheckinEntity.builder()
@@ -53,17 +55,21 @@ class RecoveryCheckinServiceTest {
                 .painLocation("hip")
                 .mood("great")
                 .note("Felt tight after cooldown")
+                .sportType("RUN")
                 .createdAt(LocalDateTime.of(2026, 7, 7, 8, 0))
                 .build();
 
-        when(activityRepository.findById(1L))
+        when(activityRepository.findByIdAndAthleteId(1L, 1L))
                 .thenReturn(Optional.of(activity));
+
+        when(recoveryCheckinRepository.findByActivityId(1L))
+                .thenReturn(Optional.empty());
 
         when(recoveryCheckinRepository.save(any(RecoveryCheckinEntity.class)))
                 .thenReturn(savedCheckin);
 
         RecoveryCheckinResponseRecord response =
-                recoveryCheckinService.saveCheckin(request);
+                recoveryCheckinService.saveCheckin(1L, request);
 
         assertEquals(1L, response.id());
         assertEquals(1L, response.activityId());
@@ -72,8 +78,10 @@ class RecoveryCheckinServiceTest {
         assertEquals("hip", response.painLocation());
         assertEquals("great", response.mood());
         assertEquals("Felt tight after cooldown", response.note());
+        assertEquals("RUN", response.sportType());
 
-        verify(activityRepository).findById(1L);
+        verify(activityRepository).findByIdAndAthleteId(1L, 1L);
+        verify(recoveryCheckinRepository).findByActivityId(1L);
         verify(recoveryCheckinRepository).save(any(RecoveryCheckinEntity.class));
     }
 
@@ -88,17 +96,17 @@ class RecoveryCheckinServiceTest {
                 .note("Test note")
                 .build();
 
-        when(activityRepository.findById(999L))
+        when(activityRepository.findByIdAndAthleteId(999L, 12345L))
                 .thenReturn(Optional.empty());
 
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
-                () -> recoveryCheckinService.saveCheckin(request)
+                () -> recoveryCheckinService.saveCheckin(12345L, request)
         );
 
         assertEquals("Activity not found", exception.getMessage());
 
-        verify(activityRepository).findById(999L);
+        verify(activityRepository).findByIdAndAthleteId(999L, 12345L);
         verify(recoveryCheckinRepository, never()).save(any(RecoveryCheckinEntity.class));
     }
 }
