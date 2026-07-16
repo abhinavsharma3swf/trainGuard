@@ -5,7 +5,7 @@ import {DashboardDataProvider} from "@/context/DashboardDataContext";
 export default function RootLayout() {
     return (
         <DashboardDataProvider>
-            <Stack screenOptions={{ headerShown: false }} />
+            <Stack screenOptions={{ headerShown: false, animation: "none" }} />
         </DashboardDataProvider>
     );
 }

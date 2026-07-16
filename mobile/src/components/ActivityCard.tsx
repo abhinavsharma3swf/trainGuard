@@ -23,7 +23,6 @@ export function ActivityCard({activity}: ActivityCardProps) {
         router.push(`/recovery/${activity.id}`)
     }
 
-
     return (
         <View style={styles.activityCard}>
             <View style={styles.activityHeader}>
@@ -67,20 +66,25 @@ export function ActivityCard({activity}: ActivityCardProps) {
                     </TouchableOpacity>
                 </View>
             ) : (
-                <View style={styles.chipRow}>
-                    <Chip label={`RPE ${activity.rpe}`}/>
-                    <Chip label={`Pain ${activity.pain}`}/>
-                    <Chip label={activity.mood ?? "Good"}/>
+                <View style={styles.completedSection}>
+                    <View style={styles.chipRow}>
+                        <Chip label={`RPE ${activity.rpe}`} />
+                        <Chip label={`Pain ${activity.pain}`} />
+                        <Chip label={activity.mood} />
 
-                    <TouchableOpacity onPress={handleEdit}><Chip label="Edit"/></TouchableOpacity>
+                        {activity.note?.trim() ? <Chip label="Note" /> : null}
 
+                        <TouchableOpacity  onPress={handleEdit}>
+                            <Text style={styles.editButton}>Edit</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
             )}
         </View>
     );
 }
 
-function Chip({label}: { label: string }) {
+function Chip({label}: { label?: string }) {
     return (
         <View style={styles.chip}>
             <Text style={styles.chipText}>{label}</Text>
@@ -167,9 +171,8 @@ const styles = StyleSheet.create({
     },
     chipRow: {
         flexDirection: "row",
-        gap: 12,
-        paddingHorizontal: 16,
-        paddingBottom: 16,
+        flexWrap: "wrap",
+        gap: 8,
     },
     chip: {
         backgroundColor: "#323537",
@@ -181,5 +184,33 @@ const styles = StyleSheet.create({
         color: "#e0e3e5",
         fontSize: 12,
         fontWeight: "700",
+    },
+    completedSection: {
+        paddingHorizontal: 16,
+        paddingBottom: 16,
+    },
+
+    editRow: {
+        flexDirection: "row",
+        justifyContent: "flex-end",
+        marginTop: 5,
+    },
+
+    editButton: {
+        backgroundColor: "rgba(253,89,0,0.14)",
+        paddingHorizontal: 14,
+        paddingVertical: 6,
+        borderRadius: 999,
+        borderWidth: 1,
+        borderColor: "rgba(253,89,0,0.35)",
+        color: "#ffb59a",
+        fontSize: 12,
+        fontWeight: "900",
+    },
+
+    editButtonText: {
+        color: "#ffb59a",
+        fontSize: 12,
+        fontWeight: "900",
     },
 });

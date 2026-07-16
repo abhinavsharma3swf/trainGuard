@@ -6,6 +6,7 @@ import {syncStravaActivities} from "@/services/stravaApi";
 import {BottomNav} from "@/components/BottomNav";
 import {useDashboardData} from "@/context/DashboardDataContext";
 import {useFocusEffect} from "expo-router";
+import SummaryProgressBar from "@/components/SummaryProgressBar";
 
 
 export default function HomeScreen() {
@@ -14,37 +15,6 @@ export default function HomeScreen() {
     const [error, setError] = useState("");
     const {feedItems, isLoading, refreshDashboardFeed} = useDashboardData();
 
-
-    // const loadDashboardFeed = async () => {
-    //     try {
-    //         setIsSyncing(true);
-    //         setError("");
-    //         await getDashboardFeed();
-    //     } catch (error) {
-    //         console.error(error);
-    //         router.replace("/");
-    //     } finally {
-    //         setIsSyncing(false);
-    //     }
-    // };
-    //
-    // const handleSync = async () => {
-    //     try {
-    //         setIsSyncing(true);
-    //         setError("");
-    //         await syncStravaActivities();
-    //         await loadDashboardFeed();
-    //     } catch (error) {
-    //         console.error(error);
-    //         setError("Could not sync Strava activities. Check your Strava connection and backend.");
-    //     } finally {
-    //         setIsSyncing(false);
-    //     }
-    // };
-
-    // useEffect(() => {
-    //     loadDashboardFeed();
-    // }, []);
 
     const handleSync = async () => {
         try {
@@ -70,6 +40,13 @@ export default function HomeScreen() {
     const pendingCheckins = feedItems.filter(
         (item) => item.checkinStatus === "PENDING"
     ).length;
+
+    const completedCheckins = feedItems.filter(item => item.checkinStatus === "COMPLETED").length;
+
+    const completedCheckinsWithPain = feedItems.filter(item => item.checkinStatus === "COMPLETED")
+            .filter((item) => item.painScore !== undefined && item.painScore !== null && item.painScore > 0).length;
+
+    const completedCheckinsWithNotes = feedItems.filter(item => item.note?.length !== undefined && item.note?.length > 0);
 
     const painScores = feedItems
         .filter((item) => item.painScore !== null)
@@ -130,9 +107,27 @@ export default function HomeScreen() {
                         unit="check-ins"
                     />
 
-                    <SummaryCard
-                       label="Still brain storming what needs to be here"
-                    />
+                    <View>
+                        <Text style={styles.subtitle}>30-Day Summary</Text>
+
+                        <SummaryProgressBar
+                            label="Completed"
+                            value={completedCheckins}
+                            total={feedItems.length}
+                        />
+
+                        <SummaryProgressBar
+                            label="Pain reported"
+                            value={completedCheckinsWithPain}
+                            total={feedItems.length}
+                        />
+
+                        <SummaryProgressBar
+                            label="Notes added"
+                            value={completedCheckinsWithNotes.length}
+                            total={feedItems.length}
+                        />
+                    </View>
 
                 </View>
 
@@ -174,6 +169,7 @@ export default function HomeScreen() {
                                             rpe: item.rpe !== null ? String(item.rpe) : undefined,
                                             pain: item.painScore !== null ? String(item.painScore) : undefined,
                                             mood: item.mood ?? undefined,
+                                            note: item.note ?? ''
                                         }}
                                     />
                                 );

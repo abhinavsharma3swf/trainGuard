@@ -15,4 +15,5 @@ export type Activity = {
     rpe?: string;
     pain?: string;
     mood?: string;
+    note?: string;
 };
