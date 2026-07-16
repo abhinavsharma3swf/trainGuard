@@ -10,19 +10,38 @@ export default function AnalysisScreen() {
     const {feedItems} = useDashboardData();
     const [displaySummaryCardInMiles, setDisplaySummaryCardInMiles] = useState(true);
 
-    const runMiles = feedItems
+    const isWithinLastSevenDays = (stringDate: string) => {
+        const activityDate = new Date(stringDate);
+
+        // if (Number.isNaN(activityDate.getTime())) {
+        //     return false;
+        // }
+
+        const now = new Date();
+
+        const sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(now.getDate() - 7);
+
+        return activityDate >= sevenDaysAgo;
+    };
+
+    const lastSevenDayFeedItems = feedItems.filter((item) =>
+        isWithinLastSevenDays(item.startDate)
+    );
+
+    const runMiles = lastSevenDayFeedItems
         .filter((item) => item.sportType === "RUN")
         .reduce((total, item) => total + item.distanceMiles, 0);
 
-    const runHours = feedItems
+    const runHours = lastSevenDayFeedItems
         .filter((item) => item.sportType === "RUN")
         .reduce((total, item) => total + item.movingTimeMinutes, 0) / 60;
 
-    const bikeHours = feedItems
+    const bikeHours = lastSevenDayFeedItems
         .filter((item) => item.sportType === "RIDE")
         .reduce((total, item) => total + item.movingTimeMinutes, 0) / 60;
 
-    const bikeDistance = feedItems
+    const bikeDistance = lastSevenDayFeedItems
         .filter((item) => item.sportType === "RIDE")
         .reduce((total, item) => total + item.distanceMiles, 0);
 
@@ -46,6 +65,16 @@ export default function AnalysisScreen() {
             : painScores.reduce((sum, score) => sum + score, 0) / painScores.length;
 
     const pain = averagePain.toFixed(0);
+
+    //removing duplicates//
+
+    const painLocations = [
+        ...new Set(
+            lastSevenDayFeedItems
+                .map((item) => item.painLocation)
+                .filter(Boolean)
+        ),
+    ];
     // calculate average pain score code end //
 
     return (
@@ -56,7 +85,7 @@ export default function AnalysisScreen() {
                     <TouchableOpacity
                         style={styles.card}
                         onPress={handleChangeSummaryCard}>
-                        <Text style={styles.subtitle}>Total training volume </Text>
+                        <Text style={styles.subtitle}>Total training volume for the last 7 days </Text>
                         <View style={styles.summaryGrid}>
                             {
                                 displaySummaryCardInMiles ?
@@ -95,14 +124,23 @@ export default function AnalysisScreen() {
 
 
                 <TouchableOpacity style={styles.card}>
-                    <Text style={styles.subtitle}>Recovery analysis </Text>
+                    <Text style={styles.subtitle}>Recovery analysis for last 7 days</Text>
+                    <View style={styles.summaryGrid}>
                     <SummaryCard
-                        label="Pain"
+                        label="Average Pain Score"
                         value={pain.toLocaleString()}
-                        // unit="hr"
-                        // instructions="Click for miles"
                     />
-                </TouchableOpacity>
+                        <View style={styles.painLocationList}>
+                            <Text style={styles.summaryText}>You reported pain in:</Text>
+
+                            {painLocations.map((location) => (
+                                <Text key={location} style={styles.painLocationText}>
+                                    {location}
+                                </Text>
+                            ))}
+                        </View>
+                    </View>
+                    </TouchableOpacity>
 
             </ScrollView>
 
@@ -157,5 +195,20 @@ const styles = StyleSheet.create({
         color: "#c5c6cd",
         fontSize: 15,
         lineHeight: 22,
+    },
+    painLocationList: {
+        marginBottom: 24,
+    },
+
+    summaryText: {
+        color: "#c5c6cd",
+        fontSize: 16,
+        marginBottom: 8,
+    },
+    painLocationText: {
+        color: "#fd5900",
+        fontSize: 16,
+        fontWeight: "800",
+        marginBottom: 6,
     },
 });

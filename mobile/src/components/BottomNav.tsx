@@ -13,7 +13,7 @@ export function BottomNav({ activeRoute, storedAthleteId }: BottomNavProps) {
         <View style={styles.container}>
             <Pressable
                 style={styles.navItem}
-                onPress={() => router.push("/")}
+                onPress={() => router.replace("/")}
             >
                 { !storedAthleteId &&
                     <Text
@@ -31,7 +31,7 @@ export function BottomNav({ activeRoute, storedAthleteId }: BottomNavProps) {
 
             <Pressable
                 style={styles.navItem}
-                onPress={() => router.push("/dashboard")}
+                onPress={() => router.replace("/dashboard")}
             >
                 <Text
                     style={[
@@ -45,7 +45,7 @@ export function BottomNav({ activeRoute, storedAthleteId }: BottomNavProps) {
 
             <Pressable
                 style={styles.navItem}
-                onPress={() => router.push("/analysis")}
+                onPress={() => router.replace("/analysis")}
             >
                 <Text
                     style={[

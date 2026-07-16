@@ -92,9 +92,9 @@ export default function RecoveryCheckInScreen() {
             activityId: Number(activityId),
             rpe: formValues.rpe,
             painScore: formValues.painScore,
-            painLocation: formValues.painLocation,
-            mood: formValues.mood,
-            note: formValues.note,
+            painLocation: formValues.painLocation.trim().toUpperCase() ?? '',
+            mood: formValues.mood ?? '',
+            note: formValues.note.trim() ?? '',
         };
 
         try {
