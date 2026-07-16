@@ -53,7 +53,7 @@ public class ActivityEntity {
 
     @OneToMany(
             mappedBy = "activity",
-            cascade = CascadeType.ALL
+            cascade = CascadeType.DETACH
     )
     @Builder.Default
     private List<RecoveryCheckinEntity> recoveryCheckins = new ArrayList<>();
