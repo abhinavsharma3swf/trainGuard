@@ -31,11 +31,11 @@ export default function HomeScreen() {
         }
     };
 
-    useFocusEffect(
-        useCallback(() => {
-            refreshDashboardFeed();
-        }, [])
-    );
+    // useFocusEffect(
+    //     useCallback(() => {
+    //         // refreshDashboardFeed();
+    //     }, [])
+    // );
 
     const pendingCheckins = feedItems.filter(
         (item) => item.checkinStatus === "PENDING"
@@ -178,7 +178,7 @@ export default function HomeScreen() {
                     )
                 }
             </ScrollView>
-            <BottomNav activeRoute="dashboard"/>
+            <BottomNav activeRoute="weekly"/>
         </View>
     )
 

@@ -33,5 +33,8 @@ public class RecoveryCheckinEntity {
 
     private String note;
 
+    private String sportType;
+
     private LocalDateTime createdAt;
+
 }

@@ -2,15 +2,13 @@ package com.trainguard.backend.recovery;
 
 import java.time.LocalDateTime;
 
-public record RecoveryCheckinResponseRecord(
-        Long id,
-        Long activityId,
+public record RecoveryHistoryResponseRecord(
+        Long checkinId,
+        LocalDateTime createdAt,
         Integer rpe,
         Integer painScore,
         String painLocation,
         String mood,
-        String note,
-        String sportType,
-        LocalDateTime createdAt
+        String note
 ) {
 }

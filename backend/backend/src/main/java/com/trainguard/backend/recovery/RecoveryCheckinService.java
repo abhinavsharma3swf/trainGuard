@@ -4,6 +4,8 @@ import com.trainguard.backend.activity.ActivityEntity;
 import com.trainguard.backend.activity.ActivityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -54,6 +56,7 @@ public class RecoveryCheckinService {
         checkin.setPainLocation(request.painLocation());
         checkin.setMood(request.mood());
         checkin.setNote(request.note());
+        checkin.setSportType(activity.getSportType());
 
         return recoveryCheckinRepository.save(checkin);
     }
@@ -67,6 +70,7 @@ public class RecoveryCheckinService {
                 checkin.getPainLocation(),
                 checkin.getMood(),
                 checkin.getNote(),
+                checkin.getSportType(),
                 checkin.getCreatedAt()
         );
     }
@@ -74,6 +78,30 @@ public class RecoveryCheckinService {
     public List<RecoveryCheckinResponseRecord> getAllRecoveryCheckin() {
         return recoveryCheckinRepository.findAll().stream()
                 .map(this::toResponse).toList();
+    }
+
+    public List<RecoveryHistoryResponseRecord> getRecoveryHistory(
+            Long athleteId,
+            int page,
+            int size
+    ) {
+        Page<RecoveryCheckinEntity> checkins =
+                recoveryCheckinRepository.findByActivityAthleteIdOrderByCreatedAtDesc(
+                        athleteId,
+                        PageRequest.of(page, size)
+                );
+
+        return checkins.stream()
+                .map(checkin -> new RecoveryHistoryResponseRecord(
+                        checkin.getId(),
+                        checkin.getCreatedAt(),
+                        checkin.getRpe(),
+                        checkin.getPainScore(),
+                        checkin.getPainLocation(),
+                        checkin.getMood(),
+                        checkin.getNote()
+                ))
+                .toList();
     }
 
 

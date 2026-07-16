@@ -56,5 +56,6 @@ public class ActivityEntity {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
+    @Builder.Default
     private List<RecoveryCheckinEntity> recoveryCheckins = new ArrayList<>();
 }

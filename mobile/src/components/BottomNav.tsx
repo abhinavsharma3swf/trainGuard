@@ -4,7 +4,7 @@ import {clearSessionToken} from "@/services/athleteStorage";
 
 
 type BottomNavProps = {
-    activeRoute: "login" | "dashboard" | "analysis";
+    activeRoute: "login" | "weekly" | "history" | "analysis";
     storedAthleteId?: any;
 };
 
@@ -36,10 +36,24 @@ export function BottomNav({ activeRoute, storedAthleteId }: BottomNavProps) {
                 <Text
                     style={[
                         styles.navText,
-                        activeRoute === "dashboard" && styles.activeText,
+                        activeRoute === "weekly" && styles.activeText,
                     ]}
                 >
-                    Activities
+                    Weekly
+                </Text>
+            </Pressable>
+
+            <Pressable
+                style={styles.navItem}
+                onPress={() => router.push("/history")}
+            >
+                <Text
+                    style={[
+                        styles.navText,
+                        activeRoute === "history" && styles.activeText,
+                    ]}
+                >
+                    History
                 </Text>
             </Pressable>
 
