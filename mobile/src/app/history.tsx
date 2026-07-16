@@ -99,7 +99,8 @@ export default function History() {
                         <RecoveryHistoryCard
                             key={item.id}
                             item={{
-                                checkinId: item.id,
+                                id: item.id,
+                                activityId: item.id,
                                 createdAt: item.createdAt,
                                 painScore: item.painScore ?? 0,
                                 painLocation: item.painLocation,

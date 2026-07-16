@@ -37,19 +37,6 @@ public class RecoveryCheckinService {
             ActivityEntity activity
     ) {
 
-//        RecoveryCheckinEntity checkin = recoveryCheckinRepository.findByActivityId(activity.getId())
-//                .orElseGet(() -> RecoveryCheckinEntity.builder()
-//                .activity(activity)
-//                .rpe(request.rpe())
-//                .painScore(request.painScore())
-//                .painLocation(request.painLocation())
-//                .mood(request.mood())
-//                .note(request.note())
-//                .createdAt(LocalDateTime.now())
-//                .build());
-//
-//        return recoveryCheckinRepository.save(checkin);
-
         RecoveryCheckinEntity checkin = recoveryCheckinRepository
                 .findByActivityId(activity.getId())
                 .orElseGet(() -> RecoveryCheckinEntity.builder()
@@ -81,11 +68,6 @@ public class RecoveryCheckinService {
         );
     }
 
-//    public List<RecoveryCheckinResponseRecord> getAllRecoveryCheckin() {
-//        return recoveryCheckinRepository.findAll().stream()
-//                .map(this::toResponse).toList();
-//    }
-
     public List<RecoveryCheckinResponseRecord> getAllRecoveryCheckin(
             Long athleteId,
             int page,
@@ -101,30 +83,4 @@ public class RecoveryCheckinService {
                 .map(this::toResponse)
                 .toList();
     }
-
-//    public List<RecoveryHistoryResponseRecord> getRecoveryHistory(
-//            Long athleteId,
-//            int page,
-//            int size
-//    ) {
-//        Page<RecoveryCheckinEntity> checkins =
-//                recoveryCheckinRepository.findByActivityAthleteIdOrderByCreatedAtDesc(
-//                        athleteId,
-//                        PageRequest.of(page, size)
-//                );
-//
-//        return checkins.stream()
-//                .map(checkin -> new RecoveryHistoryResponseRecord(
-//                        checkin.getId(),
-//                        checkin.getCreatedAt(),
-//                        checkin.getRpe(),
-//                        checkin.getPainScore(),
-//                        checkin.getPainLocation(),
-//                        checkin.getMood(),
-//                        checkin.getNote()
-//                ))
-//                .toList();
-//    }
-
-
 }

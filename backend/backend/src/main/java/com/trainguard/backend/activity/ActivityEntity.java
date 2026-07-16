@@ -53,8 +53,7 @@ public class ActivityEntity {
 
     @OneToMany(
             mappedBy = "activity",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
+            cascade = CascadeType.ALL
     )
     @Builder.Default
     private List<RecoveryCheckinEntity> recoveryCheckins = new ArrayList<>();
