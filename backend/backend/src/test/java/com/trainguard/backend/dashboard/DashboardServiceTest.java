@@ -13,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -63,12 +64,13 @@ class DashboardServiceTest {
                 .mood("Good")
                 .note("Felt fine")
                 .createdAt(LocalDateTime.of(2026, 7, 7, 9, 0))
+                .athleteId(12345L)
                 .build();
 
         when(activityRepository.findByAthleteId(12345L))
                 .thenReturn(List.of(activityWithCheckin, activityWithoutCheckin));
 
-        when(recoveryCheckinRepository.findAll())
+        when(recoveryCheckinRepository.findByAthleteId(12345L))
                 .thenReturn(List.of(checkin));
 
         when(activityMetricService.convertMetersToMiles(8046.72))
@@ -125,7 +127,7 @@ class DashboardServiceTest {
         assertNull(pendingActivity.note());
 
         verify(activityRepository).findByAthleteId(12345L);
-        verify(recoveryCheckinRepository).findAll();
+        verify(recoveryCheckinRepository).findByAthleteId(12345L);
 
         verify(activityMetricService).convertMetersToMiles(8046.72);
         verify(activityMetricService).convertSecondsToMinutes(2400);

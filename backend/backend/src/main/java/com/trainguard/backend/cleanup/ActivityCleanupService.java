@@ -51,7 +51,7 @@ public class ActivityCleanupService {
 
     @Transactional
     public void deleteActivitiesOlderThanSevenDays() {
-        LocalDateTime cutoff = LocalDateTime.now().minusDays(2);
+        LocalDateTime cutoff = LocalDateTime.now().minusDays(7);
 
         List<ActivityEntity> expiredActivities =
                 activityRepository.findAllByImportedAtBefore(cutoff);
