@@ -19,8 +19,8 @@ public class RecoveryCheckinEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "activity_id")
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "activity_id", nullable = true)
     private ActivityEntity activity;
 
     private Integer rpe;

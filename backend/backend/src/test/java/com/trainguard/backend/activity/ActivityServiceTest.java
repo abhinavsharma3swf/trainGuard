@@ -1,6 +1,11 @@
 package com.trainguard.backend.activity;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,7 +20,6 @@ public class ActivityServiceTest {
     private final ActivityMetricService activityMetricService = new ActivityMetricService();
     private final ActivityRepository activityRepository = mock(ActivityRepository.class);
     private final ActivityService activityService = new ActivityService(activityMetricService, activityRepository);
-
 
     @Test
     void shouldSaveNewActivityOnlyThatDoesNotExist() {

@@ -51,10 +51,7 @@ public class ActivityEntity {
 
     private Long athleteId;
 
-    @OneToMany(
-            mappedBy = "activity",
-            cascade = CascadeType.DETACH
-    )
+    @OneToMany(mappedBy = "activity")
     @Builder.Default
     private List<RecoveryCheckinEntity> recoveryCheckins = new ArrayList<>();
 }

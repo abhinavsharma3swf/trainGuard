@@ -1,5 +1,7 @@
 package com.trainguard.backend.recovery;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,4 +13,6 @@ public interface RecoveryCheckinRepository extends JpaRepository<RecoveryCheckin
             Long athleteId,
             Pageable pageable
     );
+
+    List<RecoveryCheckinEntity> findAllByActivityId(Long activityId);
 }

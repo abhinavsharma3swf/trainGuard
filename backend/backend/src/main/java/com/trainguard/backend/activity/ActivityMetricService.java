@@ -1,6 +1,8 @@
 package com.trainguard.backend.activity;
 
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
