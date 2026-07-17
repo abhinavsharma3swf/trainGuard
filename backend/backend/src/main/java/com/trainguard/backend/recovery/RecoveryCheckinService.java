@@ -54,10 +54,28 @@ public class RecoveryCheckinService {
         return recoveryCheckinRepository.save(checkin);
     }
 
+//    private RecoveryCheckinResponseRecord toResponse(RecoveryCheckinEntity checkin) {
+//        return new RecoveryCheckinResponseRecord(
+//                checkin.getId(),
+//                checkin.getActivity().getId(),
+//                checkin.getRpe(),
+//                checkin.getPainScore(),
+//                checkin.getPainLocation(),
+//                checkin.getMood(),
+//                checkin.getNote(),
+//                checkin.getSportType(),
+//                checkin.getCreatedAt()
+//        );
+//    }
+
     private RecoveryCheckinResponseRecord toResponse(RecoveryCheckinEntity checkin) {
+        Long activityId = checkin.getActivity() == null
+                ? null
+                : checkin.getActivity().getId();
+
         return new RecoveryCheckinResponseRecord(
                 checkin.getId(),
-                checkin.getActivity().getId(),
+                activityId,
                 checkin.getRpe(),
                 checkin.getPainScore(),
                 checkin.getPainLocation(),

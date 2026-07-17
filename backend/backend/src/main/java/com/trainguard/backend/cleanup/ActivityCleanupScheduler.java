@@ -11,8 +11,12 @@ public class ActivityCleanupScheduler {
 
     private final ActivityCleanupService cleanupService;
 
-    @Scheduled(cron = "0 21 20 * * *", zone = "America/Chicago")
+    @Scheduled(cron = "0 34 20 * * *", zone = "America/Chicago")
     public void deleteExpiredActivities() {
+        System.out.println("Activity cleanup scheduler started");
+
         cleanupService.deleteActivitiesOlderThanSevenDays();
+
+        System.out.println("Activity cleanup scheduler finished");
     }
 }
