@@ -3,7 +3,7 @@ import {getSessionToken} from "@/services/athleteStorage";
 
 
 export type DashboardFeedItem = {
-    activityId: number;
+    activityId: number | null;
     sportType: string;
     name: string;
     startDate: string;
