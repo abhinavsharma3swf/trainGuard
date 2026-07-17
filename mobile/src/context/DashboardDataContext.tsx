@@ -65,7 +65,7 @@ export function DashboardDataProvider({ children }: { children: ReactNode }) {
     }
 
     useEffect(() => {
-        // refreshDashboardFeed();
+        refreshDashboardFeed();
     }, []);
 
     return (

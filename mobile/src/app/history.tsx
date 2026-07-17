@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import {Image, Pressable, ScrollView, StyleSheet, Text, View} from "react-native";
 
 import { BottomNav } from "@/components/BottomNav";
 import { RecoveryHistoryCard } from "@/components/RecoveryHistoryCard";
@@ -16,28 +16,6 @@ export default function History() {
 
     const pageSize = 20;
 
-    // async function loadRecoveryHistory(pageToLoad = 0) {
-    //     try {
-    //         setIsLoading(true);
-    //
-    //         const data = await getRecoveryCheckins(pageToLoad, 20);
-    //
-    //         if (pageToLoad === 0) {
-    //             setRecoveryHistory(data);
-    //         } else {
-    //             setRecoveryHistory((currentHistory) => [
-    //                 ...currentHistory,
-    //                 ...data,
-    //             ]);
-    //         }
-    //
-    //         setPage(pageToLoad);
-    //     } catch (error) {
-    //         console.error("Could not load recovery history:", error);
-    //     } finally {
-    //         setIsLoading(false);
-    //     }
-    // }
     async function loadRecoveryHistory(pageToLoad = 0) {
         if (isLoading || !hasMore) {
             return;
@@ -84,15 +62,21 @@ export default function History() {
         loadRecoveryHistory(0);
     }, []);
 
-    // function handleLoadMore() {
-    //     loadRecoveryHistory(page + 1);
-    // }
-
     return (
         <View style={styles.screen}>
             <ScrollView contentContainerStyle={styles.scrollContent}>
+                <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                    <View>
                 <Text style={styles.appName}>Smart Gauge</Text>
                 <Text style={styles.subtitle}>Recovery History</Text>
+                    </View>
+                    <Image source={require("@/assets/images/smartGaugeAppIcon.png")}
+                        resizeMode="contain"
+                           style={{backgroundColor: "#fd5900",
+                        paddingHorizontal: 16,
+                        paddingVertical: 10,
+                        borderRadius: 12, width: 65, height: 60}}/>
+                </View>
 
                 <View style={styles.activityList}>
                     {recoveryHistory.map((item) => (
@@ -127,15 +111,6 @@ export default function History() {
                     <Text style={styles.endText}>No more check-ins</Text>
                 )}
 
-                {/*<Pressable*/}
-                {/*    style={styles.loadMoreButton}*/}
-                {/*    onPress={handleLoadMore}*/}
-                {/*    disabled={isLoading}*/}
-                {/*>*/}
-                {/*    <Text style={styles.loadMoreText}>*/}
-                {/*        {isLoading ? "Loading..." : "Load more"}*/}
-                {/*    </Text>*/}
-                {/*</Pressable>*/}
             </ScrollView>
 
             <BottomNav activeRoute="history" />

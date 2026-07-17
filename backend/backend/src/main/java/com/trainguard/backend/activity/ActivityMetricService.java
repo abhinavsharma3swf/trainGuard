@@ -1,8 +1,6 @@
 package com.trainguard.backend.activity;
 
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -10,7 +8,7 @@ public class ActivityMetricService {
 
     public double convertMetersToMiles(double meters) {
         double METERS_PER_MILE = 1609.34;
-        double miles =  meters / METERS_PER_MILE;
+        double miles = meters / METERS_PER_MILE;
         return Math.round(miles * 100.0) / 100.0;
     }
 

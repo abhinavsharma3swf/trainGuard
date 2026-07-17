@@ -1,4 +1,4 @@
-import {ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
+import {Image, ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 
 import {BottomNav} from "@/components/BottomNav";
 import {SummaryCard} from "@/components/SummaryCard";
@@ -12,10 +12,6 @@ export default function AnalysisScreen() {
 
     const isWithinLastSevenDays = (stringDate: string) => {
         const activityDate = new Date(stringDate);
-
-        // if (Number.isNaN(activityDate.getTime())) {
-        //     return false;
-        // }
 
         const now = new Date();
 
@@ -80,8 +76,18 @@ export default function AnalysisScreen() {
     return (
         <View style={styles.screen}>
             <ScrollView contentContainerStyle={styles.content}>
+                <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                    <View>
                 <Text style={styles.appName}>Smart Gauge</Text>
                 <Text style={styles.subtitle}>Analysis</Text>
+                    </View>
+                    <Image source={require("@/assets/images/smartGaugeAppIcon.png")}
+                           resizeMode="contain"
+                           style={{backgroundColor: "#fd5900",
+                               paddingHorizontal: 16,
+                               paddingVertical: 10,
+                               borderRadius: 12, width: 65, height: 60}}/>
+                </View>
                     <TouchableOpacity
                         style={styles.card}
                         onPress={handleChangeSummaryCard}>
