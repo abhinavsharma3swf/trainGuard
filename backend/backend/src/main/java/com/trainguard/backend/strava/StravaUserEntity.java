@@ -25,4 +25,6 @@ public class StravaUserEntity {
 
     private LocalDateTime connectedAt;
     private LocalDateTime updatedAt;
+
+
 }

@@ -1,6 +1,7 @@
 package com.trainguard.backend.recovery;
 
 import com.trainguard.backend.activity.ActivityEntity;
+import com.trainguard.backend.strava.StravaUserEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,6 +19,8 @@ public class RecoveryCheckinEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    private Long athleteId;
 
     @ManyToOne
     @JoinColumn(name = "activity_id", nullable = true)

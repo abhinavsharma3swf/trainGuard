@@ -50,6 +50,7 @@ public class RecoveryCheckinService {
         checkin.setMood(request.mood());
         checkin.setNote(request.note());
         checkin.setSportType(activity.getSportType());
+        checkin.setAthleteId(activity.getAthleteId());
 
         return recoveryCheckinRepository.save(checkin);
     }
