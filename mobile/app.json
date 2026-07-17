@@ -24,7 +24,13 @@
         "projectId": "90f21446-cf11-4f12-a82c-9b78b2697d60"
       }
     },
-    "owner": "abhinavsharma3s-team"
+    "owner": "abhinavsharma3s-team",
+    "plugins": [
+      "expo-image",
+      "expo-router",
+      "expo-splash-screen",
+      "expo-status-bar",
+      "expo-web-browser"
+    ]
   }
 }
-
