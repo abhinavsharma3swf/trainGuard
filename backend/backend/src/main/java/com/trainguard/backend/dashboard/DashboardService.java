@@ -21,7 +21,7 @@ public class DashboardService {
 
     public List<DashboardFeedRecord> getAllActivitiesForDashboard(Long athleteId) {
         List<ActivityEntity> activities = activityRepository.findByAthleteId(athleteId);
-        List<RecoveryCheckinEntity> checkins = recoveryCheckinRepository.findAll();
+        List<RecoveryCheckinEntity> checkins = recoveryCheckinRepository.findByAthleteId(athleteId);
 
         return activities.stream()
                 .map(activity -> {

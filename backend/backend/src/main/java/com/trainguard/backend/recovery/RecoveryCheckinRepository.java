@@ -6,15 +6,29 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-public interface RecoveryCheckinRepository extends JpaRepository<RecoveryCheckinEntity, Long> {
-//    Optional<RecoveryCheckinEntity> findByActivityId(Long activityId);
+//public interface RecoveryCheckinRepository extends JpaRepository<RecoveryCheckinEntity, Long> {
+////    Optional<RecoveryCheckinEntity> findByActivityId(Long activityId);
+//
+//    Page<RecoveryCheckinEntity> findByActivityAthleteIdOrderByCreatedAtDesc(
+//            Long athleteId,
+//            Pageable pageable
+//    );
+//
+//    List<RecoveryCheckinEntity> findAllByActivityId(Long activityId);
+//
+//    Optional<RecoveryCheckinEntity> findByAthleteId(Long athleteId);
+//}
 
-    Page<RecoveryCheckinEntity> findByActivityAthleteIdOrderByCreatedAtDesc(
+public interface RecoveryCheckinRepository extends JpaRepository<RecoveryCheckinEntity, Long> {
+
+    Optional<RecoveryCheckinEntity> findByActivityId(Long activityId);
+
+    List<RecoveryCheckinEntity> findAllByActivityId(Long activityId);
+
+    Page<RecoveryCheckinEntity> findByAthleteIdOrderByCreatedAtDesc(
             Long athleteId,
             Pageable pageable
     );
 
-    List<RecoveryCheckinEntity> findAllByActivityId(Long activityId);
-
-    Optional<RecoveryCheckinEntity> findByAthleteId(Long athleteId);
+    List<RecoveryCheckinEntity> findByAthleteId(Long athleteId);
 }
