@@ -12,7 +12,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 @EnableConfigurationProperties({StravaProperties.class,
         TrainGuardProperties.class,
         StravaWebhookProperties.class,
-        ActivityCleanupScheduler.class})
+ActivityCleanupScheduler.class})
 public class BackendApplication {
 
     public static void main(String[] args) {
