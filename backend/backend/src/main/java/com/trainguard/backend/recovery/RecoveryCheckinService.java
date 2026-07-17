@@ -36,16 +36,14 @@ public class RecoveryCheckinService {
             RecoveryCheckinRequestRecord request,
             ActivityEntity activity
     ) {
-        System.out.println("we are in saveActivityCheckin");
 
         RecoveryCheckinEntity checkin = recoveryCheckinRepository
-                .findByActivityId(activity.getId() == null ? -999L : activity.getId())
+                .findByAthleteId(request.athleteId())
                 .orElseGet(() -> RecoveryCheckinEntity.builder()
                         .activity(activity)
                         .createdAt(LocalDateTime.now())
                         .build());
 
-        System.out.println("we are in saveActivityCheckin after the builder");
 
         checkin.setRpe(request.rpe());
         checkin.setPainScore(request.painScore());

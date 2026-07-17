@@ -10,5 +10,6 @@ public record RecoveryCheckinRequestRecord (
         String painLocation,
         String mood,
         String note,
-        String sportType
+        String sportType,
+        Long athleteId
 ){}

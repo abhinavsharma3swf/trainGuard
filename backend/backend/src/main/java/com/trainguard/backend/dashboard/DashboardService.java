@@ -26,7 +26,11 @@ public class DashboardService {
         return activities.stream()
                 .map(activity -> {
                     Optional<RecoveryCheckinEntity> matchingCheckin = checkins.stream()
-                            .filter(checkin -> checkin.getActivity().getId() == null ? null : checkin.getActivity().getId().equals(activity.getId()))
+//                            .filter(checkin -> checkin.getActivity().getId() == null ? null : checkin.getActivity().getId().equals(activity.getId()))
+                            .filter(checkin ->
+                                    checkin.getActivity() != null &&
+                                            checkin.getActivity().getId().equals(activity.getId())
+                            )
                             .findFirst();
 
                     return toDashboardFeedRecord(activity, matchingCheckin);
