@@ -5,14 +5,14 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-//@Component
+@Component
 @RequiredArgsConstructor
-@ConfigurationProperties(prefix = "activity.cleanup")
+//@ConfigurationProperties(prefix = "activity.cleanup")
 public class ActivityCleanupScheduler {
 
     private final ActivityCleanupService cleanupService;
 
-    @Scheduled(cron = "0 53 19 * * *", zone = "America/Chicago")
+    @Scheduled(cron = "0 05 20 * * *", zone = "America/Chicago")
     public void deleteExpiredActivities() {
         cleanupService.deleteActivitiesOlderThanSevenDays();
     }
