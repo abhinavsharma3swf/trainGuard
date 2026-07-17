@@ -7,12 +7,11 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-//@ConfigurationProperties(prefix = "activity.cleanup")
 public class ActivityCleanupScheduler {
 
     private final ActivityCleanupService cleanupService;
 
-    @Scheduled(cron = "0 05 20 * * *", zone = "America/Chicago")
+    @Scheduled(cron = "0 21 20 * * *", zone = "America/Chicago")
     public void deleteExpiredActivities() {
         cleanupService.deleteActivitiesOlderThanSevenDays();
     }
