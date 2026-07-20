@@ -1,6 +1,7 @@
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect } from "react";
 import {
+    KeyboardAvoidingView, Platform,
     ScrollView,
     StyleSheet,
     Text,
@@ -126,6 +127,7 @@ export default function RecoveryCheckInScreen() {
     console.log("Current Activity:", currentActivity);
 
     return (
+        <KeyboardAvoidingView style={styles.screen} behavior={Platform.OS === "ios" ? "padding" : "height"}>
         <View style={styles.screen}>
             <ScrollView contentContainerStyle={styles.content}>
                 <TouchableOpacity onPress={() => router.push("/dashboard")}>
@@ -249,6 +251,7 @@ export default function RecoveryCheckInScreen() {
                 </View>
             </ScrollView>
         </View>
+        </KeyboardAvoidingView>
     );
 }
 

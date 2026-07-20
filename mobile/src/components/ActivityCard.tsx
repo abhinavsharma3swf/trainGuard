@@ -1,4 +1,4 @@
-import {StyleSheet, Text, TouchableOpacity, View} from "react-native";
+import {Pressable, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {Activity} from "@/types/activity";
 import {Metric} from "./Metric";
 import {router} from "expo-router";
@@ -25,10 +25,11 @@ export function ActivityCard({activity}: ActivityCardProps) {
 
     return (
         <View style={styles.activityCard}>
+            <Pressable onPress={handleEdit}>
             <View style={styles.activityHeader}>
                 <View>
                     <Text style={styles.activityType}>{activity.type}</Text>
-                    <Text style={styles.activityName}>{activity.name}</Text>
+                    <Text style={styles.activityName}>{activity.name.length < 20 ? `${activity.name.slice(0,20)}...` : `${activity.name}`}</Text>
                     <Text style={styles.activityDate}>{formatActivityDate(activity.date)}</Text>
                 </View>
 
@@ -74,12 +75,13 @@ export function ActivityCard({activity}: ActivityCardProps) {
 
                         {activity.note?.trim() ? <Chip label="Note" /> : null}
 
-                        <TouchableOpacity  onPress={handleEdit}>
+                        {/*<TouchableOpacity  onPress={handleEdit}>*/}
                             <Text style={styles.editButton}>Edit</Text>
-                        </TouchableOpacity>
+                        {/*</TouchableOpacity>*/}
                     </View>
                 </View>
             )}
+        </Pressable>
         </View>
     );
 }
