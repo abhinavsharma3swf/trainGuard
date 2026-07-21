@@ -10,7 +10,7 @@ import {
 import { getDashboardFeed } from "@/services/dashboardApi";
 
 export type DashboardFeedItem = {
-    activityId: number;
+    activityId: number | null;
     sportType: string;
     name: string;
     startDate: string;

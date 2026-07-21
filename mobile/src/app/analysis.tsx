@@ -1,9 +1,10 @@
-import {Image, ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
+import {Image, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 
 import {BottomNav} from "@/components/BottomNav";
 import {SummaryCard} from "@/components/SummaryCard";
 import {useDashboardData} from "@/context/DashboardDataContext";
 import {useState} from "react";
+import AnalysisChart from "@/components/AnalysisChart";
 
 export default function AnalysisScreen() {
 
@@ -73,6 +74,8 @@ export default function AnalysisScreen() {
     ];
     // calculate average pain score code end //
 
+    const [flag, setFlag] = useState(true)
+
     return (
         <View style={styles.screen}>
             <ScrollView contentContainerStyle={styles.content}>
@@ -129,7 +132,7 @@ export default function AnalysisScreen() {
                     </TouchableOpacity>
 
 
-                <TouchableOpacity style={styles.card}>
+                {flag ? <Pressable style={styles.card} onPress={(prev)=> setFlag(!prev)}>
                     <Text style={styles.subtitle}>Recovery analysis for last 7 days</Text>
                     <View style={styles.summaryGrid}>
                     <SummaryCard
@@ -146,7 +149,7 @@ export default function AnalysisScreen() {
                             ))}
                         </View>
                     </View>
-                    </TouchableOpacity>
+                </Pressable> : <Pressable onPress={(prev)=> setFlag(!prev)}><AnalysisChart/></Pressable> }
 
             </ScrollView>
 
