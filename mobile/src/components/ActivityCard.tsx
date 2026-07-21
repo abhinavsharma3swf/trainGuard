@@ -29,7 +29,7 @@ export function ActivityCard({activity}: ActivityCardProps) {
             <View style={styles.activityHeader}>
                 <View>
                     <Text style={styles.activityType}>{activity.type}</Text>
-                    <Text style={styles.activityName}>{activity.name.length < 20 ? `${activity.name.slice(0,20)}...` : `${activity.name}`}</Text>
+                    <Text style={styles.activityName}>{activity.name.length > 20 ? `${activity.name.slice(0,20)}...` : `${activity.name}`}</Text>
                     <Text style={styles.activityDate}>{formatActivityDate(activity.date)}</Text>
                 </View>
 
