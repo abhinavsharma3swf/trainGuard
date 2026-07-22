@@ -3,7 +3,7 @@ export type ActivityStatus = "PENDING" | "COMPLETED";
 export type ActivityType = "RUN" | "RIDE";
 
 export type Activity = {
-    id: number;
+    id: number | null;
     type: ActivityType;
     name: string;
     date: string;
