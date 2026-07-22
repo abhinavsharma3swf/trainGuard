@@ -3,13 +3,16 @@ import {Image, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View} 
 import {BottomNav} from "@/components/BottomNav";
 import {SummaryCard} from "@/components/SummaryCard";
 import {useDashboardData} from "@/context/DashboardDataContext";
-import {useState} from "react";
+import React, {useEffect, useState} from "react";
 import AnalysisChart from "@/components/AnalysisChart";
+import {getRecoveryCheckins} from "@/services/recoveryApi";
 
 export default function AnalysisScreen() {
 
     const {feedItems} = useDashboardData();
     const [displaySummaryCardInMiles, setDisplaySummaryCardInMiles] = useState(true);
+    const [painScoreGraphFlag, setPainScoreGraphFlag] = useState(true)
+    const [rpeFlag, setRpeFlag] = useState(true);
 
     const isWithinLastSevenDays = (stringDate: string) => {
         const activityDate = new Date(stringDate);
@@ -72,9 +75,56 @@ export default function AnalysisScreen() {
                 .filter(Boolean)
         ),
     ];
+    // calculate average RPE and mood //
+
+    // Calculate average pain score for completed check-ins //
+    const rpeScores = completedCheckins
+        .map((item) => item.rpe)
+        .filter((score): score is number => score !== null && score !== undefined);
+
+    const averageRpe =
+        rpeScores.length === 0
+            ? 0
+            : rpeScores.reduce((sum, score) => sum + score, 0) / rpeScores.length;
+
+    const rpe = averageRpe.toFixed(0);
+
+    //removing duplicates//
+
+    const mood = [
+        ...new Set(
+            lastSevenDayFeedItems
+                .map((item) => item.mood)
+                .filter(Boolean)
+        ),
+    ];
     // calculate average pain score code end //
 
-    const [flag, setFlag] = useState(true)
+    //For graph//
+
+    const [recoveryCheckinData, setRecoveryCheckinData] = useState<any>([])
+
+    useEffect(() => {
+        getRecoveryCheckins(0,20).then(
+            data => {
+                const fitnessData: { value: number; label: string }[] = data.map((item)=> {
+                    const date = new Date(item.createdAt).toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric'
+                    })
+                    return {
+                        value: item.painScore, label: date
+                    }
+                })
+                const sortedData = fitnessData.sort((a, b) => new Date(a.label).getTime() - new Date(b.label).getTime())
+                setRecoveryCheckinData(sortedData)
+            }
+        )
+    }, []);
+    //code end//
+
+
+
 
     return (
         <View style={styles.screen}>
@@ -132,7 +182,7 @@ export default function AnalysisScreen() {
                     </TouchableOpacity>
 
 
-                {flag ? <Pressable style={styles.card} onPress={(prev)=> setFlag(!prev)}>
+                {painScoreGraphFlag ? <Pressable style={styles.card} onPress={(prev)=> setPainScoreGraphFlag(!prev)}>
                     <Text style={styles.subtitle}>Recovery analysis for last 7 days</Text>
                     <View style={styles.summaryGrid}>
                     <SummaryCard
@@ -149,7 +199,26 @@ export default function AnalysisScreen() {
                             ))}
                         </View>
                     </View>
-                </Pressable> : <Pressable onPress={(prev)=> setFlag(!prev)}><AnalysisChart/></Pressable> }
+                </Pressable> : <AnalysisChart recoveryCheckinData={recoveryCheckinData} setPainScoreGraphFlag={setPainScoreGraphFlag}/>}
+
+                 <Pressable style={styles.card}>
+                    <Text style={styles.subtitle}>RPE and mood analysis for last 7 days</Text>
+                    <View style={styles.summaryGrid}>
+                        <SummaryCard
+                            label="Average RPE"
+                            value={rpe.toLocaleString()}
+                        />
+                        <View style={styles.painLocationList}>
+                            <Text style={styles.summaryText}>You reported mood as:</Text>
+
+                            {mood.map((mood) => (
+                                <Text key={mood} style={styles.painLocationText}>
+                                    {mood}
+                                </Text>
+                            ))}
+                        </View>
+                    </View>
+                </Pressable>
 
             </ScrollView>
 

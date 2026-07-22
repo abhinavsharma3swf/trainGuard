@@ -92,9 +92,9 @@ export default function HomeScreen() {
                         {pendingCheckins > 5 ? "Red" : pendingCheckins > 1 ? "Yellow" : "Green"}
                     </Text>
                     <Text style={styles.statusMessage}>
-                        {pendingCheckins > 0
-                            ? `${pendingCheckins} activit${pendingCheckins > 1 ? "ies need" : " needs"} a recovery check-in. Complete ${pendingCheckins > 1 ? "them" : "it"} to update the status.`
-                            : "All recent activities have recovery check-ins."}
+                        {pendingCheckins === 1 ? `${pendingCheckins} activity needs a recovery check-in. Complete it to update the status.`
+                            : pendingCheckins > 1 ? `${pendingCheckins} activities need recovery check-ins. Complete them to update the status.`
+                            : "All recent activities have recovery check-ins." }
                     </Text>
 
                 </View>

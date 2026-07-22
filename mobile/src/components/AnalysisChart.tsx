@@ -1,13 +1,18 @@
-import React, {useRef, useEffect, useState} from 'react';
-import {View, StyleSheet, Dimensions, Text, ScrollView, Platform} from 'react-native';
-import {LineChart} from "react-native-gifted-charts";
+import React, {useRef, useEffect, useState, SetStateAction, Dispatch} from 'react';
+import {View, StyleSheet, Dimensions, Text, ScrollView, Platform, Pressable, TouchableOpacity} from 'react-native';
+import {LineChart, lineDataItem} from "react-native-gifted-charts";
 import {getRecoveryCheckins, RecoveryCheckin} from "@/services/recoveryApi";
 
 
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
-export default function AnalysisChart() {
+type AnalysisChartProps = {
+    recoveryCheckinData: RecoveryCheckin[];
+    setPainScoreGraphFlag: Dispatch<SetStateAction<boolean>>;
+}
+
+export default function AnalysisChart({recoveryCheckinData, setPainScoreGraphFlag}: AnalysisChartProps) {
     // Access the underlying native ScrollView inside Gifted Charts
     const chartScrollRef = useRef<ScrollView>(null);
 
@@ -18,38 +23,21 @@ export default function AnalysisChart() {
         }, 150);
     }, []);
 
-    const [recoveryCheckinData, setRecoveryCheckinData] = useState<any>([])
-
-    useEffect(() => {
-        getRecoveryCheckins(0,20).then(
-            data => {
-                const fitnessData: { value: number; label: string }[] = data.map((item)=> {
-                    const date = new Date(item.createdAt).toLocaleDateString('en-US', {
-                        month: 'short',
-                        day: 'numeric'
-                    })
-                    return {
-                        value: item.painScore, label: date
-                    }
-                })
-                const sortedData = fitnessData.sort((a, b) => new Date(a.label).getTime() - new Date(b.label).getTime())
-                setRecoveryCheckinData(sortedData)
-            }
-        )
-    }, []);
 
     return (
         <View style={styles.container}>
             <View>
                 <Text style={styles.cardTitle}>Pain score trend</Text>
+                <Pressable onPress={()=> setPainScoreGraphFlag(false)}><Text style={styles.cardTitle}>Back</Text></Pressable>
+                <View style={{flex: 1}}>
                 <LineChart
                     // Essential layout configs
                     scrollRef={chartScrollRef}
-                    data={recoveryCheckinData}
+                    data={recoveryCheckinData as any as lineDataItem[]}
                     width={SCREEN_WIDTH - 85}
                     height={100}
-                    initialSpacing={20}
-                    endSpacing={0}
+                    initialSpacing={1}
+                    endSpacing={1}
                     spacing={55} // Horizontal gap size between data points
                     noOfSections={4}
                     stepValue={2.5}
@@ -63,6 +51,8 @@ export default function AnalysisChart() {
                     yAxisColor='white'
                     yAxisTextStyle={{ color: '#8E8E93', fontSize: 15 }}
                     xAxisLabelTextStyle={{ color: '#8E8E93', fontSize: 15, width: 60 }}
+                    xAxisLength={310}
+
 
                     // Tooltip and Drag Selector Line Configurations
                     pointerConfig={Platform.OS === 'ios' ? undefined : {
@@ -70,7 +60,7 @@ export default function AnalysisChart() {
                         pointerStripWidth: 2,
                         pointerStripHeight: 90,
                         pointerColor: '#e31c0a',
-                        pointerheight: 1,
+                        height: 1,
                         radius: 10,
                         pointerLabelComponent: (items: any) => {
                             return (
@@ -85,6 +75,7 @@ export default function AnalysisChart() {
                         tooltipShiftY: -25
                     }}
                 />
+                </View>
             </View>
         </View>
     );
