@@ -3,6 +3,7 @@ package com.trainguard.backend.strava;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public record StravaActivityResponseRecord(
         Long id,
@@ -40,10 +41,11 @@ public record StravaActivityResponseRecord(
 
         StravaAthleteSummaryRecord athlete,
 
-        @JsonProperty("start_latlng")
-        Double start_latlng,
-
         @JsonProperty("description")
-        String description
+        String description,
+
+        @JsonProperty("start_latlng")
+        List<Double> start_latlng
+
 ) {
 }

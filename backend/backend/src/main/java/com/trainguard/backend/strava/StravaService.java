@@ -35,6 +35,12 @@ public class StravaService {
     private ActivityImportRequestRecord toActivityImportRequest(
             StravaActivityResponseRecord stravaActivity,
             Long athleteId) {
+        Double start_latlng = null;
+
+        if(stravaActivity.start_latlng() != null) {
+            start_latlng = stravaActivity.start_latlng().get(0);
+        }
+
         return ActivityImportRequestRecord.builder()
                 .externalSource("STRAVA")
                 .externalActivityId(String.valueOf(stravaActivity.id()))
@@ -51,7 +57,7 @@ public class StravaService {
                 .weightedAverageWatts(stravaActivity.weightedAverageWatts())
                 .athleteId(athleteId)
                 .description(stravaActivity.description())
-                .start_latlng(stravaActivity.start_latlng())
+                .start_latlng(start_latlng)
 
                 .build();
     }
