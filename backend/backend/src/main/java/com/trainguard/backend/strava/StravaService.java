@@ -36,9 +36,9 @@ public class StravaService {
             StravaActivityResponseRecord stravaActivity,
             Long athleteId) {
         Double start_latlng = null;
+        System.out.println(stravaActivity.description() + "This is the description");
 
         if(stravaActivity.start_latlng() != null && stravaActivity.start_latlng().size() == 2) {
-            System.out.println("start_latlng: " + stravaActivity.start_latlng());
             start_latlng = stravaActivity.start_latlng().get(0);
         }
 
