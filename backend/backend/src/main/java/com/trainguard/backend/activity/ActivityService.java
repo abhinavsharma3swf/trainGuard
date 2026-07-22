@@ -42,6 +42,8 @@ public class ActivityService {
         activity.setMaxHeartbeat(requestRecord.maxHeartbeat());
         activity.setAverageWatts(requestRecord.averageWatts());
         activity.setWeightedAverageWatts(requestRecord.weightedAverageWatts());
+        activity.setStart_latlng(requestRecord.start_latlng());
+        activity.setDescription(requestRecord.description());
 
         if (activity.getImportedAt() == null) {
             activity.setImportedAt(LocalDateTime.now());
@@ -69,7 +71,9 @@ public class ActivityService {
                 activity.getStartDate(),
                 distanceMiles,
                 movingTimeMinutes,
-                pacePerMile
+                pacePerMile,
+                activity.getStart_latlng(),
+                activity.getDescription()
         );
     }
 

@@ -51,6 +51,10 @@ public class ActivityEntity {
 
     private Long athleteId;
 
+    private Double start_latlng;
+
+    private String description;
+
     @OneToMany(mappedBy = "activity")
     @Builder.Default
     private List<RecoveryCheckinEntity> recoveryCheckins = new ArrayList<>();

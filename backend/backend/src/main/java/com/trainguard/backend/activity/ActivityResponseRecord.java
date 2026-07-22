@@ -13,6 +13,8 @@ public record ActivityResponseRecord(
         LocalDateTime startDate,
         Double distanceMiles,
         Integer movingTimeMinutes,
-        String pacePerMile
+        String pacePerMile,
+        Double start_latlng,
+        String description
 ) {
 }

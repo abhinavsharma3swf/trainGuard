@@ -19,6 +19,9 @@ public record ActivityImportRequestRecord(
         Double maxHeartbeat,
         Double averageWatts,
         Double weightedAverageWatts,
-        Long athleteId
+        Long athleteId,
+        String description,
+        Double start_latlng
+
 ) {
 }

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="trainguard@localhost" uuid="05cdd38d-0fa6-46fd-b595-85bebd9d12ce">
+    <data-source source="LOCAL" name="trainguard@localhost" uuid="1c199a56-078d-4d1e-9808-6cbd86c64bc3">
       <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
+      <imported>true</imported>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
       <jdbc-url>jdbc:postgresql://localhost:5435/trainguard</jdbc-url>
       <jdbc-additional-properties>

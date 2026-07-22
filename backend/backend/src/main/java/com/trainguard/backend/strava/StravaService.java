@@ -50,6 +50,8 @@ public class StravaService {
                 .averageWatts(stravaActivity.averageWatts())
                 .weightedAverageWatts(stravaActivity.weightedAverageWatts())
                 .athleteId(athleteId)
+                .description(stravaActivity.description())
+                .start_latlng(stravaActivity.start_latlng())
 
                 .build();
     }

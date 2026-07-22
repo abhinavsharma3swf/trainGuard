@@ -31,6 +31,7 @@ export default function ConnectScreen() {
         checkExistingConnection();
     }, []);
 
+
     const handleConnectStrava = async () => {
         try {
             setIsConnecting(true);

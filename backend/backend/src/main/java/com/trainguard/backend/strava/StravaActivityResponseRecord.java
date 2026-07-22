@@ -38,6 +38,12 @@ public record StravaActivityResponseRecord(
         @JsonProperty("weighted_average_watts")
         Double weightedAverageWatts,
 
-        StravaAthleteSummaryRecord athlete
+        StravaAthleteSummaryRecord athlete,
+
+        @JsonProperty("start_latlng")
+        Double start_latlng,
+
+        @JsonProperty("description")
+        String description
 ) {
 }
