@@ -17,6 +17,7 @@ public record DashboardFeedRecord(
         Integer painScore,
         String painLocation,
         String mood,
-        String note
+        String note,
+        Double start_latlng
 ) {
 }
