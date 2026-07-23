@@ -1,5 +1,5 @@
-import {ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
-import {useCallback, useState} from "react";
+import {Image, ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
+import React, {useCallback, useState} from "react";
 import {ActivityCard} from "@/components/ActivityCard";
 import {SummaryCard} from "@/components/SummaryCard";
 import {syncStravaActivities} from "@/services/stravaApi";
@@ -14,7 +14,6 @@ export default function HomeScreen() {
     const [isSyncing, setIsSyncing] = useState(false);
     const [error, setError] = useState("");
     const {feedItems, isLoading, refreshDashboardFeed} = useDashboardData();
-
 
     const handleSync = async () => {
         try {
@@ -36,6 +35,7 @@ export default function HomeScreen() {
             refreshDashboardFeed();
         }, [])
     );
+
 
     const pendingCheckins = feedItems.filter(
         (item) => item.checkinStatus === "PENDING"
@@ -67,15 +67,27 @@ export default function HomeScreen() {
                         <Text style={styles.subtitle}>Effort tracked. Injury skipped</Text>
                     </View>
 
-                    <TouchableOpacity
+                    {feedItems.length <= 0 && <TouchableOpacity
                         style={[styles.syncButton, isSyncing && styles.syncButtonDisabled]}
                         onPress={handleSync}
-                        disabled={isSyncing}
+                        disabled={isSyncing || feedItems.length > 0}
                     >
                         <Text style={styles.syncText}>
                             {isSyncing ? "Syncing..." : "Sync"}
                         </Text>
-                    </TouchableOpacity>
+                    </TouchableOpacity>}
+
+                    {feedItems.length > 0 &&
+                        <Image source={require("@/assets/images/smartGaugeAppIcon.png")}
+                               resizeMode="contain"
+                               style={{
+                                   backgroundColor: "#fd5900",
+                                   paddingHorizontal: 16,
+                                   paddingVertical: 10,
+                                   borderRadius: 12, width: 65, height: 60
+                               }}/>
+
+                    }
                 </View>
                 {error ? <Text style={styles.errorText}>{error}</Text> : null}
                 <View

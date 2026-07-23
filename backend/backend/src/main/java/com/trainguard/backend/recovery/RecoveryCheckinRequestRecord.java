@@ -11,5 +11,10 @@ public record RecoveryCheckinRequestRecord (
         String mood,
         String note,
         String sportType,
-        Long athleteId
+        Long athleteId,
+        Integer temperature,
+        Integer feelsLikeTemperature,
+        Integer humidity,
+        Integer windSpeed,
+        Integer dewPoint
 ){}

@@ -11,6 +11,11 @@ public record RecoveryCheckinResponseRecord(
         String mood,
         String note,
         String sportType,
-        LocalDateTime createdAt
+        LocalDateTime createdAt,
+        Integer temperature,
+        Integer feelsLikeTemperature,
+        Integer humidity,
+        Integer windSpeed,
+        Integer dewPoint
 ) {
 }

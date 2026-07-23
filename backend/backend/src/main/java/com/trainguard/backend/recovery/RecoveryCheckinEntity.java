@@ -40,4 +40,14 @@ public class RecoveryCheckinEntity {
 
     private LocalDateTime createdAt;
 
+    private Integer temperature;
+
+    private Integer feelsLikeTemperature;
+
+    private Integer humidity;
+
+    private Integer windSpeed;
+
+    private Integer dewPoint;
+
 }

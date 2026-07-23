@@ -103,11 +103,12 @@ export default function AnalysisScreen() {
     //For graph//
 
     const [recoveryCheckinData, setRecoveryCheckinData] = useState<any>([])
+    const [rpeCheckinData, setRpeCheckinData] = useState<any>([])
 
     useEffect(() => {
-        getRecoveryCheckins(0,20).then(
+        getRecoveryCheckins(0, 20).then(
             data => {
-                const fitnessData: { value: number; label: string }[] = data.map((item)=> {
+                const fitnessData: { value: number; label: string }[] = data.map((item) => {
                     const date = new Date(item.createdAt).toLocaleDateString('en-US', {
                         month: 'short',
                         day: 'numeric'
@@ -118,90 +119,105 @@ export default function AnalysisScreen() {
                 })
                 const sortedData = fitnessData.sort((a, b) => new Date(a.label).getTime() - new Date(b.label).getTime())
                 setRecoveryCheckinData(sortedData)
+
+                const fitnessRpeData: { value: number; label: string }[] = data.map((item) => {
+                    const date = new Date(item.createdAt).toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric'
+                    })
+                    return {
+                        value: item.rpe, label: date
+                    }
+                })
+                const sortedRpeData = fitnessRpeData.sort((a, b) => new Date(a.label).getTime() - new Date(b.label).getTime())
+                setRpeCheckinData(sortedRpeData);
             }
         )
+
     }, []);
     //code end//
-
-
-
 
     return (
         <View style={styles.screen}>
             <ScrollView contentContainerStyle={styles.content}>
                 <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
                     <View>
-                <Text style={styles.appName}>Smart Gauge</Text>
-                <Text style={styles.subtitle}>Analysis</Text>
+                        <Text style={styles.appName}>Smart Gauge</Text>
+                        <Text style={styles.subtitle}>Analysis</Text>
                     </View>
                     <Image source={require("@/assets/images/smartGaugeAppIcon.png")}
                            resizeMode="contain"
-                           style={{backgroundColor: "#fd5900",
+                           style={{
+                               backgroundColor: "#fd5900",
                                paddingHorizontal: 16,
                                paddingVertical: 10,
-                               borderRadius: 12, width: 65, height: 60}}/>
+                               borderRadius: 12, width: 65, height: 60
+                           }}/>
                 </View>
-                    <TouchableOpacity
-                        style={styles.card}
-                        onPress={handleChangeSummaryCard}>
-                        <Text style={styles.subtitle}>Total training volume for the last 7 days </Text>
-                        <View style={styles.summaryGrid}>
-                            {
-                                displaySummaryCardInMiles ?
-                                    <>
-                                        <SummaryCard
-                                            label="Run Miles"
-                                            value={runMiles.toFixed(2)}
-                                            unit="mi"
-                                            instructions="Click for hours"
-                                        />
-                                        <SummaryCard
-                                            label="Bike Miles"
-                                            value={bikeDistance.toFixed(2)}
-                                            unit="mi"
-                                            instructions="Click for hours"
-                                        />
-                                    </>
-                                    :
-                                    <>
-                                        <SummaryCard
-                                            label="Run Hours"
-                                            value={runHours.toFixed(2)}
-                                            unit="hr"
-                                            instructions="Click for miles"
-                                        />
-                                        <SummaryCard
-                                            label="Bike Hours"
-                                            value={bikeHours.toFixed(2)}
-                                            unit="hr"
-                                            instructions="Click for miles"
-                                        />
-                                    </>
-                            }
-                        </View>
-                    </TouchableOpacity>
-
-
-                {painScoreGraphFlag ? <Pressable style={styles.card} onPress={(prev)=> setPainScoreGraphFlag(!prev)}>
-                    <Text style={styles.subtitle}>Recovery analysis for last 7 days</Text>
+                <TouchableOpacity
+                    style={styles.card}
+                    onPress={handleChangeSummaryCard}>
+                    <Text style={styles.subtitle}>Total training volume for the last 7 days </Text>
                     <View style={styles.summaryGrid}>
-                    <SummaryCard
-                        label="Average Pain Score"
-                        value={pain.toLocaleString()}
-                    />
-                        <View style={styles.painLocationList}>
-                            <Text style={styles.summaryText}>You reported pain in:</Text>
-
-                            {painLocations.map((location) => (
-                                <Text key={location} style={styles.painLocationText}>
-                                    {location}
-                                </Text>
-                            ))}
-                        </View>
+                        {
+                            displaySummaryCardInMiles ?
+                                <>
+                                    <SummaryCard
+                                        label="Run Miles"
+                                        value={runMiles.toFixed(2)}
+                                        unit="mi"
+                                        instructions="Click for hours"
+                                    />
+                                    <SummaryCard
+                                        label="Bike Miles"
+                                        value={bikeDistance.toFixed(2)}
+                                        unit="mi"
+                                        instructions="Click for hours"
+                                    />
+                                </>
+                                :
+                                <>
+                                    <SummaryCard
+                                        label="Run Hours"
+                                        value={runHours.toFixed(2)}
+                                        unit="hr"
+                                        instructions="Click for miles"
+                                    />
+                                    <SummaryCard
+                                        label="Bike Hours"
+                                        value={bikeHours.toFixed(2)}
+                                        unit="hr"
+                                        instructions="Click for miles"
+                                    />
+                                </>
+                        }
                     </View>
-                </Pressable> : <AnalysisChart recoveryCheckinData={recoveryCheckinData} setPainScoreGraphFlag={setPainScoreGraphFlag}/>}
+                </TouchableOpacity>
 
-                 <Pressable style={styles.card}>
+
+                {painScoreGraphFlag ? <Pressable style={styles.card} onPress={(prev) => setPainScoreGraphFlag(!prev)}>
+                        <Text style={styles.subtitle}>Recovery analysis for last 7 days</Text>
+                        <View style={styles.summaryGrid}>
+                            <SummaryCard
+                                label="Average Pain Score"
+                                value={pain.toLocaleString()}
+                            />
+                            <View style={styles.painLocationList}>
+                                <Text style={styles.summaryText}>You reported pain</Text>
+
+                                {painLocations.map((location) => (
+                                    <Text key={location} style={styles.painLocationText}>
+                                        {location}
+                                    </Text>
+                                ))}
+                            </View>
+                        </View>
+                    </Pressable> :
+                    <AnalysisChart recoveryCheckinData={recoveryCheckinData} setGraphFlag={setPainScoreGraphFlag}
+                                   metric="painScore"/>}
+
+                {rpeFlag ?
+                <Pressable style={styles.card} onPress={(prev) => setRpeFlag(!prev)}>
                     <Text style={styles.subtitle}>RPE and mood analysis for last 7 days</Text>
                     <View style={styles.summaryGrid}>
                         <SummaryCard
@@ -209,7 +225,7 @@ export default function AnalysisScreen() {
                             value={rpe.toLocaleString()}
                         />
                         <View style={styles.painLocationList}>
-                            <Text style={styles.summaryText}>You reported mood as:</Text>
+                            <Text style={styles.summaryText}>Your reported mood</Text>
 
                             {mood.map((mood) => (
                                 <Text key={mood} style={styles.painLocationText}>
@@ -218,8 +234,9 @@ export default function AnalysisScreen() {
                             ))}
                         </View>
                     </View>
-                </Pressable>
-
+                </Pressable> :
+                <AnalysisChart recoveryCheckinData={rpeCheckinData} metric={'rpe'}
+                               setGraphFlag={setRpeFlag}/>}
             </ScrollView>
 
 

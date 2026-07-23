@@ -7,12 +7,16 @@ import {getRecoveryCheckins, RecoveryCheckin} from "@/services/recoveryApi";
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
+type ChartMetric = "painScore" | "rpe";
+
 type AnalysisChartProps = {
     recoveryCheckinData: RecoveryCheckin[];
-    setPainScoreGraphFlag: Dispatch<SetStateAction<boolean>>;
-}
+    metric: ChartMetric;
+    setGraphFlag: Dispatch<SetStateAction<boolean>>;
+};
 
-export default function AnalysisChart({recoveryCheckinData, setPainScoreGraphFlag}: AnalysisChartProps) {
+
+export default function AnalysisChart({recoveryCheckinData, metric, setGraphFlag}: AnalysisChartProps) {
     // Access the underlying native ScrollView inside Gifted Charts
     const chartScrollRef = useRef<ScrollView>(null);
 
@@ -24,16 +28,26 @@ export default function AnalysisChart({recoveryCheckinData, setPainScoreGraphFla
     }, []);
 
 
+
+    const chartTitle =
+        metric === "painScore"
+            ? "Pain score trend"
+            : "RPE trend";
+
+    const metricLabel =
+        metric === "painScore"
+            ? "Pain Score"
+            : "RPE";
+
     return (
         <View style={styles.container}>
             <View>
-                <Text style={styles.cardTitle}>Pain score trend</Text>
-                <Pressable onPress={()=> setPainScoreGraphFlag(false)}><Text style={styles.cardTitle}>Back</Text></Pressable>
+                <Text style={styles.cardTitle}>{chartTitle}</Text>
                 <View style={{flex: 1}}>
                 <LineChart
                     // Essential layout configs
                     scrollRef={chartScrollRef}
-                    data={recoveryCheckinData as any as lineDataItem[]}
+                    data={metric === 'painScore' ? recoveryCheckinData as lineDataItem[] : recoveryCheckinData as lineDataItem[]}
                     width={SCREEN_WIDTH - 85}
                     height={100}
                     initialSpacing={1}
@@ -66,7 +80,7 @@ export default function AnalysisChart({recoveryCheckinData, setPainScoreGraphFla
                             return (
                                 <View style={styles.tooltipBox}>
                                     <Text style={styles.tooltipText}>
-                                        {items[0].value} Pain Score
+                                        {items?.[0]?.value ?? "N/A"} {metricLabel}
                                     </Text>
                                 </View>
                             );
@@ -107,15 +121,6 @@ const styles = StyleSheet.create({
         marginBottom: 8,
         paddingLeft: 25,
     },
-    // chartWrapper: {
-    //     alignItems: 'center',
-    //     justifyContent: 'center',
-    //     // height: 180,
-    //     paddingTop: 40,
-    //     borderRadius: 18,
-    //     maxHeight: "30%",
-    //     backgroundColor: "#956c6c",
-    // },
     tooltipBox: {
         backgroundColor: '#1F1F23',
         borderRadius: 6,

@@ -164,6 +164,11 @@ public class RecoveryCheckinService {
         checkin.setMood(request.mood());
         checkin.setNote(request.note());
         checkin.setSportType(activity.getSportType());
+        checkin.setTemperature(request.temperature());
+        checkin.setFeelsLikeTemperature(request.feelsLikeTemperature());
+        checkin.setHumidity(request.humidity());
+        checkin.setWindSpeed(request.windSpeed());
+        checkin.setDewPoint(request.dewPoint());
 
         return recoveryCheckinRepository.save(checkin);
     }
@@ -182,7 +187,12 @@ public class RecoveryCheckinService {
                 checkin.getMood(),
                 checkin.getNote(),
                 checkin.getSportType(),
-                checkin.getCreatedAt()
+                checkin.getCreatedAt(),
+                checkin.getTemperature(),
+                checkin.getFeelsLikeTemperature(),
+                checkin.getHumidity(),
+                checkin.getWindSpeed(),
+                checkin.getDewPoint()
         );
     }
 

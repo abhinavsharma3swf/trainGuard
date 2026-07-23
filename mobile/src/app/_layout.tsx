@@ -1,7 +1,6 @@
 import { Stack } from "expo-router";
 import {DashboardDataProvider} from "@/context/DashboardDataContext";
 
-
 export default function RootLayout() {
     return (
         <DashboardDataProvider>

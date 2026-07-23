@@ -6,7 +6,6 @@ import {
     useEffect,
     useState,
 } from "react";
-
 import { getDashboardFeed } from "@/services/dashboardApi";
 
 export type DashboardFeedItem = {
@@ -89,6 +88,5 @@ export function useDashboardData() {
     if (!context) {
         throw new Error("useDashboardData must be used inside DashboardDataProvider");
     }
-
     return context;
 }
