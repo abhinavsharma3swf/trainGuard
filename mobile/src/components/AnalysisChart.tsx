@@ -1,8 +1,6 @@
-import React, {useRef, useEffect, useState, SetStateAction, Dispatch} from 'react';
-import {View, StyleSheet, Dimensions, Text, ScrollView, Platform, Pressable, TouchableOpacity} from 'react-native';
+import React, {Dispatch, SetStateAction, useEffect, useRef} from 'react';
+import {Dimensions, Platform, Pressable, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {LineChart, lineDataItem} from "react-native-gifted-charts";
-import {getRecoveryCheckins, RecoveryCheckin} from "@/services/recoveryApi";
-
 
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
@@ -10,23 +8,27 @@ const SCREEN_WIDTH = Dimensions.get('window').width;
 type ChartMetric = "painScore" | "rpe";
 
 type AnalysisChartProps = {
-    recoveryCheckinData: RecoveryCheckin[];
+    checkinData: lineDataItem[];
     metric: ChartMetric;
     setGraphFlag: Dispatch<SetStateAction<boolean>>;
+    rpeFlag?: boolean;
+    painScoreFlag?: boolean;
 };
 
 
-export default function AnalysisChart({recoveryCheckinData, metric, setGraphFlag}: AnalysisChartProps) {
+export default function AnalysisChart({checkinData, metric, rpeFlag, setGraphFlag}: AnalysisChartProps) {
     // Access the underlying native ScrollView inside Gifted Charts
     const chartScrollRef = useRef<ScrollView>(null);
 
     useEffect(() => {
-        // Delays slightly to allow layout calculations, then scrolls to the edge
-        setTimeout(() => {
-            chartScrollRef.current?.scrollToEnd({ animated: false });
+        const timeout = setTimeout(() => {
+            chartScrollRef.current?.scrollToEnd({
+                animated: false,
+            });
         }, 150);
-    }, []);
 
+        return () => clearTimeout(timeout);
+    }, []);
 
 
     const chartTitle =
@@ -43,53 +45,56 @@ export default function AnalysisChart({recoveryCheckinData, metric, setGraphFlag
         <View style={styles.container}>
             <View>
                 <Text style={styles.cardTitle}>{chartTitle}</Text>
-                <View style={{flex: 1}}>
-                <LineChart
-                    // Essential layout configs
-                    scrollRef={chartScrollRef}
-                    data={metric === 'painScore' ? recoveryCheckinData as lineDataItem[] : recoveryCheckinData as lineDataItem[]}
-                    width={SCREEN_WIDTH - 85}
-                    height={100}
-                    initialSpacing={1}
-                    endSpacing={1}
-                    spacing={55} // Horizontal gap size between data points
-                    noOfSections={4}
-                    stepValue={2.5}
-                    areaChart
-                    color="#FC4C02"
-                    startFillColor="rgba(252, 76, 2, 0.35)"
-                    endFillColor="rgba(252, 76, 2, 0.01)"
-                    thickness={5}
-                    hideRules // Removes harsh grid backgrounds
-                    xAxisColor="white"
-                    yAxisColor='white'
-                    yAxisTextStyle={{ color: '#8E8E93', fontSize: 15 }}
-                    xAxisLabelTextStyle={{ color: '#8E8E93', fontSize: 15, width: 60 }}
-                    xAxisLength={310}
+                {!rpeFlag ? <View style={{flex: 1, flexDirection: 'column', flexWrap: 'wrap'}}>
+                    <Pressable onPress={() => setGraphFlag(true)}>
+
+                        <LineChart
+                            // Essential layout configs
+                            scrollRef={chartScrollRef}
+                            data={checkinData}
+                            width={SCREEN_WIDTH - 85}
+                            height={100}
+                            initialSpacing={1}
+                            endSpacing={1}
+                            spacing={55} // Horizontal gap size between data points
+                            noOfSections={4}
+                            stepValue={2.5}
+                            areaChart
+                            color="#FC4C02"
+                            startFillColor="rgba(252, 76, 2, 0.35)"
+                            endFillColor="rgba(252, 76, 2, 0.01)"
+                            thickness={5}
+                            hideRules // Removes harsh grid backgrounds
+                            xAxisColor="white"
+                            yAxisColor='white'
+                            yAxisTextStyle={{color: '#8E8E93', fontSize: 15}}
+                            xAxisLabelTextStyle={{color: '#8E8E93', fontSize: 15, width: 60}}
+                            xAxisLength={310}
 
 
-                    // Tooltip and Drag Selector Line Configurations
-                    pointerConfig={Platform.OS === 'ios' ? undefined : {
-                        pointerStripColor: '#FC4C02',
-                        pointerStripWidth: 2,
-                        pointerStripHeight: 90,
-                        pointerColor: '#e31c0a',
-                        height: 1,
-                        radius: 10,
-                        pointerLabelComponent: (items: any) => {
-                            return (
-                                <View style={styles.tooltipBox}>
-                                    <Text style={styles.tooltipText}>
-                                        {items?.[0]?.value ?? "N/A"} {metricLabel}
-                                    </Text>
-                                </View>
-                            );
-                        },
-                        tooltipShiftX: -55,
-                        tooltipShiftY: -25
-                    }}
-                />
-                </View>
+                            // Tooltip and Drag Selector Line Configurations
+                            pointerConfig={Platform.OS === 'web' ? undefined : {
+                                pointerStripColor: '#FC4C02',
+                                pointerStripWidth: 2,
+                                pointerStripHeight: 90,
+                                pointerColor: '#e31c0a',
+                                height: 1,
+                                radius: 10,
+                                pointerLabelComponent: (items: any) => {
+                                    return (
+                                        <View style={styles.tooltipBox}>
+                                            <Text style={styles.tooltipText}>
+                                                {items?.[0]?.value ?? "N/A"} {metricLabel}
+                                            </Text>
+                                        </View>
+                                    );
+                                },
+                                tooltipShiftX: -55,
+                                tooltipShiftY: -25
+                            }}
+                        />
+                    </Pressable>
+                </View> : null}
             </View>
         </View>
     );
@@ -97,9 +102,10 @@ export default function AnalysisChart({recoveryCheckinData, metric, setGraphFlag
 
 const styles = StyleSheet.create({
     container: {
+        flex: 1,
         paddingVertical: 20,
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
+        shadowOffset: {width: 0, height: 4},
         shadowOpacity: 0.08,
         shadowRadius: 12,
         elevation: 3,

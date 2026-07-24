@@ -196,7 +196,7 @@ export default function AnalysisScreen() {
 
 
                 {painScoreGraphFlag ? <Pressable style={styles.card} onPress={(prev) => setPainScoreGraphFlag(!prev)}>
-                        <Text style={styles.subtitle}>Recovery analysis for last 7 days</Text>
+                        <Text style={styles.subtitle}>Average reported pain analysis</Text>
                         <View style={styles.summaryGrid}>
                             <SummaryCard
                                 label="Average Pain Score"
@@ -213,12 +213,12 @@ export default function AnalysisScreen() {
                             </View>
                         </View>
                     </Pressable> :
-                    <AnalysisChart recoveryCheckinData={recoveryCheckinData} setGraphFlag={setPainScoreGraphFlag}
-                                   metric="painScore"/>}
+                    <AnalysisChart checkinData={recoveryCheckinData} setGraphFlag={setPainScoreGraphFlag}
+                                   metric="painScore" painScoreFlag={painScoreGraphFlag}/>}
 
                 {rpeFlag ?
                 <Pressable style={styles.card} onPress={(prev) => setRpeFlag(!prev)}>
-                    <Text style={styles.subtitle}>RPE and mood analysis for last 7 days</Text>
+                    <Text style={styles.subtitle}>Average reported RPE and mood analysis</Text>
                     <View style={styles.summaryGrid}>
                         <SummaryCard
                             label="Average RPE"
@@ -235,8 +235,8 @@ export default function AnalysisScreen() {
                         </View>
                     </View>
                 </Pressable> :
-                <AnalysisChart recoveryCheckinData={rpeCheckinData} metric={'rpe'}
-                               setGraphFlag={setRpeFlag}/>}
+                <AnalysisChart checkinData={rpeCheckinData} metric={'rpe'}
+                               setGraphFlag={setRpeFlag} rpeFlag={rpeFlag}/>}
             </ScrollView>
 
 
