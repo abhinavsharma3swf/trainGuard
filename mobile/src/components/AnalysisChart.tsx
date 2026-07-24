@@ -11,12 +11,13 @@ type AnalysisChartProps = {
     checkinData: lineDataItem[];
     metric: ChartMetric;
     setGraphFlag: Dispatch<SetStateAction<boolean>>;
-    rpeFlag?: boolean;
-    painScoreFlag?: boolean;
+    // rpeFlag?: boolean;
+    // painScoreFlag?: boolean;
+    // temperatureFlag?: boolean;
 };
 
 
-export default function AnalysisChart({checkinData, metric, rpeFlag, setGraphFlag}: AnalysisChartProps) {
+export default function AnalysisChart({checkinData, metric, setGraphFlag}: AnalysisChartProps) {
     // Access the underlying native ScrollView inside Gifted Charts
     const chartScrollRef = useRef<ScrollView>(null);
 
@@ -45,7 +46,7 @@ export default function AnalysisChart({checkinData, metric, rpeFlag, setGraphFla
         <View style={styles.container}>
             <View>
                 <Text style={styles.cardTitle}>{chartTitle}</Text>
-                {!rpeFlag ? <View style={{flex: 1, flexDirection: 'column', flexWrap: 'wrap'}}>
+               <View style={{flex: 1, flexDirection: 'column', flexWrap: 'wrap'}}>
                     <Pressable onPress={() => setGraphFlag(true)}>
 
                         <LineChart
@@ -94,7 +95,7 @@ export default function AnalysisChart({checkinData, metric, rpeFlag, setGraphFla
                             }}
                         />
                     </Pressable>
-                </View> : null}
+                </View>
             </View>
         </View>
     );

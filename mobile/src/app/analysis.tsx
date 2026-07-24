@@ -1,18 +1,28 @@
 import {Image, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
-
 import {BottomNav} from "@/components/BottomNav";
 import {SummaryCard} from "@/components/SummaryCard";
 import {useDashboardData} from "@/context/DashboardDataContext";
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import AnalysisChart from "@/components/AnalysisChart";
-import {getRecoveryCheckins} from "@/services/recoveryApi";
+import {useHistoryData} from "@/context/HistoryDataContext";
+import {lineDataItem} from "react-native-gifted-charts";
+
+type TimeRange = 7 | 30 | "ALL";
 
 export default function AnalysisScreen() {
 
     const {feedItems} = useDashboardData();
+    const {recoveryItems, isLoading, hasMore, handleLoadMore} = useHistoryData();
     const [displaySummaryCardInMiles, setDisplaySummaryCardInMiles] = useState(true);
     const [painScoreGraphFlag, setPainScoreGraphFlag] = useState(true)
     const [rpeFlag, setRpeFlag] = useState(true);
+    const [temperatureFlag, setTemperatureFlag] = useState(true);
+    const [painData, setPainData] = useState<lineDataItem[]>([])
+    const [rpeData, setRpeData] = useState<lineDataItem[]>([])
+    const [temperatureData, setTemperatureData] = useState<lineDataItem[]>([])
+    const [selectedRange, setSelectedRange] = useState<TimeRange>(7);
+    const [averageTemperatureForTheCard, setAverageTemperatureForTheCard] = useState<number>(0)
+
 
     const isWithinLastSevenDays = (stringDate: string) => {
         const activityDate = new Date(stringDate);
@@ -100,51 +110,114 @@ export default function AnalysisScreen() {
     ];
     // calculate average pain score code end //
 
-    //Average temperature//
+    // average temperatures//
 
-    const temperatureScores = completedCheckins
-        .map((item)=> item.temperature)
-        .filter((temperature) => temperature !== null && temperature !== 0);
-    console.log(temperatureScores, "temp scores");
+    const avgTemp = recoveryItems
+        .map((item) => item.temperature)
+        .filter((score) => score !== null && score !== undefined);
 
-    console.log(completedCheckins, "completed checkins");
+    const averageTemp =
+        avgTemp.length === 0
+            ? 0
+            : avgTemp.reduce((sum, score) => sum + score, 0) / avgTemp.length;
 
-    //For graph//
+    // const temp = averageTemp.toFixed(0);
+    // setAverageTemperatureForTheCard(30)
 
-    const [recoveryCheckinData, setRecoveryCheckinData] = useState<any>([])
-    const [rpeCheckinData, setRpeCheckinData] = useState<any>([])
+
+    //average temperatures//
+
+
+    const filteredCheckins = useMemo(() => {
+        if(selectedRange === 'ALL'){
+            return recoveryItems;
+        }
+        const cutOffDate = new Date();
+        cutOffDate.setHours(0,0,0,0);
+        cutOffDate.setDate(cutOffDate.getDate() - selectedRange)
+
+        return recoveryItems.filter(item => new Date(item.createdAt) >= cutOffDate)
+    },[selectedRange, recoveryItems])
 
     useEffect(() => {
-        getRecoveryCheckins(0, 20).then(
-            data => {
-                const fitnessData: { value: number; label: string }[] = data.map((item) => {
-                    const date = new Date(item.createdAt).toLocaleDateString('en-US', {
-                        month: 'short',
-                        day: 'numeric'
-                    })
-                    return {
-                        value: item.painScore, label: date
-                    }
-                })
-                const sortedData = fitnessData.sort((a, b) => new Date(a.label).getTime() - new Date(b.label).getTime())
-                setRecoveryCheckinData(sortedData)
 
-                const fitnessRpeData: { value: number; label: string }[] = data.map((item) => {
-                    const date = new Date(item.createdAt).toLocaleDateString('en-US', {
-                        month: 'short',
-                        day: 'numeric'
-                    })
-                    return {
-                        value: item.rpe, label: date
-                    }
-                })
-                const sortedRpeData = fitnessRpeData.sort((a, b) => new Date(a.label).getTime() - new Date(b.label).getTime())
-                setRpeCheckinData(sortedRpeData);
-            }
-        )
+        const painDataForTheAnalysisChart: lineDataItem[] =
+            recoveryItems
+                .filter(
+                    (item) =>
+                        item.painScore !== null &&
+                        item.painScore !== undefined &&
+                        item.painScore !== 0
+                )
+                .sort(
+                    (a, b) =>
+                        new Date(a.createdAt).getTime() -
+                        new Date(b.createdAt).getTime()
+                )
+                .map((item) => ({
+                    value: item.painScore as number,
+                    label: new Date(item.createdAt).toLocaleDateString(
+                        "en-US",
+                        {
+                            month: "short",
+                            day: "numeric",
+                        }
+                    ),
+                }));
+        setPainData(painDataForTheAnalysisChart);
 
-    }, []);
-    //code end//
+        const rpeDataForTheAnalysisChart: lineDataItem[] =
+            recoveryItems
+                .filter(
+                    (item) =>
+                        item.rpe !== null &&
+                        item.rpe !== undefined &&
+                        item.rpe !== 0
+                )
+                .sort(
+                    (a, b) =>
+                        new Date(a.createdAt).getTime() -
+                        new Date(b.createdAt).getTime()
+                )
+                .map((item) => ({
+                    value: item.rpe as number,
+                    label: new Date(item.createdAt).toLocaleDateString(
+                        "en-US",
+                        {
+                            month: "short",
+                            day: "numeric",
+                        }
+                    ),
+                }));
+        setRpeData(rpeDataForTheAnalysisChart);
+
+        const temperatureDataForTheAnalysisChart: lineDataItem[] =
+            recoveryItems
+                .filter(
+                    (item) =>
+                        item.temperature !== null &&
+                        item.temperature !== undefined &&
+                        item.temperature !== 0
+                )
+                .sort(
+                    (a, b) =>
+                        new Date(a.createdAt).getTime() -
+                        new Date(b.createdAt).getTime()
+                )
+                .map((item) => ({
+                    value: item.temperature as number,
+                    label: new Date(item.createdAt).toLocaleDateString(
+                        "en-US",
+                        {
+                            month: "short",
+                            day: "numeric",
+                        }
+                    ),
+                }));
+        setTemperatureData(temperatureDataForTheAnalysisChart);
+    }, [recoveryItems]);
+
+
 
     return (
         <View style={styles.screen}>
@@ -163,6 +236,38 @@ export default function AnalysisScreen() {
                                borderRadius: 12, width: 65, height: 60
                            }}/>
                 </View>
+
+                <View style={styles.rangeSelector}>
+                    {[7, 30, "ALL"].map((range) => {
+                        const isSelected = selectedRange === range;
+
+                        return (
+                            <Pressable
+                                key={range}
+                                style={[
+                                    styles.rangeButton,
+                                    isSelected && styles.rangeButtonSelected,
+                                ]}
+                                onPress={() =>
+                                    setSelectedRange(range as TimeRange)
+                                }
+                            >
+                                <Text
+                                    style={[
+                                        styles.rangeButtonText,
+                                        isSelected &&
+                                        styles.rangeButtonTextSelected,
+                                    ]}
+                                >
+                                    {range === "ALL" ? "All" : `${range}D`}
+                                </Text>
+                            </Pressable>
+                        );
+                    })}
+                </View>
+
+
+
                 <TouchableOpacity
                     style={styles.card}
                     onPress={handleChangeSummaryCard}>
@@ -209,7 +314,7 @@ export default function AnalysisScreen() {
                         <View style={styles.summaryGrid}>
                             <SummaryCard
                                 label="Average Pain Score"
-                                value={pain.toLocaleString()}
+                                value={pain}
                             />
                             <View style={styles.painLocationList}>
                                 <Text style={styles.summaryText}>You reported pain</Text>
@@ -222,8 +327,8 @@ export default function AnalysisScreen() {
                             </View>
                         </View>
                     </Pressable> :
-                    <AnalysisChart checkinData={recoveryCheckinData} setGraphFlag={setPainScoreGraphFlag}
-                                   metric="painScore" painScoreFlag={painScoreGraphFlag}/>}
+                    <AnalysisChart checkinData={painData} setGraphFlag={setPainScoreGraphFlag}
+                                   metric="painScore" />}
 
                 {rpeFlag ?
                 <Pressable style={styles.card} onPress={(prev) => setRpeFlag(!prev)}>
@@ -231,7 +336,7 @@ export default function AnalysisScreen() {
                     <View style={styles.summaryGrid}>
                         <SummaryCard
                             label="Average RPE"
-                            value={rpe.toLocaleString()}
+                            value={rpe}
                         />
                         <View style={styles.painLocationList}>
                             <Text style={styles.summaryText}>Your reported mood</Text>
@@ -244,27 +349,25 @@ export default function AnalysisScreen() {
                         </View>
                     </View>
                 </Pressable> :
-                <AnalysisChart checkinData={rpeCheckinData} metric={'rpe'}
-                               setGraphFlag={setRpeFlag} rpeFlag={rpeFlag}/>}
+                <AnalysisChart checkinData={rpeData} metric={'rpe'}
+                               setGraphFlag={setRpeFlag} />}
 
-                <Pressable style={styles.card}>
+                {temperatureFlag ?
+                    <Pressable style={styles.card} onPress={(prev) => setTemperatureFlag(!prev)}>
                     <Text style={styles.subtitle}>Average temperature and RPE analysis</Text>
                     <View style={styles.summaryGrid}>
                         <SummaryCard
                             label="Average temperature"
-                            value={rpe.toLocaleString()}
+                            value={averageTemperatureForTheCard.toLocaleString()}
                         />
                         <View style={styles.painLocationList}>
-                            <Text style={styles.summaryText}>Your reported mood</Text>
+                            <Text style={styles.summaryText}>Weather trend</Text>
+                            <Text style={styles.painLocationText}>
+                            </Text>
 
-                            {mood.map((mood) => (
-                                <Text key={mood} style={styles.painLocationText}>
-                                    {mood}
-                                </Text>
-                            ))}
                         </View>
                     </View>
-                </Pressable>
+                </Pressable> : null}
 
             </ScrollView>
 
@@ -328,11 +431,42 @@ const styles = StyleSheet.create({
         color: "#c5c6cd",
         fontSize: 16,
         marginBottom: 8,
+        width: 150
     },
     painLocationText: {
         color: "#fd5900",
         fontSize: 16,
         fontWeight: "800",
         marginBottom: 6,
+    },
+    rangeSelector: {
+        flexDirection: "row",
+        backgroundColor: "#151b1f",
+        borderRadius: 12,
+        borderWidth: 1,
+        borderColor: "#263238",
+        padding: 4,
+        marginBottom: 14,
+    },
+
+    rangeButton: {
+        flex: 1,
+        alignItems: "center",
+        paddingVertical: 9,
+        borderRadius: 9,
+    },
+
+    rangeButtonSelected: {
+        backgroundColor: "#fd5900",
+    },
+
+    rangeButtonText: {
+        color: "#8f9097",
+        fontSize: 13,
+        fontWeight: "700",
+    },
+
+    rangeButtonTextSelected: {
+        color: "#101415",
     },
 });

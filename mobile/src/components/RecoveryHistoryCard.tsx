@@ -33,7 +33,7 @@ export function RecoveryHistoryCard({ item }: RecoveryHistoryCardProps) {
             ) : null}
 
             {item.temperature || item.humidity ||  item.feelsLikeTemperature || item.windSpeed || item.dewPoint ? (
-                <Text style={styles.note}>Reported temperature {item.temperature}°F with {item.humidity}% humidity. Feels like temperature {item.feelsLikeTemperature}°F with dew point of {item.dewPoint}°F and {item.windSpeed}mph wind speed</Text>
+                <Text style={styles.temperature}>{item.temperature}°F feels like {item.feelsLikeTemperature}°F. Humidity {item.humidity}%. Dew point {item.dewPoint}°F and {item.windSpeed}mph wind speed</Text>
             ) : null}
         </View>
     );
@@ -89,4 +89,9 @@ const styles = StyleSheet.create({
         lineHeight: 19,
         marginTop: 12,
     },
+    temperature: {
+        color: "#adadf1",
+        fontSize: 12,
+        paddingTop: 12,
+    }
 });
