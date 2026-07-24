@@ -56,10 +56,10 @@ export default function RecoveryCheckInScreen() {
     const activityStart = new Date(currentActivity.startDate);
 
     const locales = Localization.getCalendars();
-    const deviceTimeZone = locales[0].timeZone;
+    const deviceTimeZone = locales[0].timeZone ?? "America/Los_Angeles";
     const activityEnd = new Date(activityStart);
     activityEnd.setHours(activityEnd.getHours() + 1);
-
+    const url = "https://api.open-meteo.com/v1/forecast";
     const params = {
         latitude: currentActivity?.start_latlng,
         longitude: currentActivity?.start_latlng,
@@ -74,10 +74,10 @@ export default function RecoveryCheckInScreen() {
         end_hour: activityEnd.toISOString().slice(0, 16),
         temperature_unit: "fahrenheit",
         wind_speed_unit: "mph",
-        timezone: `${deviceTimeZone}`,
+        timezone: deviceTimeZone,
     };
 
-    const url = "https://api.open-meteo.com/v1/forecast";
+
 
     async function fetchWeatherData() {
 
@@ -113,8 +113,6 @@ export default function RecoveryCheckInScreen() {
                 windSpeed: windSpeed ? windSpeed : 0,
                 dewPoint: dewPoint ? dewPoint : 0,
             })
-
-            console.log(temperature, humidity, apparentTemperature, windSpeed)
         } catch (error) {
             console.error("Error fetching weather data:", error);
         }

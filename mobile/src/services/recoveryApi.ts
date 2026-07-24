@@ -12,6 +12,11 @@ export type RecoveryCheckin = {
     note: string;
     sportType: string;
     createdAt: string;
+    temperature: number;
+    humidity: number;
+    feelsLikeTemperature: number;
+    windSpeed: number;
+    dewPoint: number;
 };
 
 export async function getRecoveryCheckins(

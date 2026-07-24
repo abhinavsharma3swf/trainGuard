@@ -100,6 +100,15 @@ export default function AnalysisScreen() {
     ];
     // calculate average pain score code end //
 
+    //Average temperature//
+
+    const temperatureScores = completedCheckins
+        .map((item)=> item.temperature)
+        .filter((temperature) => temperature !== null && temperature !== 0);
+    console.log(temperatureScores, "temp scores");
+
+    console.log(completedCheckins, "completed checkins");
+
     //For graph//
 
     const [recoveryCheckinData, setRecoveryCheckinData] = useState<any>([])
@@ -148,7 +157,7 @@ export default function AnalysisScreen() {
                     <Image source={require("@/assets/images/smartGaugeAppIcon.png")}
                            resizeMode="contain"
                            style={{
-                               backgroundColor: "#fd5900",
+                               // backgroundColor: "#fd5900",
                                paddingHorizontal: 16,
                                paddingVertical: 10,
                                borderRadius: 12, width: 65, height: 60
@@ -237,6 +246,26 @@ export default function AnalysisScreen() {
                 </Pressable> :
                 <AnalysisChart checkinData={rpeCheckinData} metric={'rpe'}
                                setGraphFlag={setRpeFlag} rpeFlag={rpeFlag}/>}
+
+                <Pressable style={styles.card}>
+                    <Text style={styles.subtitle}>Average temperature and RPE analysis</Text>
+                    <View style={styles.summaryGrid}>
+                        <SummaryCard
+                            label="Average temperature"
+                            value={rpe.toLocaleString()}
+                        />
+                        <View style={styles.painLocationList}>
+                            <Text style={styles.summaryText}>Your reported mood</Text>
+
+                            {mood.map((mood) => (
+                                <Text key={mood} style={styles.painLocationText}>
+                                    {mood}
+                                </Text>
+                            ))}
+                        </View>
+                    </View>
+                </Pressable>
+
             </ScrollView>
 
 

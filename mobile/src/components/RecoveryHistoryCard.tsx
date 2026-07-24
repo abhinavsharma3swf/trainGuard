@@ -31,6 +31,10 @@ export function RecoveryHistoryCard({ item }: RecoveryHistoryCardProps) {
             {item.note?.trim() ? (
                 <Text style={styles.note}>{item.note}</Text>
             ) : null}
+
+            {item.temperature || item.humidity ||  item.feelsLikeTemperature || item.windSpeed || item.dewPoint ? (
+                <Text style={styles.note}>Reported temperature {item.temperature}°F with {item.humidity}% humidity. Feels like temperature {item.feelsLikeTemperature}°F with dew point of {item.dewPoint}°F and {item.windSpeed}mph wind speed</Text>
+            ) : null}
         </View>
     );
 }

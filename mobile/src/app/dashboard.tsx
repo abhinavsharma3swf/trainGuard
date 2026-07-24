@@ -81,7 +81,7 @@ export default function HomeScreen() {
                         <Image source={require("@/assets/images/smartGaugeAppIcon.png")}
                                resizeMode="contain"
                                style={{
-                                   backgroundColor: "#fd5900",
+                                   // backgroundColor: "#fd5900",
                                    paddingHorizontal: 16,
                                    paddingVertical: 10,
                                    borderRadius: 12, width: 65, height: 60

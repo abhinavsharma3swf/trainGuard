@@ -1,85 +1,33 @@
-import { useEffect, useState } from "react";
 import {Image, Pressable, ScrollView, StyleSheet, Text, View} from "react-native";
 
-import { BottomNav } from "@/components/BottomNav";
-import { RecoveryHistoryCard } from "@/components/RecoveryHistoryCard";
-import {
-    getRecoveryCheckins,
-    RecoveryCheckin,
-} from "@/services/recoveryApi";
+import {BottomNav} from "@/components/BottomNav";
+import {RecoveryHistoryCard} from "@/components/RecoveryHistoryCard";
+import {useHistoryData} from "@/context/HistoryDataContext";
 
 export default function History() {
-    const [recoveryHistory, setRecoveryHistory] = useState<RecoveryCheckin[]>([]);
-    const [isLoading, setIsLoading] = useState(false);
-    const [page, setPage] = useState(0);
-    const [hasMore, setHasMore] = useState(true);
 
-    const pageSize = 20;
-
-    async function loadRecoveryHistory(pageToLoad = 0) {
-        if (isLoading || !hasMore) {
-            return;
-        }
-
-        try {
-            setIsLoading(true);
-
-            const data = await getRecoveryCheckins(pageToLoad, pageSize);
-
-            if (pageToLoad === 0) {
-                setRecoveryHistory(data);
-            } else {
-                setRecoveryHistory((currentHistory) => {
-                    const existingIds = new Set(currentHistory.map((item) => item.id));
-
-                    const newItems = data.filter((item) => !existingIds.has(item.id));
-
-                    return [...currentHistory, ...newItems];
-                });
-            }
-
-            setPage(pageToLoad);
-
-            if (data.length < pageSize) {
-                setHasMore(false);
-            }
-        } catch (error) {
-            console.error("Could not load recovery history:", error);
-        } finally {
-            setIsLoading(false);
-        }
-    }
-
-    function handleLoadMore() {
-        if (!hasMore) {
-            return;
-        }
-
-        loadRecoveryHistory(page + 1);
-    }
-
-    useEffect(() => {
-        loadRecoveryHistory(0);
-    }, []);
+    const {recoveryItems, isLoading, hasMore, handleLoadMore} = useHistoryData();
 
     return (
         <View style={styles.screen}>
             <ScrollView contentContainerStyle={styles.scrollContent}>
                 <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
                     <View>
-                <Text style={styles.appName}>Smart Gauge</Text>
-                <Text style={styles.subtitle}>Recovery History</Text>
+                        <Text style={styles.appName}>Smart Gauge</Text>
+                        <Text style={styles.subtitle}>Recovery History</Text>
                     </View>
                     <Image source={require("@/assets/images/smartGaugeAppIcon.png")}
-                        resizeMode="contain"
-                           style={{backgroundColor: "#fd5900",
-                        paddingHorizontal: 16,
-                        paddingVertical: 10,
-                        borderRadius: 12, width: 65, height: 60}}/>
+                           resizeMode="contain"
+                           style={{
+                               // backgroundColor: "#fd5900",
+                               paddingHorizontal: 16,
+                               paddingVertical: 10,
+                               borderRadius: 12, width: 65, height: 60
+                           }}/>
                 </View>
 
                 <View style={styles.activityList}>
-                    {recoveryHistory.map((item) => (
+                    {recoveryItems.map((item) => (
                         <RecoveryHistoryCard
                             key={item.id}
                             item={{
@@ -92,6 +40,11 @@ export default function History() {
                                 mood: item.mood,
                                 note: item.note,
                                 sportType: item.sportType,
+                                temperature: item.temperature,
+                                humidity: item.humidity,
+                                feelsLikeTemperature: item.feelsLikeTemperature,
+                                windSpeed: item.windSpeed,
+                                dewPoint: item.dewPoint
                             }}
                         />
                     ))}
@@ -113,7 +66,7 @@ export default function History() {
 
             </ScrollView>
 
-            <BottomNav activeRoute="history" />
+            <BottomNav activeRoute="history"/>
         </View>
     );
 }

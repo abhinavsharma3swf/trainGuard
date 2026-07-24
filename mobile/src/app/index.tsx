@@ -164,7 +164,7 @@ export default function ConnectScreen() {
                 </Text>
             </View>
 
-            <BottomNav activeRoute="login" storedAthleteId={athleteId} />
+            {/*<BottomNav activeRoute="login" storedAthleteId={athleteId} />*/}
         </View>
     );
 }
