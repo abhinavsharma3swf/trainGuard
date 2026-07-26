@@ -24,6 +24,7 @@ export type DashboardFeedItem = {
     note?: string | null;
     averageWatts: string;
     start_latlng?: number;
+    description?: string;
 };
 
 type DashboardDataContextType = {

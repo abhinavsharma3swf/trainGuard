@@ -352,22 +352,22 @@ export default function AnalysisScreen() {
                 <AnalysisChart checkinData={rpeData} metric={'rpe'}
                                setGraphFlag={setRpeFlag} />}
 
-                {temperatureFlag ?
-                    <Pressable style={styles.card} onPress={(prev) => setTemperatureFlag(!prev)}>
-                    <Text style={styles.subtitle}>Average temperature and RPE analysis</Text>
-                    <View style={styles.summaryGrid}>
-                        <SummaryCard
-                            label="Average temperature"
-                            value={averageTemperatureForTheCard.toLocaleString()}
-                        />
-                        <View style={styles.painLocationList}>
-                            <Text style={styles.summaryText}>Weather trend</Text>
-                            <Text style={styles.painLocationText}>
-                            </Text>
+                {/*{temperatureFlag ?*/}
+                {/*    <Pressable style={styles.card} onPress={(prev) => setTemperatureFlag(!prev)}>*/}
+                {/*    <Text style={styles.subtitle}>Average temperature and RPE analysis</Text>*/}
+                {/*    <View style={styles.summaryGrid}>*/}
+                {/*        <SummaryCard*/}
+                {/*            label="Average temperature"*/}
+                {/*            value={averageTemperatureForTheCard.toLocaleString()}*/}
+                {/*        />*/}
+                {/*        <View style={styles.painLocationList}>*/}
+                {/*            <Text style={styles.summaryText}>Weather trend</Text>*/}
+                {/*            <Text style={styles.painLocationText}>*/}
+                {/*            </Text>*/}
 
-                        </View>
-                    </View>
-                </Pressable> : null}
+                {/*        </View>*/}
+                {/*    </View>*/}
+                {/*</Pressable> : null}*/}
 
             </ScrollView>
 

@@ -148,7 +148,7 @@ export default function RecoveryCheckInScreen() {
             painScore: currentActivity.painScore ?? null,
             painLocation: currentActivity.painLocation ?? "",
             mood: currentActivity.mood ?? "",
-            note: currentActivity.note ?? "",
+            note: currentActivity.description ?? "",
         });
     }, [currentActivity, reset]);
 

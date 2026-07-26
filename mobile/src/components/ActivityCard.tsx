@@ -26,62 +26,66 @@ export function ActivityCard({activity}: ActivityCardProps) {
     return (
         <View style={styles.activityCard}>
             <Pressable onPress={handleEdit}>
-            <View style={styles.activityHeader}>
-                <View>
-                    <Text style={styles.activityType}>{activity.type}</Text>
-                    <Text style={styles.activityName}>{activity.name.length > 20 ? `${activity.name.slice(0,20)}...` : `${activity.name}`}</Text>
-                    <Text style={styles.activityDate}>{formatActivityDate(activity.date)}</Text>
+                <View style={styles.activityHeader}>
+                    <View>
+                        <Text style={styles.activityType}>{activity.type}</Text>
+                        <Text
+                            style={styles.activityName}>{activity.name.length > 20 ? `${activity.name.slice(0, 20)}...` : `${activity.name}`}</Text>
+                        <Text style={styles.activityDate}>{formatActivityDate(activity.date)}</Text>
+                    </View>
+
+                    {isPending ? (
+                        <Text style={styles.pendingBadge}>NEW</Text>
+                    ) : (
+                        <Text style={styles.completedBadge}>Completed</Text>
+                    )}
+                </View>
+
+                <View style={styles.metricsRow}>
+                    {activity.type === "WEIGHTTRAINING" || activity.type === "WORKOUT"
+                    || activity.type === "OTHER" ? null : <Metric label="Distance" value={activity.distance}/>}
+                    <Metric label="Activity Minutes" value={activity.time}/>
+
+                    {activity.type === "RIDE" ?
+                        <Metric
+                            label="WATTS"
+                            value={activity.averageWatts}
+                        /> :
+                            activity.type === "RUN" ?
+                                <Metric
+                                    label="PACE"
+                                    value={activity.pace}
+                                /> : null}
+
                 </View>
 
                 {isPending ? (
-                    <Text style={styles.pendingBadge}>NEW</Text>
-                ) : (
-                    <Text style={styles.completedBadge}>Completed</Text>
-                )}
-            </View>
+                    <View style={styles.checkInRow}>
+                        <Text style={styles.checkInText}>Recovery check-in pending</Text>
 
-            <View style={styles.metricsRow}>
-                <Metric label="Distance" value={activity.distance}/>
-                <Metric label="Activity Minutes" value={activity.time}/>
-
-                {activity.type === "RIDE" ?
-                    <Metric
-                        label="WATTS"
-                        value={activity.averageWatts}
-                    /> : <Metric
-                        label="PACE"
-                        value={activity.pace}
-                    />}
-
-            </View>
-
-            {isPending ? (
-                <View style={styles.checkInRow}>
-                    <Text style={styles.checkInText}>Recovery check-in pending</Text>
-
-                    <TouchableOpacity
-                        style={styles.checkInButton}
-                        onPress={() => router.push(`/recovery/${activity.id}`)}
-                    >
-                        <Text style={styles.checkInButtonText}>Check in</Text>
-                    </TouchableOpacity>
-                </View>
-            ) : (
-                <View style={styles.completedSection}>
-                    <View style={styles.chipRow}>
-                        <Chip label={`RPE ${activity.rpe}`} />
-                        <Chip label={`Pain ${activity.pain}`} />
-                        <Chip label={activity.mood} />
-
-                        {activity.note?.trim() ? <Chip label="Note" /> : null}
-
-                        {/*<TouchableOpacity  onPress={handleEdit}>*/}
-                            <Text style={styles.editButton}>Edit</Text>
-                        {/*</TouchableOpacity>*/}
+                        <TouchableOpacity
+                            style={styles.checkInButton}
+                            onPress={() => router.push(`/recovery/${activity.id}`)}
+                        >
+                            <Text style={styles.checkInButtonText}>Check in</Text>
+                        </TouchableOpacity>
                     </View>
-                </View>
-            )}
-        </Pressable>
+                ) : (
+                    <View style={styles.completedSection}>
+                        <View style={styles.chipRow}>
+                            <Chip label={`RPE ${activity.rpe}`}/>
+                            <Chip label={`Pain ${activity.pain}`}/>
+                            <Chip label={activity.mood}/>
+
+                            {activity.note?.trim() ? <Chip label="Note"/> : null}
+
+                            {/*<TouchableOpacity  onPress={handleEdit}>*/}
+                            <Text style={styles.editButton}>Edit</Text>
+                            {/*</TouchableOpacity>*/}
+                        </View>
+                    </View>
+                )}
+            </Pressable>
         </View>
     );
 }

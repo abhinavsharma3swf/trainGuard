@@ -17,6 +17,7 @@ export type DashboardFeedItem = {
     mood: string | null;
     note: string | null;
     averageWatts: string;
+    description: string;
 };
 
 export async function getDashboardFeed(): Promise<DashboardFeedItem[]> {

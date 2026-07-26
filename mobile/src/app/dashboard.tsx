@@ -44,7 +44,7 @@ export default function HomeScreen() {
     const completedCheckins = feedItems.filter(item => item.checkinStatus === "COMPLETED").length;
 
     const completedCheckinsWithPain = feedItems.filter(item => item.checkinStatus === "COMPLETED")
-            .filter((item) => item.painScore !== undefined && item.painScore !== null && item.painScore > 0).length;
+        .filter((item) => item.painScore !== undefined && item.painScore !== null && item.painScore > 0).length;
 
     const completedCheckinsWithNotes = feedItems.filter(item => item.note?.length !== undefined && item.note?.length > 0);
 
@@ -106,7 +106,7 @@ export default function HomeScreen() {
                     <Text style={styles.statusMessage}>
                         {pendingCheckins === 1 ? `${pendingCheckins} activity needs a recovery check-in. Complete it to update the status.`
                             : pendingCheckins > 1 ? `${pendingCheckins} activities need recovery check-ins. Complete them to update the status.`
-                            : "All recent activities have recovery check-ins." }
+                                : "All recent activities have recovery check-ins."}
                     </Text>
 
                 </View>
@@ -170,7 +170,18 @@ export default function HomeScreen() {
                                         key={item.activityId}
                                         activity={{
                                             id: item.activityId,
-                                            type: item.sportType === "RIDE" ? "RIDE" : "RUN",
+                                            type:
+                                                item.sportType === "RIDE"
+                                                    ? "RIDE"
+                                                    : item.sportType === "RUN"
+                                                        ? "RUN"
+                                                        : item.sportType === "WEIGHTTRAINING"
+                                                            ? "WEIGHTTRAINING"
+                                                            : item.sportType === "WORKOUT"
+                                                                ? "WORKOUT"
+                                                                : item.sportType === "WALK"
+                                                                    ? "WALK"
+                                                                    : "OTHER",
                                             name: item.name,
                                             date: item.startDate,
                                             distance: `${item.distanceMiles} mi`,
