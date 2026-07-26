@@ -70,6 +70,7 @@ public class DashboardService {
                 .mood(matchingCheckin.map(RecoveryCheckinEntity::getMood).orElse(null))
                 .note(matchingCheckin.map(RecoveryCheckinEntity::getNote).orElse(null))
                 .start_latlng(activity.getStart_latlng())
+                .description(activity.getDescription())
                 .build();
     }
 }
