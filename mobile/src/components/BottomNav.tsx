@@ -49,17 +49,6 @@ export function BottomNav({
     return (
         <View style={styles.container}>
 
-            <Pressable
-                style={styles.navItem}
-                onPress={() => router.replace("/account")}
-            >
-                <NavIcon
-                    active={activeRoute === "account"}
-                    activeIcon="person-circle"
-                    inactiveIcon="person-circle-outline"
-                />
-            </Pressable>
-
             {/*<Pressable*/}
             {/*    style={styles.navItem}*/}
             {/*    onPress={*/}
@@ -111,6 +100,17 @@ export function BottomNav({
                     inactiveIcon="analytics-outline"
                 />
             </Pressable>
+
+            <Pressable
+                style={styles.navItem}
+                onPress={() => router.replace("/account")}
+            >
+                <NavIcon
+                    active={activeRoute === "account"}
+                    activeIcon="person-circle"
+                    inactiveIcon="person-circle-outline"
+                />
+            </Pressable>
         </View>
     );
 }
@@ -122,15 +122,15 @@ const styles = StyleSheet.create({
         right: 16,
         bottom: 16,
         height: 68,
-        backgroundColor: "#151b1f",
+        backgroundColor: "#181919",
         borderRadius: 24,
         borderWidth: 1,
-        borderColor: "rgba(255,255,255,0.08)",
+        borderColor: "#fd5900",
         flexDirection: "row",
         alignItems: "center",
         paddingHorizontal: 8,
 
-        shadowColor: "#000",
+        shadowColor: "#686262",
         shadowOffset: {
             width: 0,
             height: 6,

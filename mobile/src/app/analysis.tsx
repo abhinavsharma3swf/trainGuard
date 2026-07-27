@@ -135,14 +135,16 @@ export default function AnalysisScreen() {
         const cutOffDate = new Date();
         cutOffDate.setHours(0,0,0,0);
         cutOffDate.setDate(cutOffDate.getDate() - selectedRange)
-
         return recoveryItems.filter(item => new Date(item.createdAt) >= cutOffDate)
     },[selectedRange, recoveryItems])
 
-    useEffect(() => {
+    console.log(filteredCheckins, "F");
 
+
+
+    useEffect(() => {
         const painDataForTheAnalysisChart: lineDataItem[] =
-            recoveryItems
+            filteredCheckins
                 .filter(
                     (item) =>
                         item.painScore !== null &&
@@ -167,7 +169,7 @@ export default function AnalysisScreen() {
         setPainData(painDataForTheAnalysisChart);
 
         const rpeDataForTheAnalysisChart: lineDataItem[] =
-            recoveryItems
+            filteredCheckins
                 .filter(
                     (item) =>
                         item.rpe !== null &&
@@ -192,7 +194,7 @@ export default function AnalysisScreen() {
         setRpeData(rpeDataForTheAnalysisChart);
 
         const temperatureDataForTheAnalysisChart: lineDataItem[] =
-            recoveryItems
+            filteredCheckins
                 .filter(
                     (item) =>
                         item.temperature !== null &&
@@ -215,7 +217,7 @@ export default function AnalysisScreen() {
                     ),
                 }));
         setTemperatureData(temperatureDataForTheAnalysisChart);
-    }, [recoveryItems]);
+    }, [recoveryItems, selectedRange]);
 
 
 
@@ -248,8 +250,9 @@ export default function AnalysisScreen() {
                                     styles.rangeButton,
                                     isSelected && styles.rangeButtonSelected,
                                 ]}
-                                onPress={() =>
+                                onPress={() => {
                                     setSelectedRange(range as TimeRange)
+                                }
                                 }
                             >
                                 <Text

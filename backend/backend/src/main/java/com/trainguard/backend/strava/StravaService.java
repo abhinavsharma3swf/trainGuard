@@ -4,6 +4,7 @@ import com.trainguard.backend.activity.ActivityImportRequestRecord;
 import com.trainguard.backend.activity.ActivityResponseRecord;
 import com.trainguard.backend.activity.ActivityService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -70,7 +71,13 @@ public class StravaService {
 
         return switch (sportType.toLowerCase()) {
             case "run" -> "RUN";
-            case "ride", "virtualride" -> "RIDE";
+            case "ride" -> "RIDE";
+            case "weighttraining" -> "WEIGHTTRAINING";
+            case "swim" -> "SWIM";
+            case "virtualbikeride" -> "VIRTUALBIKERIDE";
+            case "walk"  -> "WALK";
+            case "strength" -> "STRENGTH";
+            case "workout"  -> "WORKOUT";
             default -> sportType.toUpperCase();
         };
     }
@@ -108,6 +115,7 @@ public class StravaService {
         return athleteId;
     }
 
+
     public void importSingleActivityFromWebhook(
             Long athleteId,
             Long stravaActivityId
@@ -115,12 +123,14 @@ public class StravaService {
         importOrUpdateActivityFromWebhook(athleteId, stravaActivityId);
     }
 
+
     public void updateSingleActivityFromWebhook(
             Long athleteId,
             Long stravaActivityId
     ) {
         importOrUpdateActivityFromWebhook(athleteId, stravaActivityId);
     }
+
 
     public void deleteSingleActivityFromWebhook(
             Long athleteId,

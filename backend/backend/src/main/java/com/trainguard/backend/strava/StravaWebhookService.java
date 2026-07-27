@@ -2,6 +2,7 @@ package com.trainguard.backend.strava;
 
 import com.trainguard.backend.activity.ActivityResponseRecord;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -10,6 +11,7 @@ public class StravaWebhookService {
 
     private final StravaService stravaService;
 
+    @Async
     public void handleWebhookEvent(StravaWebhookEventRecord event) {
 
         if (event == null ||

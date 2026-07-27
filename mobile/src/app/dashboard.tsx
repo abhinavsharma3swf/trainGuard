@@ -1,5 +1,5 @@
-import {Image, ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
-import React, {useCallback, useState} from "react";
+import {Image, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
+import React, {useCallback, useEffect, useState} from "react";
 import {ActivityCard} from "@/components/ActivityCard";
 import {SummaryCard} from "@/components/SummaryCard";
 import {syncStravaActivities} from "@/services/stravaApi";
@@ -48,10 +48,52 @@ export default function HomeScreen() {
 
     const completedCheckinsWithNotes = feedItems.filter(item => item.note?.length !== undefined && item.note?.length > 0);
 
+    const [modalVisible, setModalVisible] = useState(false)
+
+    useEffect(() => {
+        const timer = setTimeout(()=> {
+            setModalVisible(true)
+        }, 3000)
+
+        return () => clearTimeout(timer)
+    }, []);
+
 
     return (
         <View style={styles.screen}>
             <ScrollView contentContainerStyle={styles.content}>
+
+                {pendingCheckins > 0 ?
+                    <View style={styles.container}>
+                    {/* Reminder Modal */}
+                    <Modal
+                        animationType="fade"
+                        transparent={true}
+                        visible={modalVisible}
+                        onRequestClose={() => setModalVisible(false)} // Handles Android back button
+                    >
+                        <View style={styles.overlay}>
+                            <View style={styles.modalView}>
+
+                                {/* Reminder Content */}
+                                <Text style={styles.reminderTitle}>{pendingCheckins} Check-in Pending</Text>
+                                <Text style={styles.reminderText}>
+                                   Complete them to update your metrics.
+                                </Text>
+
+                                {/* The Only Action: Close Button */}
+                                <TouchableOpacity
+                                    style={styles.closeButton}
+                                    onPress={() => setModalVisible(false)}
+                                >
+                                    <Text style={styles.closeButtonText}>Close</Text>
+                                </TouchableOpacity>
+
+                            </View>
+                        </View>
+                    </Modal>
+                </View> : null}
+
                 <View style={styles.header}>
                     <View>
                         <Text style={styles.appName}>Smart Gauge</Text>
@@ -322,4 +364,65 @@ const styles = StyleSheet.create({
         lineHeight: 22,
         textAlign: "center",
     },
+
+    //Modal Styling//
+        container: {
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: '#f5f5f5',
+        },
+        openButton: {
+            backgroundColor: '#007AFF',
+            paddingVertical: 12,
+            paddingHorizontal: 24,
+            borderRadius: 8,
+        },
+        buttonText: {
+            color: '#fff',
+            fontSize: 16,
+            fontWeight: '600',
+        },
+        overlay: {
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)', // Dims the background screen
+        },
+        modalView: {
+            width: '80%',
+            backgroundColor: 'white',
+            borderRadius: 16,
+            padding: 24,
+            alignItems: 'center',
+            // Material elevation for Android & Shadow for iOS
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.25,
+            shadowRadius: 4,
+            elevation: 5,
+        },
+        reminderTitle: {
+            fontSize: 20,
+            fontWeight: 'bold',
+            marginBottom: 12,
+        },
+        reminderText: {
+            fontSize: 16,
+            color: '#333',
+            textAlign: 'center',
+            marginBottom: 24,
+        },
+        closeButton: {
+            backgroundColor: '#fd5900',
+            width: '100%',
+            paddingVertical: 12,
+            borderRadius: 8,
+            alignItems: 'center',
+        },
+        closeButtonText: {
+            color: '#fff',
+            fontSize: 16,
+            fontWeight: 'bold',
+        },
 });

@@ -11,9 +11,6 @@ type AnalysisChartProps = {
     checkinData: lineDataItem[];
     metric: ChartMetric;
     setGraphFlag: Dispatch<SetStateAction<boolean>>;
-    // rpeFlag?: boolean;
-    // painScoreFlag?: boolean;
-    // temperatureFlag?: boolean;
 };
 
 
@@ -74,7 +71,9 @@ export default function AnalysisChart({checkinData, metric, setGraphFlag}: Analy
 
 
                             // Tooltip and Drag Selector Line Configurations
-                            pointerConfig={Platform.OS === 'ios' ? undefined : {
+                            // Platform.OS === 'ios' ? undefined :
+                        pointerConfig={{
+                            pointerStripUptoDataPoint: true,
                                 pointerStripColor: '#FC4C02',
                                 pointerStripWidth: 2,
                                 pointerStripHeight: 90,
@@ -90,8 +89,6 @@ export default function AnalysisChart({checkinData, metric, setGraphFlag}: Analy
                                         </View>
                                     );
                                 },
-                                tooltipShiftX: -55,
-                                tooltipShiftY: -25
                             }}
                         />
                     </Pressable>
@@ -105,6 +102,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         paddingVertical: 20,
+        marginBottom: 20,
         shadowColor: '#000',
         shadowOffset: {width: 0, height: 4},
         shadowOpacity: 0.08,
