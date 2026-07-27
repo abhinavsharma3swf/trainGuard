@@ -18,6 +18,7 @@ import {API_BASE_URL} from "@/constants/api";
 import {useDashboardData} from "@/context/DashboardDataContext";
 import {getSessionToken} from "@/services/athleteStorage";
 import {fetchWeatherApi} from "openmeteo";
+import {useCurrentRender} from "expo-router/build/react-navigation/core/useCurrentRender";
 
 type RecoveryCheckinForm = {
     rpe: number | null;
@@ -126,12 +127,12 @@ export default function RecoveryCheckInScreen() {
         clearErrors,
         formState: {errors, isSubmitting},
     } = useForm<RecoveryCheckinForm>({
-        defaultValues: {
-            rpe: null,
-            painScore: null,
-            painLocation: "",
-            mood: "",
-            note: "",
+        values: {
+            rpe: currentActivity.rpe ?? null,
+            painScore: currentActivity.painScore ?? null,
+            painLocation: currentActivity.painLocation ?? "",
+            mood: currentActivity.mood ?? "",
+            note: currentActivity.note ? currentActivity.note : currentActivity.description ?? "",
         },
     });
 
@@ -143,13 +144,13 @@ export default function RecoveryCheckInScreen() {
             return;
         }
         fetchWeatherData();
-        reset({
-            rpe: currentActivity.rpe ?? null,
-            painScore: currentActivity.painScore ?? null,
-            painLocation: currentActivity.painLocation ?? "",
-            mood: currentActivity.mood ?? "",
-            note: currentActivity.description ?? "",
-        });
+            // reset({
+            //     // rpe: currentActivity.rpe ?? null,
+            //     // painScore: currentActivity.painScore ?? null,
+            //     // painLocation: currentActivity.painLocation ?? "",
+            //     // mood: currentActivity.mood ?? "",
+            //     // note: currentActivity.note ?? "",
+            // });
     }, [currentActivity, reset]);
 
     const handleSave = async (formValues: RecoveryCheckinForm) => {
@@ -311,7 +312,6 @@ export default function RecoveryCheckInScreen() {
                             <Text style={styles.errorText}>{errors.mood.message}</Text>
                         ) : null}
 
-                        <Text style={styles.label}>Note</Text>
                         <Text style={styles.label}>Note</Text>
 
                         <View style={styles.noteContainer}>

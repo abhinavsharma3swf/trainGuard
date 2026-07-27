@@ -74,7 +74,7 @@ export default function AnalysisChart({checkinData, metric, setGraphFlag}: Analy
 
 
                             // Tooltip and Drag Selector Line Configurations
-                            pointerConfig={Platform.OS === 'web' ? undefined : {
+                            pointerConfig={Platform.OS === 'ios' ? undefined : {
                                 pointerStripColor: '#FC4C02',
                                 pointerStripWidth: 2,
                                 pointerStripHeight: 90,

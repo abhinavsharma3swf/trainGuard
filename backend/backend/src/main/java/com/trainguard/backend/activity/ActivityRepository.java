@@ -15,4 +15,6 @@ public interface ActivityRepository extends JpaRepository<ActivityEntity, Long> 
     Optional<ActivityEntity> findByAthleteIdAndExternalSourceAndExternalActivityId(Long athleteId, String strava, String externalActivityId);
 
     List<ActivityEntity> findAllByImportedAtBefore(LocalDateTime cutoff);
+
+    void deleteAllByAthleteId(Long athleteId);
 }

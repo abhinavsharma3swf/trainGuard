@@ -18,4 +18,6 @@ public interface RecoveryCheckinRepository extends JpaRepository<RecoveryCheckin
     );
 
     List<RecoveryCheckinEntity> findByAthleteId(Long athleteId);
+
+    void deleteAllByAthleteId(Long athleteId);
 }

@@ -1,5 +1,7 @@
-import {createContext, useContext, useEffect, useState} from "react";
+import React, {createContext, useCallback, useContext, useState} from "react";
 import {getRecoveryCheckins, RecoveryCheckin} from "@/services/recoveryApi";
+import {useDashboardData} from "@/context/DashboardDataContext";
+import {useFocusEffect} from "expo-router";
 
 type HistoryDataContextType = {
     recoveryItems: RecoveryCheckin[];
@@ -17,6 +19,8 @@ export function HistoryDataProvider({children}: { children: React.ReactNode }) {
     const [isLoading, setIsLoading] = useState(false);
     const [page, setPage] = useState(0);
     const [hasMore, setHasMore] = useState(true);
+    const {feedItems} = useDashboardData()
+    const [refreshing, setRefreshing] = useState(false);
 
     const pageSize = 20;
 
@@ -61,9 +65,10 @@ export function HistoryDataProvider({children}: { children: React.ReactNode }) {
         loadRecoveryHistory(page + 1);
     }
 
-    useEffect(() => {
-        loadRecoveryHistory(0);
-    }, []);
+    useFocusEffect(
+        useCallback(() => {
+            loadRecoveryHistory(page);
+        }, [feedItems, page]))
 
 
     return (

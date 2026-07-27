@@ -1,74 +1,115 @@
-import { router } from "expo-router";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import {router} from "expo-router";
+import {Pressable, StyleSheet, View} from "react-native";
+import {Ionicons} from "@expo/vector-icons";
 import {clearSessionToken} from "@/services/athleteStorage";
 
-
 type BottomNavProps = {
-    activeRoute: "login" | "weekly" | "history" | "analysis";
-    storedAthleteId?: any;
+    activeRoute: "account" | "weekly" | "history" | "analysis";
+    storedAthleteId?: string | number | null;
 };
 
-export function BottomNav({ activeRoute, storedAthleteId }: BottomNavProps) {
+type NavIconProps = {
+    active: boolean;
+    activeIcon: keyof typeof Ionicons.glyphMap;
+    inactiveIcon: keyof typeof Ionicons.glyphMap;
+};
+
+function NavIcon({
+                     active,
+                     activeIcon,
+                     inactiveIcon,
+                 }: NavIconProps) {
+    return (
+        <View
+            style={[
+                styles.iconWrapper,
+                active && styles.activeIconWrapper,
+            ]}
+        >
+            <Ionicons
+                name={active ? activeIcon : inactiveIcon}
+                size={25}
+                color={active ? "#fd5900" : "#7d8a91"}
+            />
+
+            {active && <View style={styles.activeDot}/>}
+        </View>
+    );
+}
+
+export function BottomNav({
+                              activeRoute,
+                              storedAthleteId,
+                          }: BottomNavProps) {
+    const handleLogout = async () => {
+        await clearSessionToken();
+        router.replace("/");
+    };
+
     return (
         <View style={styles.container}>
+
             <Pressable
                 style={styles.navItem}
-                onPress={() => router.replace("/")}
+                onPress={() => router.replace("/account")}
             >
-                { !storedAthleteId &&
-                    <Text
-                    style={[
-                        styles.navText,
-                        activeRoute === "login" && styles.activeText,
-                    ]}
-                    onPress={()=> {
-                        clearSessionToken()
-                        router.replace("/")}}>
-                    Logout
-                </Text>
-                }
+                <NavIcon
+                    active={activeRoute === "account"}
+                    activeIcon="person-circle"
+                    inactiveIcon="person-circle-outline"
+                />
             </Pressable>
+
+            {/*<Pressable*/}
+            {/*    style={styles.navItem}*/}
+            {/*    onPress={*/}
+            {/*        storedAthleteId*/}
+            {/*            ? handleLogout*/}
+            {/*            : () => router.replace("/")*/}
+            {/*    }*/}
+            {/*>*/}
+            {/*    <NavIcon*/}
+            {/*        active={activeRoute === "login"}*/}
+            {/*        activeIcon="log-out"*/}
+            {/*        inactiveIcon={*/}
+            {/*            storedAthleteId*/}
+            {/*                ? "log-out-outline"*/}
+            {/*                : "person-outline"*/}
+            {/*        }*/}
+            {/*    />*/}
+            {/*</Pressable>*/}
 
             <Pressable
                 style={styles.navItem}
                 onPress={() => router.replace("/dashboard")}
             >
-                <Text
-                    style={[
-                        styles.navText,
-                        activeRoute === "weekly" && styles.activeText,
-                    ]}
-                >
-                    Weekly
-                </Text>
+                <NavIcon
+                    active={activeRoute === "weekly"}
+                    activeIcon="home"
+                    inactiveIcon="home-outline"
+                />
             </Pressable>
 
             <Pressable
                 style={styles.navItem}
-                onPress={() => router.push("/history")}
+                onPress={() => router.replace("/history")}
             >
-                <Text
-                    style={[
-                        styles.navText,
-                        activeRoute === "history" && styles.activeText,
-                    ]}
-                >
-                    History
-                </Text>
+                <NavIcon
+                    active={activeRoute === "history"}
+                    activeIcon="time"
+                    inactiveIcon="time-outline"
+                />
             </Pressable>
 
             <Pressable
                 style={styles.navItem}
                 onPress={() => router.replace("/analysis")}
             >
-                <Text
-                    style={[
-                        styles.navText,
-                        activeRoute === "analysis" && styles.activeText,
-                    ]}
-                >
-                    Analysis
-                </Text>
+                <NavIcon
+                    active={activeRoute === "analysis"}
+                    activeIcon="analytics"
+                    inactiveIcon="analytics-outline"
+                />
             </Pressable>
         </View>
     );
@@ -80,24 +121,50 @@ const styles = StyleSheet.create({
         left: 16,
         right: 16,
         bottom: 16,
+        height: 68,
         backgroundColor: "#151b1f",
-        borderRadius: 22,
+        borderRadius: 24,
         borderWidth: 1,
-        borderColor: "#263238",
+        borderColor: "rgba(255,255,255,0.08)",
         flexDirection: "row",
-        paddingVertical: 12,
+        alignItems: "center",
         paddingHorizontal: 8,
+
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 6,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 12,
+        elevation: 10,
     },
+
     navItem: {
         flex: 1,
+        height: "100%",
         alignItems: "center",
+        justifyContent: "center",
     },
-    navText: {
-        color: "#7d8a91",
-        fontSize: 18,
-        fontWeight: "800",
+
+    iconWrapper: {
+        width: 46,
+        height: 46,
+        borderRadius: 23,
+        alignItems: "center",
+        justifyContent: "center",
     },
-    activeText: {
-        color: "#fd5900",
+
+    activeIconWrapper: {
+        backgroundColor: "rgba(253,89,0,0.12)",
+    },
+
+    activeDot: {
+        position: "absolute",
+        bottom: 4,
+        width: 4,
+        height: 4,
+        borderRadius: 2,
+        backgroundColor: "#fd5900",
     },
 });

@@ -48,15 +48,6 @@ export default function HomeScreen() {
 
     const completedCheckinsWithNotes = feedItems.filter(item => item.note?.length !== undefined && item.note?.length > 0);
 
-    const painScores = feedItems
-        .filter((item) => item.painScore !== null)
-        .map((item) => item.painScore as number);
-
-    const averagePain =
-        painScores.length > 0
-            ? painScores.reduce((total, pain) => total + pain, 0) / painScores.length
-            : 0;
-
 
     return (
         <View style={styles.screen}>
@@ -81,7 +72,6 @@ export default function HomeScreen() {
                         <Image source={require("@/assets/images/smartGaugeAppIcon.png")}
                                resizeMode="contain"
                                style={{
-                                   // backgroundColor: "#fd5900",
                                    paddingHorizontal: 16,
                                    paddingVertical: 10,
                                    borderRadius: 12, width: 65, height: 60
@@ -120,7 +110,7 @@ export default function HomeScreen() {
                     />
 
                     <View>
-                        <Text style={styles.subtitle}>30-Day Summary</Text>
+                        <Text style={styles.subtitle}>7 Day Summary</Text>
 
                         <SummaryProgressBar
                             label="Completed"
