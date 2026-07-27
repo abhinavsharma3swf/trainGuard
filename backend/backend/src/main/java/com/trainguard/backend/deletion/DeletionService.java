@@ -31,7 +31,7 @@ public class DeletionService {
         activityRepository.deleteAllByAthleteId(athleteId);
 
         // Delete authentication/session data
-        sessionRepository.deleteAllByAthleteId(athleteId);
+        sessionRepository.deleteAllByStravaUser_AthleteId(athleteId);
 
         // Delete the main user record last
         stravaUserRepository.deleteAllByAthleteId(athleteId);

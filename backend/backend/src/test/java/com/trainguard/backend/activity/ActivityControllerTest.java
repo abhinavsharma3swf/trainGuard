@@ -56,7 +56,9 @@ public class ActivityControllerTest {
                 LocalDateTime.of(2026, 7, 7, 6, 30),
                 5.0,
                 40,
-                "8:00"
+                "8:00",
+                24.5,
+                "I am description"
         );
 
         when(activityService.importActivity(any(ActivityImportRequestRecord.class)))
@@ -90,7 +92,9 @@ public class ActivityControllerTest {
                 LocalDateTime.of(2026, 7, 7, 6, 30),
                 5.0,
                 40,
-                "8:00"
+                "8:00",
+                24.5,
+                "I am description"
         );
 
         ActivityResponseRecord activityTwo = new ActivityResponseRecord(
@@ -102,7 +106,9 @@ public class ActivityControllerTest {
                 LocalDateTime.of(2026, 7, 8, 7, 0),
                 25.0,
                 90,
-                "3:36"
+                "3:36",
+                24.5,
+                "I am description"
         );
 
         when(activityService.getAllActivities()).thenReturn(List.of(activityOne, activityTwo));

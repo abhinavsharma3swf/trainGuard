@@ -43,7 +43,10 @@ public class StravaControllerTest {
                 LocalDateTime.of(2026, 7, 9, 8, 0),
                 5.0,
                 40,
-                "8:00"
+                "8:00",
+                24.8,
+                "description"
+
         );
         sessionService.getAthleteIdFromAuthorizationHeader("testToken");
         when(sessionService.getAthleteIdFromAuthorizationHeader("testToken")).thenReturn(12345L);

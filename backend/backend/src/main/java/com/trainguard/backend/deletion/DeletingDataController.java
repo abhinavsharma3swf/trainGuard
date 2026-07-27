@@ -3,7 +3,6 @@ package com.trainguard.backend.deletion;
 
 import com.trainguard.backend.session.SessionService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -21,7 +20,6 @@ public class DeletingDataController {
 
     @DeleteMapping()
     public void delete(@RequestHeader("Authorization") String authorizationHeader) {
-
         Long athleteId = sessionService.getAthleteIdFromToken(authorizationHeader);
         deletionService.deleteUserData(athleteId);
     }

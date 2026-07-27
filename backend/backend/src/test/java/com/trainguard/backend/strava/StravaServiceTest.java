@@ -9,8 +9,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.lang.reflect.Array;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -36,6 +38,8 @@ class StravaServiceTest {
 
     @Test
     void shouldSyncLastSevenStravaActivities() {
+
+        List<Double> start_latlng = List.of(123.5,323.55);
         StravaActivityResponseRecord stravaActivity = new StravaActivityResponseRecord(
                 12345L,
                 "Morning Run",
@@ -49,7 +53,9 @@ class StravaServiceTest {
                 170.0,
                 null,
                 null,
-                new StravaAthleteSummaryRecord(12345L)
+                new StravaAthleteSummaryRecord(12345L),
+                "I am description",
+                start_latlng
 
         );
 
@@ -62,7 +68,10 @@ class StravaServiceTest {
                 LocalDateTime.of(2026, 7, 9, 8, 0),
                 5.0,
                 40,
-                "8:00"
+                "8:00",
+                24.6,
+                "I am description"
+
         );
 
         StravaUserEntity stravaUser = StravaUserEntity.builder()
@@ -102,6 +111,8 @@ class StravaServiceTest {
 
     @Test
     void shouldConvertStravaActivityToActivityImportRequest() {
+
+        List<Double> start_latlng = List.of(123.5,323.55);
         StravaActivityResponseRecord stravaActivity = new StravaActivityResponseRecord(
                 12345L,
                 "Morning Run",
@@ -115,7 +126,9 @@ class StravaServiceTest {
                 170.0,
                 null,
                 null,
-                new StravaAthleteSummaryRecord(12345L)
+                new StravaAthleteSummaryRecord(12345L),
+                "description",
+                start_latlng
         );
 
         ActivityResponseRecord importedActivity = new ActivityResponseRecord(
@@ -127,7 +140,9 @@ class StravaServiceTest {
                 LocalDateTime.of(2026, 7, 9, 8, 0),
                 5.0,
                 40,
-                "8:00"
+                "8:00",
+                24.8,
+                "description"
         );
 
         StravaUserEntity stravaUser = StravaUserEntity.builder()

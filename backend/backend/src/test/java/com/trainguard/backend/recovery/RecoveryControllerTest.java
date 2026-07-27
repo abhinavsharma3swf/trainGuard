@@ -58,7 +58,12 @@ class RecoveryCheckinControllerTest {
                 "Good",
                 "Felt fine",
                 "Run",
-                LocalDateTime.of(2026, 7, 7, 8, 0)
+                LocalDateTime.of(2026, 7, 7, 8, 0),
+                80,
+                85,
+                90,
+                8,
+                85
         );
 
         when(sessionService.getAthleteIdFromAuthorizationHeader("Bearer test-token"))
@@ -103,7 +108,12 @@ class RecoveryCheckinControllerTest {
                 "Good",
                 "Felt fine",
                 "Run",
-                LocalDateTime.of(2026, 7, 7, 8, 0)
+                LocalDateTime.of(2026, 7, 7, 8, 0),
+                80,
+                85,
+                90,
+                8,
+                85
         );
 
         RecoveryCheckinResponseRecord response1 = new RecoveryCheckinResponseRecord(
@@ -115,7 +125,12 @@ class RecoveryCheckinControllerTest {
                 "Low",
                 "Okay",
                 "Run",
-                LocalDateTime.of(2026, 7, 8, 8, 0)
+                LocalDateTime.of(2026, 7, 8, 8, 0),
+                80,
+                85,
+                90,
+                8,
+                85
         );
 
         when(sessionService.getAthleteIdFromAuthorizationHeader("Bearer test-token"))
