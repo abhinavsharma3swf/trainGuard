@@ -23,6 +23,8 @@ export type DashboardFeedItem = {
 export async function getDashboardFeed(): Promise<DashboardFeedItem[]> {
     const token = await getSessionToken();
 
+    console.log(token, "token dS");
+
     if (!token) {
         throw new Error("Missing session token.");
     }

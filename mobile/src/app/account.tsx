@@ -39,8 +39,8 @@ export default function AccountScreen() {
         }
     };
 
-    const handleDeleteData = () => {
-        console.log("Delete Data");
+    const handleDeleteData = async () => {
+        await deleteApi();
         Alert.alert(
             "Delete recovery data?",
             "This will permanently delete your stored recovery check-ins and analysis data. Your account will remain active.",

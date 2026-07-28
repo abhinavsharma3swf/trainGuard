@@ -21,7 +21,10 @@ public class DeletingDataController {
     @DeleteMapping()
     public void delete(@RequestHeader("Authorization") String authorizationHeader) {
         Long athleteId = sessionService.getAthleteIdFromToken(authorizationHeader);
+        System.out.println("Deleting data for athlete " + athleteId);
+        System.out.println("Authorization header: " + authorizationHeader);
         deletionService.deleteUserData(athleteId);
+        System.out.println("after the service call");
     }
 
 

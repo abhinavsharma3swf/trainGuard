@@ -19,6 +19,8 @@ public class DeletionService {
 
     @Transactional
     public void deleteUserData(Long athleteId) {
+
+        System.out.println("In service deleteUserData");
         recoveryCheckinRepository.deleteAllByAthleteId(athleteId);
         activityRepository.deleteAllByAthleteId(athleteId);
 

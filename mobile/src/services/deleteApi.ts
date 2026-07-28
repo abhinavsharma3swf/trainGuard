@@ -4,6 +4,8 @@ import {API_BASE_URL} from "@/constants/api";
 export async function deleteApi() {
     const token = await getSessionToken();
 
+    console.log(token, "token");
+
 if(!token) {
     throw new Error("Missing token for deleteApi");
 }
