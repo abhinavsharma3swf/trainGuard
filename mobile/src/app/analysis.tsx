@@ -138,9 +138,6 @@ export default function AnalysisScreen() {
         return recoveryItems.filter(item => new Date(item.createdAt) >= cutOffDate)
     },[selectedRange, recoveryItems])
 
-    console.log(filteredCheckins, "F");
-
-
 
     useEffect(() => {
         const painDataForTheAnalysisChart: lineDataItem[] =
