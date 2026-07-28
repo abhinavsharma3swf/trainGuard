@@ -79,7 +79,8 @@ export default function AccountScreen() {
         );
     };
 
-    const handleDeleteAccount = () => {
+    const handleDeleteAccount = async () => {
+        await deleteAccount();
         Alert.alert(
             "Delete account?",
             "You must login in Strava and revoke access in the setting -> App for Smart Gauge. This action permanently deletes your account and cannot be undone.",

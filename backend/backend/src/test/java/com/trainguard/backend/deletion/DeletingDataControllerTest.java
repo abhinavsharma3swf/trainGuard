@@ -30,7 +30,7 @@ public class DeletingDataControllerTest {
 
         String token = "testToken";
         when(sessionService.getAthleteIdFromToken(token)).thenReturn(12345L);
-        doNothing().when(deletionService).deleteUserData(12345L);
+        doNothing().when(deletionService).deleteUserData("12345");
 
         mockMvc.perform(delete("/api/deleteData").header("Authorization", "testToken"))
                 .andExpect(status().isOk());

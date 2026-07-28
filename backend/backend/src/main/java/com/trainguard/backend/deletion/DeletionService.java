@@ -3,6 +3,7 @@ package com.trainguard.backend.deletion;
 import com.trainguard.backend.activity.ActivityRepository;
 import com.trainguard.backend.recovery.RecoveryCheckinRepository;
 import com.trainguard.backend.session.SessionRepository;
+import com.trainguard.backend.session.SessionService;
 import com.trainguard.backend.strava.StravaUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,14 +17,13 @@ public class DeletionService {
     private final RecoveryCheckinRepository recoveryCheckinRepository;
     private final SessionRepository sessionRepository;
     private final StravaUserRepository stravaUserRepository;
+    private final SessionService sessionService;
 
     @Transactional
-    public void deleteUserData(Long athleteId) {
-
-        System.out.println("In service deleteUserData");
+    public void deleteUserData(String authorizationHeader) {
+        Long athleteId = sessionService.getAthleteIdFromAuthorizationHeader(authorizationHeader);
         recoveryCheckinRepository.deleteAllByAthleteId(athleteId);
         activityRepository.deleteAllByAthleteId(athleteId);
-
     }
 
     @Transactional

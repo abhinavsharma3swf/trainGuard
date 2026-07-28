@@ -14,24 +14,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class DeletingDataController {
 
-    private final SessionService sessionService;
     private final DeletionService deletionService;
 
 
     @DeleteMapping()
     public void delete(@RequestHeader("Authorization") String authorizationHeader) {
-        Long athleteId = sessionService.getAthleteIdFromToken(authorizationHeader);
-        System.out.println("Deleting data for athlete " + athleteId);
-        System.out.println("Authorization header: " + authorizationHeader);
-        deletionService.deleteUserData(athleteId);
-        System.out.println("after the service call");
+        deletionService.deleteUserData(authorizationHeader);
     }
 
 
-    @DeleteMapping("/userAccount")
-    public ResponseEntity<Void> deleteUserAccount(@RequestHeader("Authorization") String authorizationHeader) {
-        Long athleteId = sessionService.getAthleteIdFromToken(authorizationHeader);
-        deletionService.deleteUserAccount(athleteId);
-        return ResponseEntity.noContent().build();
-    }
+//    @DeleteMapping("/userAccount")
+//    public ResponseEntity<Void> deleteUserAccount(@RequestHeader("Authorization") String authorizationHeader) {
+//        Long athleteId = sessionService.getAthleteIdFromToken(authorizationHeader);
+//        deletionService.deleteUserAccount(athleteId);
+//        return ResponseEntity.noContent().build();
+//    }
 }
