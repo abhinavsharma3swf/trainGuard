@@ -18,7 +18,6 @@ import {API_BASE_URL} from "@/constants/api";
 import {useDashboardData} from "@/context/DashboardDataContext";
 import {getSessionToken} from "@/services/athleteStorage";
 import {fetchWeatherApi} from "openmeteo";
-import {useCurrentRender} from "expo-router/build/react-navigation/core/useCurrentRender";
 
 type RecoveryCheckinForm = {
     rpe: number | null;
@@ -79,7 +78,6 @@ export default function RecoveryCheckInScreen() {
     };
 
 
-
     async function fetchWeatherData() {
 
         try {
@@ -119,6 +117,7 @@ export default function RecoveryCheckInScreen() {
         }
 
     }
+
     const {
         control,
         handleSubmit,
@@ -144,13 +143,13 @@ export default function RecoveryCheckInScreen() {
             return;
         }
         fetchWeatherData();
-            // reset({
-            //     // rpe: currentActivity.rpe ?? null,
-            //     // painScore: currentActivity.painScore ?? null,
-            //     // painLocation: currentActivity.painLocation ?? "",
-            //     // mood: currentActivity.mood ?? "",
-            //     // note: currentActivity.note ?? "",
-            // });
+        // reset({
+        //     // rpe: currentActivity.rpe ?? null,
+        //     // painScore: currentActivity.painScore ?? null,
+        //     // painLocation: currentActivity.painLocation ?? "",
+        //     // mood: currentActivity.mood ?? "",
+        //     // note: currentActivity.note ?? "",
+        // });
     }, [currentActivity, reset]);
 
     const handleSave = async (formValues: RecoveryCheckinForm) => {

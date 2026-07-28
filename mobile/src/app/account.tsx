@@ -13,12 +13,12 @@ import {Ionicons} from "@expo/vector-icons";
 import {BottomNav} from "@/components/BottomNav";
 import {clearSessionToken} from "@/services/athleteStorage";
 import {deleteAccount, deleteApi} from "@/services/deleteApi";
+import {About} from "@/components/About"
 import {useDashboardData} from "@/context/DashboardDataContext";
 
 export default function AccountScreen() {
     const [isProcessing, setIsProcessing] = useState(false);
-
-    const {feedItems} = useDashboardData()
+    const [aboutModalFlag, setAboutModalFlag] = useState(false);
 
     const handleLogout = async () => {
         try {
@@ -40,7 +40,7 @@ export default function AccountScreen() {
     };
 
     const handleDeleteData = async () => {
-        await deleteApi();
+
         Alert.alert(
             "Delete recovery data?",
             "This will permanently delete your stored recovery check-ins and analysis data. Your account will remain active.",
@@ -80,7 +80,7 @@ export default function AccountScreen() {
     };
 
     const handleDeleteAccount = async () => {
-        await deleteAccount();
+
         Alert.alert(
             "Delete account?",
             "You must login in Strava and revoke access in the setting -> App for Smart Gauge. This action permanently deletes your account and cannot be undone.",
@@ -269,6 +269,18 @@ export default function AccountScreen() {
                         />
                     </Pressable>
                 </View>
+
+                <View style={styles.about}>
+                <Pressable onPress={()=> setAboutModalFlag(true)}>
+
+                    <Text style={{color: "#fd5900", fontSize: 20}}>About the app!</Text>
+
+                <About
+                    visible={aboutModalFlag}
+                    onClose={() => setAboutModalFlag(false)}
+                />
+                </Pressable>
+                </View>
             </ScrollView>
 
             <BottomNav activeRoute="account"/>
@@ -285,7 +297,16 @@ const styles = StyleSheet.create({
     content: {
         padding: 20,
         paddingTop: 56,
-        paddingBottom: 120,
+        paddingBottom: 100,
+
+    },
+
+    about: {
+        color: "#fd5900",
+        // backgroundColor: "#fff",
+        height: 40,
+        alignItems: "center",
+        justifyContent: "center",
     },
 
     appName: {
