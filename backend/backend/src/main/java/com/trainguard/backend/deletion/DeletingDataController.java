@@ -23,10 +23,9 @@ public class DeletingDataController {
     }
 
 
-//    @DeleteMapping("/userAccount")
-//    public ResponseEntity<Void> deleteUserAccount(@RequestHeader("Authorization") String authorizationHeader) {
-//        Long athleteId = sessionService.getAthleteIdFromToken(authorizationHeader);
-//        deletionService.deleteUserAccount(athleteId);
-//        return ResponseEntity.noContent().build();
-//    }
+    @DeleteMapping("/userAccount")
+    public ResponseEntity<Void> deleteUserAccount(@RequestHeader("Authorization") String authorizationHeader) {
+        deletionService.deleteUserAccount(authorizationHeader);
+        return ResponseEntity.noContent().build();
+    }
 }

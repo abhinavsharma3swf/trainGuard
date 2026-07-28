@@ -27,7 +27,9 @@ public class DeletionService {
     }
 
     @Transactional
-    public void deleteUserAccount(Long athleteId) {
+    public void deleteUserAccount(String authorizationHeader) {
+
+        Long athleteId = sessionService.getAthleteIdFromAuthorizationHeader(authorizationHeader);
         // Delete dependent data first
         recoveryCheckinRepository.deleteAllByAthleteId(athleteId);
         activityRepository.deleteAllByAthleteId(athleteId);
