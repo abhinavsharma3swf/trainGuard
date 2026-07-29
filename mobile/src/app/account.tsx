@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {
-    Alert,
+    Alert, Image,
     Pressable,
     ScrollView,
     StyleSheet,
@@ -15,10 +15,13 @@ import {clearSessionToken} from "@/services/athleteStorage";
 import {deleteAccount, deleteApi} from "@/services/deleteApi";
 import {About} from "@/components/About"
 import {useDashboardData} from "@/context/DashboardDataContext";
+import {useHistoryData} from "@/context/HistoryDataContext";
 
 export default function AccountScreen() {
     const [isProcessing, setIsProcessing] = useState(false);
     const [aboutModalFlag, setAboutModalFlag] = useState(false);
+    const {clearHistoricalData} = useHistoryData();
+    const {clearDashboardData} = useDashboardData();
 
     const handleLogout = async () => {
         try {
@@ -56,6 +59,9 @@ export default function AccountScreen() {
                         try {
                             setIsProcessing(true);
                             await deleteApi();
+                            clearHistoricalData();
+                            clearDashboardData();
+
                             Alert.alert(
                                 "Data deleted",
                                 "Your stored recovery data has been deleted."
@@ -125,6 +131,8 @@ export default function AccountScreen() {
                 contentContainerStyle={styles.content}
                 showsVerticalScrollIndicator={false}
             >
+                <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                <View>
                 <Text style={styles.appName}>
                     Smart Gauge
                 </Text>
@@ -132,6 +140,15 @@ export default function AccountScreen() {
                 <Text style={styles.pageTitle}>
                     Account
                 </Text>
+                </View>
+                <Image source={require("@/assets/images/smartGaugeAppIcon.png")}
+                       resizeMode="contain"
+                       style={{
+                           paddingHorizontal: 16,
+                           paddingVertical: 10,
+                           borderRadius: 12, width: 65, height: 60
+                       }}/>
+                </View>
 
                 <View style={styles.card}>
                     <View style={styles.iconContainer}>

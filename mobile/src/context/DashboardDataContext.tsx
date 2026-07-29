@@ -1,7 +1,7 @@
 import { router } from "expo-router";
 import {
     createContext,
-    ReactNode,
+    ReactNode, useCallback,
     useContext,
     useEffect,
     useState,
@@ -32,6 +32,7 @@ type DashboardDataContextType = {
     isLoading: boolean;
     error: string;
     refreshDashboardFeed: () => Promise<void>;
+    clearDashboardData: () => void;
 };
 
 const DashboardDataContext = createContext<DashboardDataContextType | undefined>(
@@ -69,6 +70,10 @@ export function DashboardDataProvider({ children }: { children: ReactNode }) {
         refreshDashboardFeed();
     }, []);
 
+    const clearDashboardData = useCallback(() => {
+        setFeedItems([]);
+    },[])
+
     return (
         <DashboardDataContext.Provider
             value={{
@@ -76,6 +81,7 @@ export function DashboardDataProvider({ children }: { children: ReactNode }) {
                 isLoading,
                 error,
                 refreshDashboardFeed,
+                clearDashboardData
             }}
         >
             {children}

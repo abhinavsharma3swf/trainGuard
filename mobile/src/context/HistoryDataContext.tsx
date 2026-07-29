@@ -8,6 +8,7 @@ type HistoryDataContextType = {
     isLoading: boolean;
     hasMore: boolean;
     handleLoadMore: () => void;
+    clearHistoricalData: () => void;
 }
 
 const HistoryDataContext = createContext<HistoryDataContextType | undefined>(
@@ -20,7 +21,6 @@ export function HistoryDataProvider({children}: { children: React.ReactNode }) {
     const [page, setPage] = useState(0);
     const [hasMore, setHasMore] = useState(true);
     const {feedItems} = useDashboardData()
-    const [refreshing, setRefreshing] = useState(false);
 
     const pageSize = 20;
 
@@ -68,7 +68,11 @@ export function HistoryDataProvider({children}: { children: React.ReactNode }) {
     useFocusEffect(
         useCallback(() => {
             loadRecoveryHistory(page);
-        }, [feedItems, page]))
+        }, [feedItems, page]),)
+
+    const clearHistoricalData = useCallback(() => {
+        setRecoveryHistory([]);
+    }, []);
 
 
     return (
@@ -77,7 +81,8 @@ export function HistoryDataProvider({children}: { children: React.ReactNode }) {
                 recoveryItems: recoveryHistory,
                 isLoading,
                 hasMore,
-                handleLoadMore
+                handleLoadMore,
+                clearHistoricalData,
             }}>
             {children}
         </HistoryDataContext.Provider>
