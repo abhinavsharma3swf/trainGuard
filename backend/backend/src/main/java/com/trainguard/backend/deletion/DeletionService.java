@@ -5,6 +5,7 @@ import com.trainguard.backend.recovery.RecoveryCheckinRepository;
 import com.trainguard.backend.session.SessionRepository;
 import com.trainguard.backend.session.SessionService;
 import com.trainguard.backend.strava.StravaClient;
+import com.trainguard.backend.strava.StravaTokenResponseRecord;
 import com.trainguard.backend.strava.StravaUserEntity;
 import com.trainguard.backend.strava.StravaUserRepository;
 import lombok.RequiredArgsConstructor;
@@ -47,7 +48,10 @@ public class DeletionService {
     }
 
     public void deleteUserAccount(String authorizationHeader) {
-        Long athleteId = sessionService.getAthleteIdFromAuthorizationHeader(authorizationHeader);
+        Long athleteId =
+                sessionService.getAthleteIdFromAuthorizationHeader(
+                        authorizationHeader
+                );
 
         StravaUserEntity stravaUser = stravaUserRepository
                 .findById(athleteId)
@@ -59,10 +63,13 @@ public class DeletionService {
 
         String refreshToken = stravaUser.getRefreshToken();
 
-        System.out.println("Inside the delete User Account" + refreshToken);
-
         if (refreshToken != null && !refreshToken.isBlank()) {
-            stravaClient.revokeAuthorization(refreshToken);
+            StravaTokenResponseRecord tokenResponse =
+                    stravaClient.refreshAccessToken(refreshToken);
+
+            stravaClient.deauthorize(
+                    tokenResponse.accessToken()
+            );
         }
 
         deleteLocalAccount(athleteId);

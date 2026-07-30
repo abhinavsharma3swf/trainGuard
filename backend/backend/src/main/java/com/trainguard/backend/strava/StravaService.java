@@ -20,15 +20,45 @@ public class StravaService {
     private final StravaProperties stravaProperties;
     private final StravaUserRepository stravaUserRepository;
 
-    public List<ActivityResponseRecord> syncLastSevenActivities(Long athleteId) {
-        StravaUserEntity stravaUser = stravaUserRepository.findById(athleteId)
-                .orElseThrow(() -> new IllegalArgumentException("Strava user not connected."));
+//    public List<ActivityResponseRecord> syncLastSevenActivities(Long athleteId) {
+//        StravaUserEntity stravaUser = stravaUserRepository.findById(athleteId)
+//                .orElseThrow(() -> new IllegalArgumentException("Strava user not connected."));
+//
+//        List<StravaActivityResponseRecord> stravaActivities =
+//                stravaClient.fetchLastSevenActivities(stravaUser.getRefreshToken());
+//
+//        return stravaActivities.stream()
+//                .map(stravaActivity -> toActivityImportRequest(stravaActivity, athleteId))
+//                .map(activityService::importActivity)
+//                .toList();
+//    }
+
+    public List<ActivityResponseRecord> syncLastSevenActivities(
+            Long athleteId
+    ) {
+        StravaUserEntity stravaUser =
+                stravaUserRepository.findById(athleteId)
+                        .orElseThrow(() ->
+                                new IllegalArgumentException(
+                                        "Strava user not connected."
+                                )
+                        );
+
+        String accessToken =
+                getCurrentAccessToken(stravaUser);
 
         List<StravaActivityResponseRecord> stravaActivities =
-                stravaClient.fetchLastSevenActivities(stravaUser.getRefreshToken());
+                stravaClient.fetchLastSevenActivities(
+                        accessToken
+                );
 
         return stravaActivities.stream()
-                .map(stravaActivity -> toActivityImportRequest(stravaActivity, athleteId))
+                .map(stravaActivity ->
+                        toActivityImportRequest(
+                                stravaActivity,
+                                athleteId
+                        )
+                )
                 .map(activityService::importActivity)
                 .toList();
     }
@@ -142,26 +172,83 @@ public class StravaService {
         );
     }
 
+//    private void importOrUpdateActivityFromWebhook(
+//            Long athleteId,
+//            Long stravaActivityId
+//    ) {
+//        StravaUserEntity stravaUser = stravaUserRepository.findById(athleteId)
+//                .orElseThrow(() -> new IllegalArgumentException("Strava user not found."));
+//
+//        StravaActivityResponseRecord stravaActivity =
+//                stravaClient.fetchActivityById(
+//                        stravaActivityId,
+//                        stravaUser.getRefreshToken()
+//                );
+//
+//        if(!stravaActivity.athlete().id().equals(athleteId)){
+//            throw new IllegalArgumentException("Webhook athlete id mismatch");
+//        }
+//
+//        ActivityImportRequestRecord request =
+//                toActivityImportRequest(stravaActivity, athleteId);
+//
+//        activityService.importActivity(request);
+//    }
+
     private void importOrUpdateActivityFromWebhook(
             Long athleteId,
             Long stravaActivityId
     ) {
-        StravaUserEntity stravaUser = stravaUserRepository.findById(athleteId)
-                .orElseThrow(() -> new IllegalArgumentException("Strava user not found."));
+        StravaUserEntity stravaUser =
+                stravaUserRepository.findById(athleteId)
+                        .orElseThrow(() ->
+                                new IllegalArgumentException(
+                                        "Strava user not found."
+                                )
+                        );
+
+        String accessToken =
+                getCurrentAccessToken(stravaUser);
 
         StravaActivityResponseRecord stravaActivity =
                 stravaClient.fetchActivityById(
                         stravaActivityId,
-                        stravaUser.getRefreshToken()
+                        accessToken
                 );
 
-        if(!stravaActivity.athlete().id().equals(athleteId)){
-            throw new IllegalArgumentException("Webhook athlete id mismatch");
+        if (stravaActivity.athlete() == null
+                || !stravaActivity.athlete()
+                .id()
+                .equals(athleteId)) {
+            throw new IllegalArgumentException(
+                    "Webhook athlete ID mismatch."
+            );
         }
 
         ActivityImportRequestRecord request =
-                toActivityImportRequest(stravaActivity, athleteId);
+                toActivityImportRequest(
+                        stravaActivity,
+                        athleteId
+                );
 
         activityService.importActivity(request);
+    }
+
+    private String getCurrentAccessToken(
+            StravaUserEntity stravaUser
+    ) {
+        StravaTokenResponseRecord tokenResponse =
+                stravaClient.refreshAccessToken(
+                        stravaUser.getRefreshToken()
+                );
+
+        stravaUser.setRefreshToken(
+                tokenResponse.refreshToken()
+        );
+        stravaUser.setUpdatedAt(LocalDateTime.now());
+
+        stravaUserRepository.save(stravaUser);
+
+        return tokenResponse.accessToken();
     }
 }
