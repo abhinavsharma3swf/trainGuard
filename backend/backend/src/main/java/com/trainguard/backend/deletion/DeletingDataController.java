@@ -2,6 +2,7 @@ package com.trainguard.backend.deletion;
 
 
 import com.trainguard.backend.session.SessionService;
+import com.trainguard.backend.strava.StravaUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,13 +16,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class DeletingDataController {
 
     private final DeletionService deletionService;
+    private final LocalDeletionService localDeletionService;
+    private final SessionService sessionService;
 
 
     @DeleteMapping()
     public void delete(@RequestHeader("Authorization") String authorizationHeader) {
-
-        System.out.println("Inside the delete user data controller first block");
-        deletionService.deleteUserData(authorizationHeader);
+        Long athleteId = sessionService.getAthleteIdFromAuthorizationHeader(authorizationHeader);
+        localDeletionService.deleteLocalAccount(athleteId);
     }
 
     @DeleteMapping("/userAccount")

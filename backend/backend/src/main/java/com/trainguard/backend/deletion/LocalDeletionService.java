@@ -3,6 +3,7 @@ package com.trainguard.backend.deletion;
 import com.trainguard.backend.activity.ActivityRepository;
 import com.trainguard.backend.recovery.RecoveryCheckinRepository;
 import com.trainguard.backend.session.SessionRepository;
+import com.trainguard.backend.session.SessionService;
 import com.trainguard.backend.strava.StravaUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ public class LocalDeletionService {
     private final RecoveryCheckinRepository recoveryCheckinRepository;
     private final SessionRepository sessionRepository;
     private final StravaUserRepository stravaUserRepository;
+    private final SessionService sessionService;
 
     @Transactional
     public void deleteLocalAccount(Long athleteId) {

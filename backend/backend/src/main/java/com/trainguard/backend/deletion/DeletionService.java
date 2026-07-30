@@ -16,9 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class DeletionService {
 
-    private final ActivityRepository activityRepository;
-    private final RecoveryCheckinRepository recoveryCheckinRepository;
-    private final SessionRepository sessionRepository;
     private final StravaUserRepository stravaUserRepository;
     private final SessionService sessionService;
     private final StravaClient stravaClient;
