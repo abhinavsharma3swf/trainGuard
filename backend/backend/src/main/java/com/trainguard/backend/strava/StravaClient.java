@@ -103,6 +103,9 @@ public class StravaClient {
 
         System.out.println("i am in strava client" + formData);
 
+        String clientId = stravaProperties.clientId();
+        String clientSecret = stravaProperties.clientSecret();
+
         try {
             RestClient restClient = restClientBuilder
                     .baseUrl("https://www.strava.com")
@@ -110,11 +113,12 @@ public class StravaClient {
             System.out.println("Inside the try block");
             restClient.post()
                     .uri("/oauth/revoke")
-                    .header(HttpHeaders.AUTHORIZATION, stravaProperties.clientId(), stravaProperties.clientSecret())
+                    .header(HttpHeaders.AUTHORIZATION, clientId, clientSecret)
                     .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                     .body(refreshToken)
                     .retrieve()
                     .toBodilessEntity();
+            System.out.println("Inside the try block" +clientId   + clientSecret + "refreshToken" +refreshToken  );
         } catch (RestClientResponseException exception) {
             throw new IllegalStateException("Failed to revoke Strava access token.");
 
