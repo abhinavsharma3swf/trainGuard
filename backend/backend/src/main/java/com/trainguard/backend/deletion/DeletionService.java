@@ -5,6 +5,7 @@ import com.trainguard.backend.recovery.RecoveryCheckinRepository;
 import com.trainguard.backend.session.SessionRepository;
 import com.trainguard.backend.session.SessionService;
 import com.trainguard.backend.strava.StravaClient;
+import com.trainguard.backend.strava.StravaUserEntity;
 import com.trainguard.backend.strava.StravaUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,10 +29,10 @@ public class DeletionService {
         activityRepository.deleteAllByAthleteId(athleteId);
     }
 
-    @Transactional
-    public void deleteUserAccount(String authorizationHeader) {
 
-        Long athleteId = sessionService.getAthleteIdFromAuthorizationHeader(authorizationHeader);
+    public void deleteLocalAccount(Long athleteId) {
+
+//        Long athleteId = sessionService.getAthleteIdFromAuthorizationHeader(authorizationHeader);
         // Delete dependent data first
         recoveryCheckinRepository.deleteAllByAthleteId(athleteId);
         activityRepository.deleteAllByAthleteId(athleteId);
@@ -42,7 +43,30 @@ public class DeletionService {
         // Delete the main user record last
         stravaUserRepository.deleteAllByAthleteId(athleteId);
 
-        stravaClient.revokeAuthorization(authorizationHeader);
+//        stravaClient.revokeAuthorization(authorizationHeader);
+    }
+
+    public void deleteUserAccount(String authorizationHeader) {
+        Long athleteId =
+                sessionService.getAthleteIdFromAuthorizationHeader(
+                        authorizationHeader
+                );
+
+        StravaUserEntity stravaUser = stravaUserRepository
+                .findById(athleteId)
+                .orElseThrow(() ->
+                        new IllegalStateException(
+                                "Strava user not found: " + athleteId
+                        )
+                );
+
+        String refreshToken = stravaUser.getRefreshToken();
+
+        if (refreshToken != null && !refreshToken.isBlank()) {
+            stravaClient.revokeAuthorization(refreshToken);
+        }
+
+        deleteLocalAccount(athleteId);
     }
 
 
