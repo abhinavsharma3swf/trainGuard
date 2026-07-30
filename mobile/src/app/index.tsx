@@ -1,22 +1,20 @@
-import { router } from "expo-router";
-import { useEffect, useState } from "react";
-import {
-    Linking,
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    Text,
-    View,
-} from "react-native";
-
-import { BottomNav } from "@/components/BottomNav";
-import { getSessionToken } from "@/services/athleteStorage";
-import { getStravaAuthorizationUrl } from "@/services/stravaApi";
+import {router} from "expo-router";
+import React, {useEffect, useState} from "react";
+import {Linking, Pressable, StyleSheet, Text, View,} from "react-native";
+import {getSessionToken} from "@/services/athleteStorage";
+import {getStravaAuthorizationUrl} from "@/services/stravaApi";
+import {PrivacyStatement} from "@/components/PrivacyStatement";
+import {BetaDisclaimer} from "@/components/BetaDisclaimer";
+import {Checkbox} from 'expo-checkbox';
 
 export default function ConnectScreen() {
     const [error, setError] = useState("");
     const [isConnecting, setIsConnecting] = useState(false);
     const [athleteId, setAthleteId] = useState("");
+    const [privacyStatementFLag, setPrivacyStatementFLag] = useState<boolean>(false);
+    const [betaDisclaimerFlag, setBetaDisclaimerFlag] = useState<boolean>(false)
+    const [confirmDisclaimerFlag, setConfirmDisclaimerFlag] = useState<boolean>(false)
+    const [confirmPrivacyStatementFlag, setConfirmPrivacyStatementFlag] = useState<boolean>(false)
 
     async function checkExistingConnection() {
         const accessToken = await getSessionToken();
@@ -66,93 +64,52 @@ export default function ConnectScreen() {
                     status.
                 </Text>
 
+                <View style={[styles.disclaimerCard]}>
+                    <Pressable onPress={() => {
+                        setPrivacyStatementFLag(true)
+                        setConfirmPrivacyStatementFlag(true)
+                    }}>
+
+
+                        <View style={{flex: 1, flexDirection: "row"}}>
+                            <Text style={styles.disclaimerTitle}>
+                                Terms of Service and Privacy Policy.
+                            </Text>
+                            <Checkbox style={{padding: 12, margin: 2}} value={confirmPrivacyStatementFlag}
+                                      onValueChange={setPrivacyStatementFLag}
+                            />
+                        </View>
+                        <PrivacyStatement privacyStatementFlag={privacyStatementFLag}
+                                          setPrivacyStatementFlag={setPrivacyStatementFLag}/>
+                    </Pressable>
+                </View>
+
                 <View style={styles.disclaimerCard}>
-                    <Text style={styles.disclaimerTitle}>
-                        Beta Disclaimer and User Acknowledgement
-                    </Text>
+                    <Pressable onPress={() => {
+                        setBetaDisclaimerFlag(true)
+                        setConfirmDisclaimerFlag(true)
+                    }
+                    }>
 
-                    <ScrollView
-                        style={styles.disclaimerScroll}
-                        nestedScrollEnabled
-                        showsVerticalScrollIndicator
-                    >
-                        <Text style={styles.disclaimerText}>
-                            Smart Gauge is a beta fitness tracking and training analysis
-                            application. By using this app, you acknowledge and agree that the
-                            app is provided for informational, educational, and personal
-                            tracking purposes only.
-                        </Text>
-
-                        <Text style={styles.disclaimerText}>
-                            Smart Gauge is not a medical device, healthcare service, coaching
-                            service, emergency service, or substitute for professional medical
-                            advice, diagnosis, treatment, or training guidance. Any information
-                            displayed in the app, including activity history, recovery
-                            check-ins, pain scores, training trends, performance metrics, or
-                            alerts, should not be relied upon as medical, safety, or
-                            professional training advice.
-                        </Text>
-
-                        <Text style={styles.disclaimerText}>
-                            You are responsible for your own training decisions, physical
-                            activity, health choices, and use of the information displayed in
-                            the app. You should consult a qualified medical professional,
-                            coach, or other appropriate professional before making decisions
-                            that may affect your health, injury risk, training load, or
-                            physical performance.
-                        </Text>
-
-                        <Text style={styles.disclaimerText}>
-                            Smart Gauge may connect to third-party services, including Strava,
-                            to import activity data. By connecting your Strava account, you
-                            authorize Smart Gauge to access and store the activity data needed
-                            to provide the app’s features. This may include activity names,
-                            sport types, dates, distances, durations, elevation, heart rate,
-                            power, recovery check-ins, pain scores, notes, and related training
-                            information.
-                        </Text>
-
-                        <Text style={styles.disclaimerText}>
-                            Although reasonable efforts are made to protect user data, no
-                            software system, network, server, database, or third-party
-                            integration can be guaranteed to be completely secure,
-                            uninterrupted, or error-free. You acknowledge that data may be
-                            delayed, incomplete, inaccurate, unavailable, or affected by
-                            third-party service changes, outages, user permissions, API
-                            limitations, or technical issues.
-                        </Text>
-
-                        <Text style={styles.disclaimerText}>
-                            You are responsible for reviewing your own data and determining
-                            whether it is accurate and appropriate for your personal use. Smart
-                            Gauge and its developer are not responsible for decisions,
-                            injuries, losses, damages, training outcomes, data inaccuracies,
-                            service interruptions, third-party service issues, or other
-                            consequences arising from your use of the app or reliance on
-                            information displayed in the app.
-                        </Text>
-
-                        <Text style={styles.disclaimerText}>
-                            Because this is a beta product, features may change, break, be
-                            removed, or behave unexpectedly. Data may be modified, deleted,
-                            reset, or lost during testing, development, hosting changes,
-                            database migrations, or app updates.
-                        </Text>
-
-                        <Text style={styles.disclaimerText}>
-                            By continuing to use Smart Gauge, you agree that you understand
-                            these limitations and accept responsibility for your use of the app
-                            and any decisions you make based on its information.
-                        </Text>
-                    </ScrollView>
+                        <View style={{flex: 1, flexDirection: "row"}}>
+                            <Text style={styles.disclaimerTitle}>
+                                Beta Disclaimer.
+                            </Text>
+                            <Checkbox style={{marginLeft: 150, padding: 12 }} value={confirmDisclaimerFlag}
+                                      onValueChange={setConfirmDisclaimerFlag}
+                            />
+                        </View>
+                        <BetaDisclaimer betaDisclaimerFlag={betaDisclaimerFlag}
+                                        setBetaDisclaimerFlag={setBetaDisclaimerFlag}/>
+                    </Pressable>
                 </View>
 
                 {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
                 <Pressable
-                    style={[styles.primaryButton, isConnecting && styles.disabledButton]}
+                    style={[styles.primaryButton, isConnecting || !confirmDisclaimerFlag || !confirmPrivacyStatementFlag ? styles.disabledButton : styles.primaryButton]}
                     onPress={handleConnectStrava}
-                    disabled={isConnecting}
+                    disabled={isConnecting || !confirmDisclaimerFlag || !confirmPrivacyStatementFlag}
                 >
                     <Text style={styles.primaryButtonText}>
                         {isConnecting ? "Connecting..." : "I Understand — Connect with Strava"}
@@ -160,11 +117,11 @@ export default function ConnectScreen() {
                 </Pressable>
 
                 <Text style={styles.footerText}>
-                    By tapping Connect with Strava, you acknowledge the beta disclaimer.
+                    By connecting, you agree to Smart Gauge’s
+                    Terms of Service and Privacy Policy.
                 </Text>
             </View>
 
-            {/*<BottomNav activeRoute="login" storedAthleteId={athleteId} />*/}
         </View>
     );
 }
@@ -176,6 +133,7 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         padding: 20,
         paddingBottom: 110,
+        paddingTop: 50
     },
     card: {
         backgroundColor: "#151b1f",
@@ -183,6 +141,8 @@ const styles = StyleSheet.create({
         padding: 24,
         borderWidth: 1,
         borderColor: "#263238",
+        height: 500,
+        paddingHorizontal: 20,
     },
     logoMark: {
         width: 64,
@@ -218,11 +178,20 @@ const styles = StyleSheet.create({
         borderColor: "#2a3033",
         marginBottom: 16,
     },
+    confirm: {
+        backgroundColor: "#54cd03",
+        borderRadius: 16,
+        padding: 14,
+        borderWidth: 1,
+        borderColor: "#2a3033",
+        marginBottom: 16,
+    },
     disclaimerTitle: {
         color: "#e0e3e5",
-        fontSize: 16,
-        fontWeight: "900",
+        fontSize: 14,
+        fontWeight: "700",
         marginBottom: 10,
+        marginLeft: 10
     },
     disclaimerScroll: {
         maxHeight: 190,

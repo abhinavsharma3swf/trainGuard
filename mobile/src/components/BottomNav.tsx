@@ -49,25 +49,6 @@ export function BottomNav({
     return (
         <View style={styles.container}>
 
-            {/*<Pressable*/}
-            {/*    style={styles.navItem}*/}
-            {/*    onPress={*/}
-            {/*        storedAthleteId*/}
-            {/*            ? handleLogout*/}
-            {/*            : () => router.replace("/")*/}
-            {/*    }*/}
-            {/*>*/}
-            {/*    <NavIcon*/}
-            {/*        active={activeRoute === "login"}*/}
-            {/*        activeIcon="log-out"*/}
-            {/*        inactiveIcon={*/}
-            {/*            storedAthleteId*/}
-            {/*                ? "log-out-outline"*/}
-            {/*                : "person-outline"*/}
-            {/*        }*/}
-            {/*    />*/}
-            {/*</Pressable>*/}
-
             <Pressable
                 style={styles.navItem}
                 onPress={() => router.replace("/dashboard")}
