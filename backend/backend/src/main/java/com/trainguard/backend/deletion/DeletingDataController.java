@@ -27,7 +27,6 @@ public class DeletingDataController {
     @DeleteMapping("/userAccount")
     public ResponseEntity<Void> deleteUserAccount(@RequestHeader("Authorization") String authorizationHeader) {
         deletionService.deleteUserAccount(authorizationHeader);
-        System.out.println("Inside the delete controller block");
         return ResponseEntity.noContent().build();
     }
 }

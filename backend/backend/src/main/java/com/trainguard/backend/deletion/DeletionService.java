@@ -71,7 +71,6 @@ public class DeletionService {
                     tokenResponse.accessToken()
             );
         }
-    System.out.println("Inside the delete user account in deletion servie");
-//        deleteLocalAccount(athleteId);
+        deleteLocalAccount(athleteId);
     }
 }
