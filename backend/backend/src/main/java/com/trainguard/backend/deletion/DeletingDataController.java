@@ -2,7 +2,6 @@ package com.trainguard.backend.deletion;
 
 
 import com.trainguard.backend.session.SessionService;
-import com.trainguard.backend.strava.StravaUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;

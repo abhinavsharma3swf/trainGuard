@@ -27,11 +27,11 @@ public record StravaActivityResponseRecord(
         @JsonProperty("total_elevation_gain")
         Double totalElevationGain,
 
-        @JsonProperty("average_heartrate")
-        Double averageHeartbeat,
-
-        @JsonProperty("max_heartrate")
-        Double maxHeartbeat,
+//        @JsonProperty("average_heartrate")
+//        Double averageHeartbeat,
+//
+//        @JsonProperty("max_heartrate")
+//        Double maxHeartbeat,
 
         @JsonProperty("average_watts")
         Double averageWatts,

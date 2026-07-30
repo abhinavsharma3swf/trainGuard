@@ -39,9 +39,9 @@ public class ActivityEntity {
 
     private Double totalElevationGain;
 
-    private Double averageHeartbeat;
-
-    private Double maxHeartbeat;
+//    private Double averageHeartbeat;
+//
+//    private Double maxHeartbeat;
 
     private Double averageWatts;
 

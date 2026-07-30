@@ -1,127 +1,247 @@
-import {router} from "expo-router";
-import React, {useEffect, useState} from "react";
-import {Linking, Pressable, StyleSheet, Text, View,} from "react-native";
-import {getSessionToken} from "@/services/athleteStorage";
-import {getStravaAuthorizationUrl} from "@/services/stravaApi";
-import {PrivacyStatement} from "@/components/PrivacyStatement";
-import {BetaDisclaimer} from "@/components/BetaDisclaimer";
-import {Checkbox} from 'expo-checkbox';
+import { router } from "expo-router";
+import React, { useEffect, useState } from "react";
+import {
+    ActivityIndicator,
+    Linking,
+    Pressable,
+    SafeAreaView,
+    ScrollView,
+    StyleSheet,
+    Text,
+    View,
+} from "react-native";
+import Checkbox from "expo-checkbox";
+
+import { getSessionToken } from "@/services/athleteStorage";
+import { getStravaAuthorizationUrl } from "@/services/stravaApi";
+import { PrivacyStatement } from "@/components/PrivacyStatement";
+import { BetaDisclaimer } from "@/components/BetaDisclaimer";
+import {SafeAreaProvider} from "react-native-safe-area-context";
 
 export default function ConnectScreen() {
     const [error, setError] = useState("");
+    const [isCheckingSession, setIsCheckingSession] = useState(true);
     const [isConnecting, setIsConnecting] = useState(false);
-    const [athleteId, setAthleteId] = useState("");
-    const [privacyStatementFLag, setPrivacyStatementFLag] = useState<boolean>(false);
-    const [betaDisclaimerFlag, setBetaDisclaimerFlag] = useState<boolean>(false)
-    const [confirmDisclaimerFlag, setConfirmDisclaimerFlag] = useState<boolean>(false)
-    const [confirmPrivacyStatementFlag, setConfirmPrivacyStatementFlag] = useState<boolean>(false)
 
-    async function checkExistingConnection() {
-        const accessToken = await getSessionToken();
+    const [isPrivacyStatementVisible, setIsPrivacyStatementVisible] =
+        useState(false);
+    const [isBetaDisclaimerVisible, setIsBetaDisclaimerVisible] =
+        useState(false);
 
-        if (accessToken) {
-            setAthleteId(accessToken);
-            router.replace("/dashboard");
-        }
-    }
+    const [hasAcceptedPrivacy, setHasAcceptedPrivacy] = useState(false);
+    const [hasAcceptedBetaDisclaimer, setHasAcceptedBetaDisclaimer] =
+        useState(false);
+
+    const canConnect =
+        hasAcceptedPrivacy &&
+        hasAcceptedBetaDisclaimer &&
+        !isConnecting &&
+        !isCheckingSession;
 
     useEffect(() => {
-        checkExistingConnection();
+        let isMounted = true;
+
+        const checkExistingConnection = async () => {
+            try {
+                const sessionToken = await getSessionToken();
+
+                if (sessionToken && isMounted) {
+                    router.replace("/dashboard");
+                }
+            } catch (sessionError) {
+                console.error("Failed to check existing session:", sessionError);
+
+                if (isMounted) {
+                    setError("Could not verify your existing session.");
+                }
+            } finally {
+                if (isMounted) {
+                    setIsCheckingSession(false);
+                }
+            }
+        };
+
+        void checkExistingConnection();
+
+        return () => {
+            isMounted = false;
+        };
     }, []);
 
-
     const handleConnectStrava = async () => {
+        if (!canConnect) {
+            return;
+        }
+
         try {
             setIsConnecting(true);
             setError("");
 
-            const url = await getStravaAuthorizationUrl();
+            const authorizationUrl = await getStravaAuthorizationUrl();
 
-            if (!url) {
-                setError("Could not get Strava authorization URL.");
+            if (!authorizationUrl) {
+                setError("Could not get the Strava authorization URL.");
                 return;
             }
-            await Linking.openURL(url);
-        } catch (error) {
-            console.error(error);
-            setError("Could not open Strava connection.");
+
+            const canOpenUrl = await Linking.canOpenURL(authorizationUrl);
+
+            if (!canOpenUrl) {
+                setError("This device could not open the Strava authorization page.");
+                return;
+            }
+
+            await Linking.openURL(authorizationUrl);
+        } catch (connectionError) {
+            console.error("Failed to open Strava authorization:", connectionError);
+            setError("Could not open the Strava connection page.");
         } finally {
             setIsConnecting(false);
         }
     };
 
+    if (isCheckingSession) {
+        return (
+            <SafeAreaProvider style={styles.screen}>
+                <View style={styles.loadingContainer}>
+                    <ActivityIndicator size="large" />
+                    <Text style={styles.loadingText}>Checking your session...</Text>
+                </View>
+            </SafeAreaProvider>
+        );
+    }
+
     return (
-        <View style={styles.screen}>
-            <View style={styles.card}>
-                <View style={styles.logoMark}>
-                    <Text style={styles.logoText}>SG</Text>
-                </View>
+        <SafeAreaProvider style={styles.screen}>
+            <ScrollView
+                contentContainerStyle={styles.scrollContent}
+                keyboardShouldPersistTaps="handled"
+                showsVerticalScrollIndicator={false}
+            >
+                <View style={styles.card}>
+                    <View style={styles.logoMark}>
+                        <Text style={styles.logoText}>SG</Text>
+                    </View>
 
-                <Text style={styles.appName}>Smart Gauge</Text>
+                    <Text style={styles.appName}>Smart Gauge</Text>
 
-                <Text style={styles.subtitle}>
-                    Connect Strava to import your latest activities and track your recovery
-                    status.
-                </Text>
-
-                <View style={[styles.disclaimerCard]}>
-                    <Pressable onPress={() => {
-                        setPrivacyStatementFLag(true)
-                        setConfirmPrivacyStatementFlag(true)
-                    }}>
-
-
-                        <View style={{flex: 1, flexDirection: "row"}}>
-                            <Text style={styles.disclaimerTitle}>
-                                Terms of Service and Privacy Policy.
-                            </Text>
-                            <Checkbox style={{padding: 12, margin: 2}} value={confirmPrivacyStatementFlag}
-                                      onValueChange={setPrivacyStatementFLag}
-                            />
-                        </View>
-                        <PrivacyStatement privacyStatementFlag={privacyStatementFLag}
-                                          setPrivacyStatementFlag={setPrivacyStatementFLag}/>
-                    </Pressable>
-                </View>
-
-                <View style={styles.disclaimerCard}>
-                    <Pressable onPress={() => {
-                        setBetaDisclaimerFlag(true)
-                        setConfirmDisclaimerFlag(true)
-                    }
-                    }>
-
-                        <View style={{flex: 1, flexDirection: "row"}}>
-                            <Text style={styles.disclaimerTitle}>
-                                Beta Disclaimer.
-                            </Text>
-                            <Checkbox style={{marginLeft: 150, padding: 12 }} value={confirmDisclaimerFlag}
-                                      onValueChange={setConfirmDisclaimerFlag}
-                            />
-                        </View>
-                        <BetaDisclaimer betaDisclaimerFlag={betaDisclaimerFlag}
-                                        setBetaDisclaimerFlag={setBetaDisclaimerFlag}/>
-                    </Pressable>
-                </View>
-
-                {error ? <Text style={styles.errorText}>{error}</Text> : null}
-
-                <Pressable
-                    style={[styles.primaryButton, isConnecting || !confirmDisclaimerFlag || !confirmPrivacyStatementFlag ? styles.disabledButton : styles.primaryButton]}
-                    onPress={handleConnectStrava}
-                    disabled={isConnecting || !confirmDisclaimerFlag || !confirmPrivacyStatementFlag}
-                >
-                    <Text style={styles.primaryButtonText}>
-                        {isConnecting ? "Connecting..." : "I Understand — Connect with Strava"}
+                    <Text style={styles.subtitle}>
+                        Connect Strava to temporarily import your recent activities
+                        and record private recovery check-ins.
                     </Text>
-                </Pressable>
 
-                <Text style={styles.footerText}>
-                    By connecting, you agree to Smart Gauge’s
-                    Terms of Service and Privacy Policy.
-                </Text>
+                    <Text style={styles.retentionText}>
+                        Imported Strava activity data is retained for no longer than
+                        seven days.
+                    </Text>
+
+                    <ConsentRow
+                        title="Privacy Policy and Terms of Service"
+                        description="Review how Smart Gauge collects, uses, retains, and deletes your data."
+                        checked={hasAcceptedPrivacy}
+                        onCheckedChange={setHasAcceptedPrivacy}
+                        onReviewPress={() => setIsPrivacyStatementVisible(true)}
+                    />
+
+                    <ConsentRow
+                        title="Beta Disclaimer"
+                        description="Review the limitations that apply while Smart Gauge is in beta."
+                        checked={hasAcceptedBetaDisclaimer}
+                        onCheckedChange={setHasAcceptedBetaDisclaimer}
+                        onReviewPress={() => setIsBetaDisclaimerVisible(true)}
+                    />
+
+                    {error ? (
+                        <Text accessibilityRole="alert" style={styles.errorText}>
+                            {error}
+                        </Text>
+                    ) : null}
+
+                    <Pressable
+                        accessibilityRole="button"
+                        accessibilityState={{ disabled: !canConnect }}
+                        disabled={!canConnect}
+                        onPress={handleConnectStrava}
+                        style={({ pressed }) => [
+                            styles.primaryButton,
+                            !canConnect && styles.disabledButton,
+                            pressed && canConnect && styles.pressedButton,
+                        ]}
+                    >
+                        {isConnecting ? (
+                            <ActivityIndicator />
+                        ) : (
+                            <Text style={styles.primaryButtonText}>
+                                Connect with Strava
+                            </Text>
+                        )}
+                    </Pressable>
+
+                    <Text style={styles.footerText}>
+                        You can disconnect Strava or delete your Smart Gauge account
+                        from account settings.
+                    </Text>
+                </View>
+            </ScrollView>
+
+            <PrivacyStatement
+                privacyStatementFlag={isPrivacyStatementVisible}
+                setPrivacyStatementFlag={setIsPrivacyStatementVisible}
+            />
+
+            <BetaDisclaimer
+                betaDisclaimerFlag={isBetaDisclaimerVisible}
+                setBetaDisclaimerFlag={setIsBetaDisclaimerVisible}
+            />
+        </SafeAreaProvider>
+    );
+}
+
+type ConsentRowProps = {
+    title: string;
+    description: string;
+    checked: boolean;
+    onCheckedChange: (checked: boolean) => void;
+    onReviewPress: () => void;
+};
+
+function ConsentRow({
+                        title,
+                        description,
+                        checked,
+                        onCheckedChange,
+                        onReviewPress,
+                    }: ConsentRowProps) {
+    return (
+        <View style={styles.consentCard}>
+            <View style={styles.consentHeader}>
+                <View style={styles.consentTextContainer}>
+                    <Text style={styles.disclaimerTitle}>{title}</Text>
+                    <Text style={styles.disclaimerDescription}>
+                        {description}
+                    </Text>
+                </View>
+
+                <Checkbox
+                    accessibilityLabel={`Accept ${title}`}
+                    color={checked ? "#fd5900" : undefined}
+                    value={checked}
+                    onValueChange={onCheckedChange}
+                    style={styles.checkbox}
+                />
             </View>
 
+            <Pressable
+                accessibilityRole="button"
+                onPress={onReviewPress}
+                hitSlop={8}
+                style={({ pressed }) => [
+                    styles.reviewButton,
+                    pressed && styles.reviewButtonPressed,
+                ]}
+            >
+                <Text style={styles.reviewButtonText}>Review</Text>
+            </Pressable>
         </View>
     );
 }
@@ -130,19 +250,33 @@ const styles = StyleSheet.create({
     screen: {
         flex: 1,
         backgroundColor: "#101415",
+    },
+    scrollContent: {
+        flexGrow: 1,
         justifyContent: "center",
-        padding: 20,
-        paddingBottom: 110,
-        paddingTop: 50
+        paddingHorizontal: 20,
+        paddingVertical: 32,
+    },
+    loadingContainer: {
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
+        padding: 24,
+    },
+    loadingText: {
+        color: "#c5c6cd",
+        fontSize: 15,
+        marginTop: 12,
     },
     card: {
+        width: "100%",
+        maxWidth: 520,
+        alignSelf: "center",
         backgroundColor: "#151b1f",
         borderRadius: 24,
         padding: 24,
         borderWidth: 1,
         borderColor: "#263238",
-        height: 500,
-        paddingHorizontal: 20,
     },
     logoMark: {
         width: 64,
@@ -168,58 +302,87 @@ const styles = StyleSheet.create({
         color: "#c5c6cd",
         fontSize: 15,
         lineHeight: 22,
-        marginBottom: 16,
+        marginBottom: 8,
     },
-    disclaimerCard: {
+    retentionText: {
+        color: "#8b949e",
+        fontSize: 13,
+        lineHeight: 19,
+        marginBottom: 20,
+    },
+    consentCard: {
         backgroundColor: "#101415",
         borderRadius: 16,
         padding: 14,
         borderWidth: 1,
         borderColor: "#2a3033",
-        marginBottom: 16,
+        marginBottom: 14,
     },
-    confirm: {
-        backgroundColor: "#54cd03",
-        borderRadius: 16,
-        padding: 14,
-        borderWidth: 1,
-        borderColor: "#2a3033",
-        marginBottom: 16,
+    consentHeader: {
+        flexDirection: "row",
+        alignItems: "flex-start",
+    },
+    consentTextContainer: {
+        flex: 1,
+        paddingRight: 14,
     },
     disclaimerTitle: {
         color: "#e0e3e5",
         fontSize: 14,
         fontWeight: "700",
-        marginBottom: 10,
-        marginLeft: 10
+        lineHeight: 20,
     },
-    disclaimerScroll: {
-        maxHeight: 190,
+    disclaimerDescription: {
+        color: "#8b949e",
+        fontSize: 12,
+        lineHeight: 18,
+        marginTop: 4,
     },
-    disclaimerText: {
-        color: "#c5c6cd",
-        fontSize: 13,
-        lineHeight: 19,
-        marginBottom: 12,
+    checkbox: {
+        width: 24,
+        height: 24,
+        borderRadius: 5,
+    },
+    reviewButton: {
+        alignSelf: "flex-start",
+        marginTop: 12,
+        paddingVertical: 6,
+        paddingHorizontal: 2,
+    },
+    reviewButtonPressed: {
+        opacity: 0.7,
+    },
+    reviewButtonText: {
+        color: "#fd5900",
+        fontSize: 14,
+        fontWeight: "700",
     },
     primaryButton: {
+        minHeight: 52,
         backgroundColor: "#fd5900",
         borderRadius: 14,
-        paddingVertical: 15,
+        paddingHorizontal: 18,
         alignItems: "center",
+        justifyContent: "center",
+        marginTop: 4,
     },
     primaryButtonText: {
         color: "#501600",
         fontSize: 16,
         fontWeight: "900",
+        textAlign: "center",
     },
     disabledButton: {
-        opacity: 0.6,
+        opacity: 0.45,
+    },
+    pressedButton: {
+        opacity: 0.8,
     },
     errorText: {
         color: "#ffb4ab",
         fontSize: 14,
         fontWeight: "700",
+        lineHeight: 20,
         marginBottom: 12,
     },
     footerText: {
@@ -227,6 +390,6 @@ const styles = StyleSheet.create({
         fontSize: 12,
         lineHeight: 18,
         textAlign: "center",
-        marginTop: 10,
+        marginTop: 12,
     },
 });
