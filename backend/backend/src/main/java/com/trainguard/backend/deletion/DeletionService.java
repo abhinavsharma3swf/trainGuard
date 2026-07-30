@@ -4,6 +4,7 @@ import com.trainguard.backend.activity.ActivityRepository;
 import com.trainguard.backend.recovery.RecoveryCheckinRepository;
 import com.trainguard.backend.session.SessionRepository;
 import com.trainguard.backend.session.SessionService;
+import com.trainguard.backend.strava.StravaClient;
 import com.trainguard.backend.strava.StravaUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ public class DeletionService {
     private final SessionRepository sessionRepository;
     private final StravaUserRepository stravaUserRepository;
     private final SessionService sessionService;
+    private final StravaClient stravaClient;
 
     @Transactional
     public void deleteUserData(String authorizationHeader) {
@@ -39,5 +41,9 @@ public class DeletionService {
 
         // Delete the main user record last
         stravaUserRepository.deleteAllByAthleteId(athleteId);
+
+        stravaClient.revokeAuthorization(authorizationHeader);
     }
+
+
 }

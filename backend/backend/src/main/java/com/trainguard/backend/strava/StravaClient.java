@@ -3,6 +3,7 @@ package com.trainguard.backend.strava;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
@@ -91,5 +92,19 @@ public class StravaClient {
                 .header("Authorization", "Bearer " + accessToken)
                 .retrieve()
                 .body(StravaActivityResponseRecord.class);
+    }
+
+    public void revokeAuthorization(String refreshToken){
+        RestClient restClient = restClientBuilder
+                .baseUrl("https://www.strava.com/oauth/revoke")
+                .build();
+
+                 restClient.post()
+                .header("Authorization", stravaProperties.clientId(), stravaProperties.clientSecret())
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .body(refreshToken)
+                .retrieve()
+                .toBodilessEntity();
+
     }
 }
