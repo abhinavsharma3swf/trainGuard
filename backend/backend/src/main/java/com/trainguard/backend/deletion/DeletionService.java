@@ -22,30 +22,23 @@ public class DeletionService {
     private final StravaUserRepository stravaUserRepository;
     private final SessionService sessionService;
     private final StravaClient stravaClient;
+    private final LocalDeletionService localDeletionService;
 
-    @Transactional
-    public void deleteUserData(String authorizationHeader) {
-        Long athleteId = sessionService.getAthleteIdFromAuthorizationHeader(authorizationHeader);
-        recoveryCheckinRepository.deleteAllByAthleteId(athleteId);
-        activityRepository.deleteAllByAthleteId(athleteId);
-    }
-
-
-    public void deleteLocalAccount(Long athleteId) {
-
-//        Long athleteId = sessionService.getAthleteIdFromAuthorizationHeader(authorizationHeader);
-        // Delete dependent data first
-        recoveryCheckinRepository.deleteAllByAthleteId(athleteId);
-        activityRepository.deleteAllByAthleteId(athleteId);
-
-        // Delete authentication/session data
-        sessionRepository.deleteAllByStravaUser_AthleteId(athleteId);
-
-        // Delete the main user record last
-        stravaUserRepository.deleteAllByAthleteId(athleteId);
-
-//        stravaClient.revokeAuthorization(authorizationHeader);
-    }
+//    public void deleteLocalAccount(Long athleteId) {
+//
+////        Long athleteId = sessionService.getAthleteIdFromAuthorizationHeader(authorizationHeader);
+//        // Delete dependent data first
+//        recoveryCheckinRepository.deleteAllByAthleteId(athleteId);
+//        activityRepository.deleteAllByAthleteId(athleteId);
+//
+//        // Delete authentication/session data
+//        sessionRepository.deleteAllByStravaUser_AthleteId(athleteId);
+//
+//        // Delete the main user record last
+//        stravaUserRepository.deleteAllByAthleteId(athleteId);
+//
+////        stravaClient.revokeAuthorization(authorizationHeader);
+//    }
 
     public void deleteUserAccount(String authorizationHeader) {
         Long athleteId =
@@ -66,11 +59,11 @@ public class DeletionService {
         if (refreshToken != null && !refreshToken.isBlank()) {
             StravaTokenResponseRecord tokenResponse =
                     stravaClient.refreshAccessToken(refreshToken);
-            deleteLocalAccount(athleteId);
+
             stravaClient.deauthorize(
                     tokenResponse.accessToken()
             );
         }
-
+        localDeletionService.deleteLocalAccount(athleteId);
     }
 }
