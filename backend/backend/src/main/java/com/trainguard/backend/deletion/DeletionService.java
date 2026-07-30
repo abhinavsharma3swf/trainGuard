@@ -66,11 +66,11 @@ public class DeletionService {
         if (refreshToken != null && !refreshToken.isBlank()) {
             StravaTokenResponseRecord tokenResponse =
                     stravaClient.refreshAccessToken(refreshToken);
-
+            deleteLocalAccount(athleteId);
             stravaClient.deauthorize(
                     tokenResponse.accessToken()
             );
         }
-        deleteLocalAccount(athleteId);
+
     }
 }
