@@ -19,12 +19,15 @@ public class DeletingDataController {
 
     @DeleteMapping()
     public void delete(@RequestHeader("Authorization") String authorizationHeader) {
+
+        System.out.println("Inside the delete user data controller first block");
         deletionService.deleteUserData(authorizationHeader);
     }
 
     @DeleteMapping("/userAccount")
     public ResponseEntity<Void> deleteUserAccount(@RequestHeader("Authorization") String authorizationHeader) {
         deletionService.deleteUserAccount(authorizationHeader);
+        System.out.println("Inside the delete controller block");
         return ResponseEntity.noContent().build();
     }
 }

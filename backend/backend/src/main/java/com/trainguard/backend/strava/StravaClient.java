@@ -7,8 +7,6 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.ErrorResponseException;
-import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientResponseException;
 
@@ -102,28 +100,40 @@ public class StravaClient {
     public void revokeAuthorization(String refreshToken) {
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
         formData.add("token", refreshToken);
-        formData.add("token_type_hint", "refresh_token");
+
+        System.out.println("i am in strava client" + formData);
 
         try {
-            restClientBuilder
+            RestClient restClient = restClientBuilder
                     .baseUrl("https://www.strava.com")
-                    .build()
-                    .post()
+                    .build();
+            System.out.println("Inside the try block");
+            restClient.post()
                     .uri("/oauth/revoke")
-                    .headers(headers ->
-                            headers.setBasicAuth(
-                                    String.valueOf(stravaProperties.clientId()),
-                                    stravaProperties.clientSecret()
-                            )
-                    )
+                    .header(HttpHeaders.AUTHORIZATION, stravaProperties.clientId(), stravaProperties.clientSecret())
                     .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                    .body(formData)
+                    .body(refreshToken)
                     .retrieve()
                     .toBodilessEntity();
-
         } catch (RestClientResponseException exception) {
             throw new IllegalStateException("Failed to revoke Strava access token.");
 
         }
+
+//        try {
+//            restClientBuilder
+//                    .baseUrl("https://www.strava.com/oauth/revoke")
+//                    .build()
+//                    .post()
+//                    .headers("Authorization", stravaProperties.clientId(),
+//                                    stravaProperties.clientSecret()
+//                            )
+//                    )
+//                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+//                    .body(formData)
+//                    .retrieve()
+//                    .toBodilessEntity();
+//
+//        }
     }
 }

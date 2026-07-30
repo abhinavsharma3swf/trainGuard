@@ -47,10 +47,7 @@ public class DeletionService {
     }
 
     public void deleteUserAccount(String authorizationHeader) {
-        Long athleteId =
-                sessionService.getAthleteIdFromAuthorizationHeader(
-                        authorizationHeader
-                );
+        Long athleteId = sessionService.getAthleteIdFromAuthorizationHeader(authorizationHeader);
 
         StravaUserEntity stravaUser = stravaUserRepository
                 .findById(athleteId)
@@ -61,6 +58,8 @@ public class DeletionService {
                 );
 
         String refreshToken = stravaUser.getRefreshToken();
+
+        System.out.println("Inside the delete User Account" + refreshToken);
 
         if (refreshToken != null && !refreshToken.isBlank()) {
             stravaClient.revokeAuthorization(refreshToken);
