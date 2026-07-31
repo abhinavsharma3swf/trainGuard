@@ -60,7 +60,7 @@ export function DashboardDataProvider({ children }: { children: ReactNode }) {
         } catch (error) {
             console.error(error);
             setError("Could not load dashboard data.");
-            router.replace("/");
+            // router.replace("/");
         } finally {
             setIsLoading(false);
         }

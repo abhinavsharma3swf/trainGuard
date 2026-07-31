@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 public class StravaWebhookController {
 
     private final StravaWebhookProperties stravaWebhookProperties;
-    private final StravaWebhookService stravaWebhookService;
+    private final StravaWebhookService  stravaWebhookService;
 
     @GetMapping
     public ResponseEntity<StravaWebhookVerificationResponse> verifyWebHook(
