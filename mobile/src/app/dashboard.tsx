@@ -36,7 +36,6 @@ export default function HomeScreen() {
         }, [])
     );
 
-
     const pendingCheckins = feedItems.filter(
         (item) => item.checkinStatus === "PENDING"
     ).length;
@@ -205,6 +204,8 @@ export default function HomeScreen() {
                                             type:
                                                 item.sportType === "RIDE"
                                                     ? "RIDE"
+                                                    : item.sportType === "VIRTUALRIDE"
+                                                        ? "VIRTUALRIDE"
                                                     : item.sportType === "RUN"
                                                         ? "RUN"
                                                         : item.sportType === "WEIGHTTRAINING"

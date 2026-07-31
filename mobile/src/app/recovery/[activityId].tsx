@@ -142,7 +142,8 @@ export default function RecoveryCheckInScreen() {
         if (currentActivity.start_latlng === null) {
             return;
         }
-        fetchWeatherData();
+        if(currentActivity.sportType === "RIDE" || currentActivity.sportType === "RUN")fetchWeatherData()
+
         // reset({
         //     // rpe: currentActivity.rpe ?? null,
         //     // painScore: currentActivity.painScore ?? null,
@@ -330,7 +331,10 @@ export default function RecoveryCheckInScreen() {
                             />
 
                             <View style={styles.weatherRow}>
-                                <Text style={styles.weatherText}>
+                                {currentActivity.sportType === "RIDE" ? "RIDE"
+                                    : currentActivity.sportType === "RUN" ?
+                                    <>
+                                    <Text style={styles.weatherText}>
                                     Temp:{" "}
                                     {weatherData?.temperature !== undefined
                                         ? `${weatherData.temperature.toFixed(0)}°F`
@@ -363,7 +367,7 @@ export default function RecoveryCheckInScreen() {
                                     {weatherData?.dewPoint !== undefined
                                         ? `${weatherData.dewPoint.toFixed(0)}°F`
                                         : "N/A"}
-                                </Text>
+                                </Text> </> : <Text style={styles.weatherText}> No Weather Data Available</Text>}
                             </View>
                         </View>
 

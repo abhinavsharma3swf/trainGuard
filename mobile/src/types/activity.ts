@@ -1,6 +1,6 @@
 export type ActivityStatus = "PENDING" | "COMPLETED";
 
-export type ActivityType = "RUN" | "RIDE" | "WALK" | "WORKOUT" | "WEIGHTTRAINING" | "OTHER";
+export type ActivityType = "RUN" | "RIDE" | "VIRTUALRIDE" | "WALK" | "WORKOUT" | "WEIGHTTRAINING" | "OTHER";
 
 export type Activity = {
     id: number | null;
