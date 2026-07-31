@@ -19,7 +19,7 @@ public class UserContactUsService {
         UserContactUsEntity userContactUsEntity = UserContactUsEntity.builder()
                 .name(contactUsRecord.name())
                 .email(contactUsRecord.email())
-                .messageType(contactUsRecord.messageType())
+                .category(contactUsRecord.category())
                 .message(contactUsRecord.message())
                 .build();
 

@@ -18,7 +18,7 @@ public class UserContactUsEntity {
 
     private String name;
     private String email;
-    private String messageType;
+    private String category;
     private String message;
 
 }
