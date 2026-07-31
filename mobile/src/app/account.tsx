@@ -16,12 +16,14 @@ import {deleteAccount, deleteApi} from "@/services/deleteApi";
 import {About} from "@/components/About"
 import {useDashboardData} from "@/context/DashboardDataContext";
 import {useHistoryData} from "@/context/HistoryDataContext";
+import {ContactModal} from "@/components/ContactModal";
 
 export default function AccountScreen() {
     const [isProcessing, setIsProcessing] = useState(false);
     const [aboutModalFlag, setAboutModalFlag] = useState(false);
     const {clearHistoricalData} = useHistoryData();
     const {clearDashboardData} = useDashboardData();
+    const [contactUsModal, setContactUsModal] = useState(false);
 
     const handleLogout = async () => {
         try {
@@ -277,6 +279,45 @@ export default function AccountScreen() {
                                     data
                                 </Text>
                             </View>
+                        </View>
+
+                        <Ionicons
+                            name="chevron-forward"
+                            size={20}
+                            color="#7d8a91"
+                        />
+                    </Pressable>
+
+                    <View style={styles.divider}/>
+
+                    <Pressable
+                        style={styles.option}
+                        onPress={()=> setContactUsModal(true)}
+                    >
+                        <View style={styles.optionLeft}>
+                            <Ionicons
+                                name="mail"
+                                size={24}
+                                color="#D3D3D3"
+                            />
+                            <View>
+                                <Text
+                                    style={[
+                                        styles.optionTitle,
+                                    ]}
+                                >
+                                    Contact the developer
+                                </Text>
+
+                                <Text
+                                    style={
+                                        styles.optionDescription
+                                    }
+                                >
+                                    Click to contact the developer and provide feedback or request feature
+                                </Text>
+                            </View>
+                            <ContactModal contactUsModal={contactUsModal} setContactUsModal={setContactUsModal}/>
                         </View>
 
                         <Ionicons

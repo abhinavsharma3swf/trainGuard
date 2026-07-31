@@ -26,10 +26,6 @@ export function About({
             onRequestClose={onClose}
         >
             <View style={styles.overlay}>
-                <Pressable
-                    style={StyleSheet.absoluteFill}
-                    onPress={onClose}
-                />
 
                 <View style={styles.modalCard}>
                     <View style={styles.header}>
@@ -44,19 +40,6 @@ export function About({
                                 About Smart Gauge
                             </Text>
                         </View>
-
-                        <Pressable
-                            style={styles.closeButton}
-                            onPress={onClose}
-                            accessibilityRole="button"
-                            accessibilityLabel="Close About Smart Gauge"
-                        >
-                            <Ionicons
-                                name="close"
-                                size={24}
-                                color="#c5c6cd"
-                            />
-                        </Pressable>
                     </View>
 
                     <ScrollView

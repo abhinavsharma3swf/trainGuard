@@ -13,7 +13,6 @@ export async function getStravaAuthorizationUrl(): Promise<string> {
 
 export async function syncStravaActivities(): Promise<void> {
     const token = await getSessionToken();
-    console.log("token", token)
 
     if (!token) {
         throw new Error("Missing session token.");
