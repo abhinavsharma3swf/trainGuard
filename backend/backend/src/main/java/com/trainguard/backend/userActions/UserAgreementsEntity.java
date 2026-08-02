@@ -1,0 +1,34 @@
+package com.trainguard.backend.userActions;
+
+import com.trainguard.backend.strava.StravaUserEntity;
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.time.LocalDateTime;
+
+@Entity
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@Table(name = "user_agreement_acceptance_table")
+public class UserAgreementsEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @OneToOne(cascade = CascadeType.ALL)
+            @JoinColumn(name = "athlete_id", nullable = false)
+            private StravaUserEntity stravaUser;
+
+    boolean checkboxState;
+    boolean checkboxStateForBeta;
+    private LocalDateTime privacyPolicyAcceptedAt;
+    private LocalDateTime betaDisclaimerAcceptedAt;
+
+
+
+
+}

@@ -1,4 +1,4 @@
-package com.trainguard.backend.userContactUs;
+package com.trainguard.backend.userActions;
 
 import jakarta.persistence.*;
 import lombok.*;
