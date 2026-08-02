@@ -1,21 +1,12 @@
-import { router } from "expo-router";
-import React, { useEffect, useState } from "react";
-import {
-    ActivityIndicator,
-    Linking,
-    Pressable,
-    SafeAreaView,
-    ScrollView,
-    StyleSheet,
-    Text,
-    View,
-} from "react-native";
+import {router} from "expo-router";
+import React, {useEffect, useState} from "react";
+import {ActivityIndicator, Linking, Pressable, ScrollView, StyleSheet, Text, View,} from "react-native";
 import Checkbox from "expo-checkbox";
 
-import { getSessionToken } from "@/services/athleteStorage";
-import { getStravaAuthorizationUrl } from "@/services/stravaApi";
-import { PrivacyStatement } from "@/components/PrivacyStatement";
-import { BetaDisclaimer } from "@/components/BetaDisclaimer";
+import {getSessionToken} from "@/services/athleteStorage";
+import {getStravaAuthorizationUrl} from "@/services/stravaApi";
+import {PrivacyStatement} from "@/components/PrivacyStatement";
+import {BetaDisclaimer} from "@/components/BetaDisclaimer";
 import {SafeAreaProvider} from "react-native-safe-area-context";
 
 export default function ConnectScreen() {
@@ -23,18 +14,14 @@ export default function ConnectScreen() {
     const [isCheckingSession, setIsCheckingSession] = useState(true);
     const [isConnecting, setIsConnecting] = useState(false);
 
-    const [isPrivacyStatementVisible, setIsPrivacyStatementVisible] =
-        useState(false);
-    const [isBetaDisclaimerVisible, setIsBetaDisclaimerVisible] =
-        useState(false);
-
-    const [hasAcceptedPrivacy, setHasAcceptedPrivacy] = useState(false);
-    const [hasAcceptedBetaDisclaimer, setHasAcceptedBetaDisclaimer] =
-        useState(false);
+    const [isPrivacyStatementVisible, setIsPrivacyStatementVisible] = useState(false);
+    const [isBetaDisclaimerVisible, setIsBetaDisclaimerVisible] = useState(false);
+    const [checkboxState, setCheckboxState] = useState(false)
+    const [checkboxStateForBeta, setCheckboxStateForBeta] = useState(false)
 
     const canConnect =
-        hasAcceptedPrivacy &&
-        hasAcceptedBetaDisclaimer &&
+        checkboxState &&
+        checkboxStateForBeta &&
         !isConnecting &&
         !isCheckingSession;
 
@@ -104,7 +91,7 @@ export default function ConnectScreen() {
         return (
             <SafeAreaProvider style={styles.screen}>
                 <View style={styles.loadingContainer}>
-                    <ActivityIndicator size="large" />
+                    <ActivityIndicator size="large"/>
                     <Text style={styles.loadingText}>Checking your session...</Text>
                 </View>
             </SafeAreaProvider>
@@ -138,17 +125,27 @@ export default function ConnectScreen() {
                     <ConsentRow
                         title="Privacy Policy and Terms of Service"
                         description="Review how Smart Gauge collects, uses, retains, and deletes your data."
-                        checked={hasAcceptedPrivacy}
-                        onCheckedChange={setHasAcceptedPrivacy}
-                        onReviewPress={() => setIsPrivacyStatementVisible(true)}
+                        checked={checkboxState}
+                        checkbox={'privacy'}
+                        // onCheckedChange={setHasAcceptedPrivacy}
+                        onReviewPress={() => {
+                            setIsPrivacyStatementVisible(true)
+                            setCheckboxState(true)
+                        }
+                        }
                     />
 
                     <ConsentRow
                         title="Beta Disclaimer"
                         description="Review the limitations that apply while Smart Gauge is in beta."
-                        checked={hasAcceptedBetaDisclaimer}
-                        onCheckedChange={setHasAcceptedBetaDisclaimer}
-                        onReviewPress={() => setIsBetaDisclaimerVisible(true)}
+                        checked={checkboxStateForBeta}
+                        checkbox={'beta'}
+                        // onCheckedChange={setHasAcceptedBetaDisclaimer}
+                        onReviewPress={() => {
+                            setIsBetaDisclaimerVisible(true)
+                            setCheckboxStateForBeta(true)
+                        }
+                        }
                     />
 
                     {error ? (
@@ -159,17 +156,17 @@ export default function ConnectScreen() {
 
                     <Pressable
                         accessibilityRole="button"
-                        accessibilityState={{ disabled: !canConnect }}
+                        accessibilityState={{disabled: !canConnect}}
                         disabled={!canConnect}
                         onPress={handleConnectStrava}
-                        style={({ pressed }) => [
+                        style={({pressed}) => [
                             styles.primaryButton,
                             !canConnect && styles.disabledButton,
                             pressed && canConnect && styles.pressedButton,
                         ]}
                     >
                         {isConnecting ? (
-                            <ActivityIndicator />
+                            <ActivityIndicator/>
                         ) : (
                             <Text style={styles.primaryButtonText}>
                                 Connect with Strava
@@ -197,20 +194,23 @@ export default function ConnectScreen() {
     );
 }
 
+type checkBoxFlags = 'privacy' | 'beta';
+
 type ConsentRowProps = {
     title: string;
     description: string;
     checked: boolean;
-    onCheckedChange: (checked: boolean) => void;
+    // onCheckedChange: (checked: boolean) => void;
     onReviewPress: () => void;
+    checkbox: checkBoxFlags;
 };
 
 function ConsentRow({
                         title,
                         description,
                         checked,
-                        onCheckedChange,
                         onReviewPress,
+                        checkbox,
                     }: ConsentRowProps) {
     return (
         <View style={styles.consentCard}>
@@ -222,20 +222,19 @@ function ConsentRow({
                     </Text>
                 </View>
 
-                <Checkbox
+                {checkbox && <Checkbox
                     accessibilityLabel={`Accept ${title}`}
-                    color={checked ? "#fd5900" : undefined}
-                    value={checked}
-                    onValueChange={onCheckedChange}
+                    color={checkbox ? "#fd5900" : undefined}
+                    value={checkbox ? checked : false}
                     style={styles.checkbox}
-                />
+                />}
             </View>
 
             <Pressable
                 accessibilityRole="button"
                 onPress={onReviewPress}
                 hitSlop={8}
-                style={({ pressed }) => [
+                style={({pressed}) => [
                     styles.reviewButton,
                     pressed && styles.reviewButtonPressed,
                 ]}

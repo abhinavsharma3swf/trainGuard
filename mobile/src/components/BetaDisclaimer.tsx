@@ -106,7 +106,7 @@ export function BetaDisclaimer({
                             injuries, losses, damages, training outcomes, data inaccuracies,
                             service interruptions, third-party service issues, or other
                             consequences arising from your use of the app or reliance on
-                            information displayed in the app.
+                            information displayed in the app. You release the developer from any liability and accept the risks
                         </Text>
 
                         <Text style={globalStyles.paragraph}>
