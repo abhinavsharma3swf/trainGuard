@@ -35,19 +35,18 @@ public class UserContactUsService {
         return new UserContactUsResponseRecord("Message Send Successfully");
     }
 
-    public void privacyStatementsAndBeta(String authorizationHeader, boolean checkboxState, boolean checkboxStateForBeta, String createdAt) {
+    public void privacyStatementsAndBeta(String authorizationHeader, UserAcceptedStatementsRecord userAcceptedStatementsRecord) {
 
         Long athleteId = sessionService.getAthleteIdFromAuthorizationHeader(authorizationHeader);
 
         StravaUserEntity stravaUser = stravaUserRepository.findById(athleteId).orElseThrow(()->
                 new IllegalArgumentException("User Not Found")
         );
-System.out.println("Privacy State: " + checkboxState);
         UserAgreementsEntity userAgreementsEntity = UserAgreementsEntity.builder()
                 .stravaUser(stravaUser)
-                .checkboxState(checkboxState)
-                .checkboxStateForBeta(checkboxStateForBeta)
-                .acceptedAt(createdAt)
+                .checkboxState(userAcceptedStatementsRecord.checkboxState())
+                .checkboxStateForBeta(userAcceptedStatementsRecord.checkboxStateForBeta())
+                .acceptedAt(userAcceptedStatementsRecord.createdAt())
                 .build();
 System.out.println("user agreement entity before save" + userAgreementsEntity);
         userAgreementRepository.save(userAgreementsEntity);

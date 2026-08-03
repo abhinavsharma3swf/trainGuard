@@ -1,27 +1,45 @@
+import {API_BASE_URL} from "@/constants/api";
 import {getSessionToken} from "@/services/athleteStorage";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {API_BASE_URL} from "@/constants/api";
 
 export async function acceptedUserDisclaimers(): Promise<void> {
+    const storedAgreement =
+        await AsyncStorage.getItem('pending_agreement');
 
-    const data: string = await AsyncStorage.getItem('pending_agreement') ?? "Empty";
-    const token = await getSessionToken();
-
-    if(!data)return Promise.reject(new Error('Not authorized'));
-
-    const agreementData = JSON.parse(data) as {
-        checkboxState: boolean,
-        checkboxStateForBeta: boolean,
+    if (!storedAgreement) {
+        return;
     }
 
-    console.log(agreementData);
-    console.log(token);
-    await fetch(`${API_BASE_URL}/api/contactUs/userAcceptedBetaAndPrivacyStatement`, {
-        method: "POST",
-        headers: {
-            Authorization: `Bearer ${token}`,
-            "content-type": "application/json",
+    const token = await getSessionToken();
+
+    if (!token) {
+        return;
+    }
+
+    const agreementData = JSON.parse(storedAgreement) as {
+        checkboxState: boolean;
+        checkboxStateForBeta: boolean;
+    };
+
+    const response = await fetch(
+        `${API_BASE_URL}/api/contactUs/userAcceptedBetaAndPrivacyStatement`,
+        {
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(agreementData),
         },
-        body: JSON.stringify(agreementData)
-    })
+    );
+
+    if (!response.ok) {
+        const errorBody = await response.text();
+
+        throw new Error(
+            `Agreement request failed: ${response.status} ${errorBody}`,
+        );
+    }
+
+    await AsyncStorage.removeItem('pending_agreement');
 }

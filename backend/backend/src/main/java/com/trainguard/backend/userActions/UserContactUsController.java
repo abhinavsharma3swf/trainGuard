@@ -18,10 +18,12 @@ public class UserContactUsController {
 
     @PostMapping("/userAcceptedBetaAndPrivacyStatement")
     public void userAcceptedBetaAndPrivacyStatement(@RequestHeader("Authorization") String authorizationHeader,
-                                                    @RequestBody boolean checkboxState, boolean checkboxStateForBeta, String createdAt) {
-        userContactUsService.privacyStatementsAndBeta(authorizationHeader, checkboxState, checkboxStateForBeta, createdAt);
+                                                    @RequestBody UserAcceptedStatementsRecord userAcceptedStatementsRecord) {
+        userContactUsService.privacyStatementsAndBeta(authorizationHeader, userAcceptedStatementsRecord);
     }
 }
+
+
 
 
 

@@ -34,10 +34,23 @@ export default function HomeScreen() {
     useFocusEffect(
         useCallback(() => {
             refreshDashboardFeed();
-            acceptedUserDisclaimers();
         }, [])
     );
 
+    useEffect(() => {
+        const submitPendingAgreement = async () => {
+            try {
+                await acceptedUserDisclaimers();
+            } catch (error) {
+                console.error(
+                    'Could not save pending agreement acceptance:',
+                    error,
+                );
+            }
+        };
+
+        void submitPendingAgreement();
+    }, []);
     const pendingCheckins = feedItems.filter(
         (item) => item.checkinStatus === "PENDING"
     ).length;

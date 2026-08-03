@@ -37,9 +37,8 @@ export default function ConnectScreen() {
                 const sessionToken = await getSessionToken();
 
                 if (sessionToken && isMounted) {
-                    router.replace("/dashboard");
+                    // router.replace("/dashboard");
 
-                    console.log(sessionToken);
                 }
             } catch (sessionError) {
                 console.error("Failed to check existing session:", sessionError);
@@ -78,7 +77,7 @@ export default function ConnectScreen() {
                 JSON.stringify({
                     checkboxState: checkboxState,
                     checkboxStateForBeta: checkboxStateForBeta,
-                    acceptedAt: new Date().toLocaleString("en-US"),
+                    createdAt: new Date().toLocaleString("en-US"),
                 }))
 
             const authorizationUrl = await getStravaAuthorizationUrl();
