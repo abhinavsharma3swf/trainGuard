@@ -65,10 +65,6 @@ export default function ConnectScreen() {
             return;
         }
 
-        if(!checkboxStateForBeta || !checkboxState) {
-            return;
-        }
-
         try {
             setIsConnecting(true);
             setError("");

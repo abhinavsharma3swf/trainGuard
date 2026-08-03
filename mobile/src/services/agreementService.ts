@@ -19,9 +19,10 @@ export async function acceptedUserDisclaimers(): Promise<void> {
     const agreementData = JSON.parse(storedAgreement) as {
         checkboxState: boolean;
         checkboxStateForBeta: boolean;
+        createdAt: string;
     };
 
-    const response = await fetch(
+     await fetch(
         `${API_BASE_URL}/api/contactUs/userAcceptedBetaAndPrivacyStatement`,
         {
             method: 'POST',
@@ -32,14 +33,6 @@ export async function acceptedUserDisclaimers(): Promise<void> {
             body: JSON.stringify(agreementData),
         },
     );
-
-    if (!response.ok) {
-        const errorBody = await response.text();
-
-        throw new Error(
-            `Agreement request failed: ${response.status} ${errorBody}`,
-        );
-    }
 
     await AsyncStorage.removeItem('pending_agreement');
 }

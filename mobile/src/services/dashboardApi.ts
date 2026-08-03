@@ -1,5 +1,5 @@
 import { API_BASE_URL } from "@/constants/api";
-import {getSessionToken} from "@/services/athleteStorage";
+import {clearSessionToken, getSessionToken} from "@/services/athleteStorage";
 
 
 export type DashboardFeedItem = {

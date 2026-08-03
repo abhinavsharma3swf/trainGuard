@@ -48,7 +48,6 @@ public class UserContactUsService {
                 .checkboxStateForBeta(userAcceptedStatementsRecord.checkboxStateForBeta())
                 .acceptedAt(userAcceptedStatementsRecord.createdAt())
                 .build();
-System.out.println("user agreement entity before save" + userAgreementsEntity);
         userAgreementRepository.save(userAgreementsEntity);
     }
 }
