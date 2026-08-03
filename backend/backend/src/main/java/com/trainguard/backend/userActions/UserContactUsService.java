@@ -42,7 +42,7 @@ public class UserContactUsService {
         StravaUserEntity stravaUser = stravaUserRepository.findById(athleteId).orElseThrow(()->
                 new IllegalArgumentException("User Not Found")
         );
-
+System.out.println("Privacy State: " + checkboxState);
         UserAgreementsEntity userAgreementsEntity = UserAgreementsEntity.builder()
                 .stravaUser(stravaUser)
                 .checkboxState(checkboxState)
@@ -50,7 +50,7 @@ public class UserContactUsService {
                 .betaDisclaimerAcceptedAt(LocalDateTime.now())
                 .privacyPolicyAcceptedAt(LocalDateTime.now())
                 .build();
-
+System.out.println("user agreement entity before save" + userAgreementsEntity);
         userAgreementRepository.save(userAgreementsEntity);
     }
 }

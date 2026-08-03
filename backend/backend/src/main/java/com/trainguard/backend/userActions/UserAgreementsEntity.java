@@ -19,7 +19,7 @@ public class UserAgreementsEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
             @JoinColumn(name = "athlete_id", nullable = false)
             private StravaUserEntity stravaUser;
 
