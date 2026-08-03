@@ -5,8 +5,9 @@ import {SummaryCard} from "@/components/SummaryCard";
 import {syncStravaActivities} from "@/services/stravaApi";
 import {BottomNav} from "@/components/BottomNav";
 import {useDashboardData} from "@/context/DashboardDataContext";
-import {useFocusEffect} from "expo-router";
+import {router, useFocusEffect} from "expo-router";
 import SummaryProgressBar from "@/components/SummaryProgressBar";
+import {acceptedUserDisclaimers} from "@/services/agreementService";
 
 
 export default function HomeScreen() {
@@ -33,6 +34,7 @@ export default function HomeScreen() {
     useFocusEffect(
         useCallback(() => {
             refreshDashboardFeed();
+            acceptedUserDisclaimers();
         }, [])
     );
 

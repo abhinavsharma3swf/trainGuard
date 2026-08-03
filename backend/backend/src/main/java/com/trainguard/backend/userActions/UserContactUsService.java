@@ -35,7 +35,7 @@ public class UserContactUsService {
         return new UserContactUsResponseRecord("Message Send Successfully");
     }
 
-    public void privacyStatementsAndBeta(String authorizationHeader, boolean checkboxState, boolean checkboxStateForBeta) {
+    public void privacyStatementsAndBeta(String authorizationHeader, boolean checkboxState, boolean checkboxStateForBeta, String createdAt) {
 
         Long athleteId = sessionService.getAthleteIdFromAuthorizationHeader(authorizationHeader);
 
@@ -47,8 +47,7 @@ System.out.println("Privacy State: " + checkboxState);
                 .stravaUser(stravaUser)
                 .checkboxState(checkboxState)
                 .checkboxStateForBeta(checkboxStateForBeta)
-                .betaDisclaimerAcceptedAt(LocalDateTime.now())
-                .privacyPolicyAcceptedAt(LocalDateTime.now())
+                .acceptedAt(createdAt)
                 .build();
 System.out.println("user agreement entity before save" + userAgreementsEntity);
         userAgreementRepository.save(userAgreementsEntity);

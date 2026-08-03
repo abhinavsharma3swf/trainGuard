@@ -8,6 +8,8 @@ import {getStravaAuthorizationUrl} from "@/services/stravaApi";
 import {PrivacyStatement} from "@/components/PrivacyStatement";
 import {BetaDisclaimer} from "@/components/BetaDisclaimer";
 import {SafeAreaProvider} from "react-native-safe-area-context";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import {acceptedUserDisclaimers} from "@/services/agreementService";
 
 export default function ConnectScreen() {
     const [error, setError] = useState("");
@@ -16,8 +18,10 @@ export default function ConnectScreen() {
 
     const [isPrivacyStatementVisible, setIsPrivacyStatementVisible] = useState(false);
     const [isBetaDisclaimerVisible, setIsBetaDisclaimerVisible] = useState(false);
-    const [checkboxState, setCheckboxState] = useState(false)
-    const [checkboxStateForBeta, setCheckboxStateForBeta] = useState(false)
+    const [checkboxState, setCheckboxState] = useState(false);
+    const [checkboxStateForBeta, setCheckboxStateForBeta] = useState(false);
+
+    const PENDING_AGREEMENT = 'pending_agreement';
 
     const canConnect =
         checkboxState &&
@@ -34,6 +38,8 @@ export default function ConnectScreen() {
 
                 if (sessionToken && isMounted) {
                     router.replace("/dashboard");
+
+                    console.log(sessionToken);
                 }
             } catch (sessionError) {
                 console.error("Failed to check existing session:", sessionError);
@@ -60,9 +66,20 @@ export default function ConnectScreen() {
             return;
         }
 
+        if(!checkboxStateForBeta || !checkboxState) {
+            return;
+        }
+
         try {
             setIsConnecting(true);
             setError("");
+
+            await AsyncStorage.setItem(PENDING_AGREEMENT,
+                JSON.stringify({
+                    checkboxState: checkboxState,
+                    checkboxStateForBeta: checkboxStateForBeta,
+                    acceptedAt: new Date().toLocaleString("en-US"),
+                }))
 
             const authorizationUrl = await getStravaAuthorizationUrl();
 

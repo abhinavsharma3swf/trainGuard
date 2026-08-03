@@ -23,12 +23,7 @@ public class UserAgreementsEntity {
             @JoinColumn(name = "athlete_id", nullable = false)
             private StravaUserEntity stravaUser;
 
-    boolean checkboxState;
-    boolean checkboxStateForBeta;
-    private LocalDateTime privacyPolicyAcceptedAt;
-    private LocalDateTime betaDisclaimerAcceptedAt;
-
-
-
-
+    private boolean checkboxState;
+    private boolean checkboxStateForBeta;
+    private String acceptedAt;
 }
