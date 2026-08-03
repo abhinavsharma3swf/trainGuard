@@ -493,7 +493,7 @@ type TimeRange = 7 | 30 | "ALL";
 type Insight = {
     title: string;
     message: string;
-};
+}
 
 const calculateAverage = (
     values: Array<number | null | undefined>,
@@ -941,7 +941,7 @@ export default function AnalysisScreen() {
 
     return (
         <View style={styles.screen}>
-            <ScrollView contentContainerStyle={styles.content}>
+            <ScrollView contentContainerStyle={styles.content} directionalLockEnabled canCancelContentTouches={false} disableScrollViewPanResponder nestedScrollEnabled>
                 <View style={styles.headerRow}>
                     <View>
                         <Text style={styles.appName}>Smart Gauge</Text>
