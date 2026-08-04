@@ -9,9 +9,8 @@ import {useFocusEffect} from "expo-router";
 import SummaryProgressBar from "@/components/SummaryProgressBar";
 import {acceptedUserDisclaimers} from "@/services/agreementService";
 import {
-    registerForNotifications,
+    registerForNotifications, requestTestPush,
     saveUserNotificationToken,
-    scheduleTestNotification
 } from "@/services/notificationService";
 
 
@@ -192,16 +191,13 @@ export default function HomeScreen() {
                             : pendingCheckins > 1 ? `${pendingCheckins} activities need recovery check-ins. Complete them to update the status.`
                                 : "All recent activities have recovery check-ins."}
                     </Text>
-
                     <Pressable
-                        style={styles.notificationButton}
-                        onPress={() => void scheduleTestNotification(pendingCheckins)}
+                        onPress={() =>
+                            void requestTestPush().catch(console.error)
+                        }
                     >
-                        <Text style={styles.notificationButtonText}>
-                            Test notification
-                        </Text>
+                        <Text>Send backend push</Text>
                     </Pressable>
-
                 </View>
 
                 <View style={styles.summaryGrid}>

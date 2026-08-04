@@ -55,25 +55,25 @@ export async function registerForNotifications(): Promise<string | null> {
 }
 
 
-      export async function scheduleTestNotification(pendingCheckins: number): Promise<void> {
-
-        await Notifications.scheduleNotificationAsync({
-            content: {
-                title: 'Smart Gauge',
-                body: pendingCheckins === 1
-                ? 'You have 1 pending check-in.'
-                : `You have ${pendingCheckins} pending check-ins.`,
-                sound: 'default',
-                data: {
-                    route: '/dashboard',
-                },
-            },
-            trigger: {
-                type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
-                seconds: 3,
-            },
-        });
-    }
+    //   export async function scheduleTestNotification(pendingCheckins: number): Promise<void> {
+    //
+    //     await Notifications.scheduleNotificationAsync({
+    //         content: {
+    //             title: 'Smart Gauge',
+    //             body: pendingCheckins === 1
+    //             ? 'You have 1 pending check-in.'
+    //             : `You have ${pendingCheckins} pending check-ins.`,
+    //             sound: 'default',
+    //             data: {
+    //                 route: '/dashboard',
+    //             },
+    //         },
+    //         trigger: {
+    //             type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+    //             seconds: 3,
+    //         },
+    //     });
+    // }
 
     export async function saveUserNotificationToken(notificationToken: any) {
         const token = await getSessionToken();
@@ -87,3 +87,29 @@ export async function registerForNotifications(): Promise<string | null> {
             body: JSON.stringify(notificationToken),
         })
     }
+
+export async function requestTestPush(): Promise<void> {
+    const token = await getSessionToken();
+
+    if (!token) {
+        throw new Error('Session token is missing.');
+    }
+
+    const response = await fetch(
+        `${API_BASE_URL}/api/contactUs/notification/test`,
+        {
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        },
+    );
+
+    if (!response.ok) {
+        const body = await response.text();
+
+        throw new Error(
+            `Test push failed: ${response.status} ${body}`,
+        );
+    }
+}

@@ -1,8 +1,12 @@
 package com.trainguard.backend.userActions;
 
 
+import com.trainguard.backend.session.SessionService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestTemplate;
 
 @RestController
 @RequestMapping("/api/contactUs")
@@ -10,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
+    private final SessionService sessionService;
 
     @PostMapping
     public UserContactUsResponseRecord contactUsModal(@RequestBody UserContactUsRecord contactUsRecord) {
@@ -25,6 +30,17 @@ public class UserController {
     @PostMapping("/notification")
     public void userNotificationToken(@RequestHeader("Authorization") String authorizationHeader, @RequestBody String notificationToken) {
         userService.notificationToken(authorizationHeader, notificationToken);
+    }
+
+    @PostMapping("/notification/test")
+    public ResponseEntity<Void> testNotification(@RequestHeader("Authorization") String authorizationHeader, @RequestBody String notificationToken) {
+        Long athleteId =
+                sessionService.getAthleteIdFromAuthorizationHeader(
+                        authorizationHeader
+                );
+
+        userService.sendNotificationsToUser(athleteId);
+        return ResponseEntity.noContent().build();
     }
 }
 
