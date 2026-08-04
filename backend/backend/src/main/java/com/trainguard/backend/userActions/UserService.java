@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Service
 @Getter
@@ -42,16 +41,24 @@ public class UserService {
 
         Long athleteId = sessionService.getAthleteIdFromAuthorizationHeader(authorizationHeader);
 
-        StravaUserEntity stravaUser = stravaUserRepository.findById(athleteId).orElseThrow(()->
+        StravaUserEntity stravaUser = stravaUserRepository.findById(athleteId).orElseThrow(() ->
                 new IllegalArgumentException("User Not Found")
         );
-        UserAgreementsEntity userAgreementsEntity = UserAgreementsEntity.builder()
-                .stravaUser(stravaUser)
-                .checkboxState(userAcceptedStatementsRecord.checkboxState())
-                .checkboxStateForBeta(userAcceptedStatementsRecord.checkboxStateForBeta())
-                .acceptedAt(userAcceptedStatementsRecord.createdAt())
-                .build();
-        userAgreementRepository.save(userAgreementsEntity);
+
+        userAgreementRepository.findByStravaUser_AthleteId(athleteId)
+                .ifPresentOrElse(existingValue -> {
+                            System.out.println("user has already accepted the agreements");
+                        },
+                        () -> {
+                            UserAgreementsEntity userAgreementsEntity = UserAgreementsEntity.builder()
+                                    .stravaUser(stravaUser)
+                                    .checkboxState(userAcceptedStatementsRecord.checkboxState())
+                                    .checkboxStateForBeta(userAcceptedStatementsRecord.checkboxStateForBeta())
+                                    .acceptedAt(userAcceptedStatementsRecord.createdAt())
+                                    .build();
+                            userAgreementRepository.save(userAgreementsEntity);
+
+                        });
     }
 
 
@@ -59,7 +66,7 @@ public class UserService {
 
         Long athleteId = sessionService.getAthleteIdFromAuthorizationHeader(authorizationHeader);
 
-        StravaUserEntity stravaUser = stravaUserRepository.findById(athleteId).orElseThrow(()->
+        StravaUserEntity stravaUser = stravaUserRepository.findById(athleteId).orElseThrow(() ->
                 new IllegalArgumentException("User Not Found")
         );
 

@@ -5,7 +5,7 @@ import {SummaryCard} from "@/components/SummaryCard";
 import {syncStravaActivities} from "@/services/stravaApi";
 import {BottomNav} from "@/components/BottomNav";
 import {useDashboardData} from "@/context/DashboardDataContext";
-import {router, useFocusEffect} from "expo-router";
+import {useFocusEffect} from "expo-router";
 import SummaryProgressBar from "@/components/SummaryProgressBar";
 import {acceptedUserDisclaimers} from "@/services/agreementService";
 import {
@@ -13,7 +13,6 @@ import {
     saveUserNotificationToken,
     scheduleTestNotification
 } from "@/services/notificationService";
-import * as Notifications from "expo-notifications";
 
 
 export default function HomeScreen() {
@@ -39,7 +38,7 @@ export default function HomeScreen() {
 
     useFocusEffect(
         useCallback(() => {
-           void refreshDashboardFeed();
+            void refreshDashboardFeed();
         }, [])
     );
 
@@ -58,7 +57,6 @@ export default function HomeScreen() {
     }, []);
 
 
-
     useEffect(() => {
         const initializeDashboard = async () => {
             try {
@@ -66,7 +64,7 @@ export default function HomeScreen() {
 
                 const pushToken = await registerForNotifications();
 
-                if(pushToken)await saveUserNotificationToken(pushToken);
+                if (pushToken) await saveUserNotificationToken(pushToken);
 
                 if (pushToken) {
                     console.log('Expo push token created');
@@ -105,7 +103,7 @@ export default function HomeScreen() {
     const [modalVisible, setModalVisible] = useState(false)
 
     useEffect(() => {
-        const timer = setTimeout(()=> {
+        const timer = setTimeout(() => {
             setModalVisible(true)
         }, 5000)
 
@@ -119,34 +117,34 @@ export default function HomeScreen() {
 
                 {pendingCheckins > 0 ?
                     <View style={styles.container}>
-                    {/* Reminder Modal */}
-                    <Modal
-                        animationType="fade"
-                        transparent={true}
-                        visible={modalVisible}
-                        onRequestClose={() => setModalVisible(false)} // Handles Android back button
-                    >
-                        <View style={styles.overlay}>
-                            <View style={styles.modalView}>
+                        {/* Reminder Modal */}
+                        <Modal
+                            animationType="fade"
+                            transparent={true}
+                            visible={modalVisible}
+                            onRequestClose={() => setModalVisible(false)} // Handles Android back button
+                        >
+                            <View style={styles.overlay}>
+                                <View style={styles.modalView}>
 
-                                {/* Reminder Content */}
-                                <Text style={styles.reminderTitle}>{pendingCheckins} Check-in Pending</Text>
-                                <Text style={styles.reminderText}>
-                                   Complete them to update your metrics.
-                                </Text>
+                                    {/* Reminder Content */}
+                                    <Text style={styles.reminderTitle}>{pendingCheckins} Check-in Pending</Text>
+                                    <Text style={styles.reminderText}>
+                                        Complete them to update your metrics.
+                                    </Text>
 
-                                {/* The Only Action: Close Button */}
-                                <TouchableOpacity
-                                    style={styles.closeButton}
-                                    onPress={() => setModalVisible(false)}
-                                >
-                                    <Text style={styles.closeButtonText}>Close</Text>
-                                </TouchableOpacity>
+                                    {/* The Only Action: Close Button */}
+                                    <TouchableOpacity
+                                        style={styles.closeButton}
+                                        onPress={() => setModalVisible(false)}
+                                    >
+                                        <Text style={styles.closeButtonText}>Close</Text>
+                                    </TouchableOpacity>
 
+                                </View>
                             </View>
-                        </View>
-                    </Modal>
-                </View> : null}
+                        </Modal>
+                    </View> : null}
 
                 <View style={styles.header}>
                     <View>
@@ -197,7 +195,7 @@ export default function HomeScreen() {
 
                     <Pressable
                         style={styles.notificationButton}
-                        onPress={() => void scheduleTestNotification()}
+                        onPress={() => void scheduleTestNotification(pendingCheckins)}
                     >
                         <Text style={styles.notificationButtonText}>
                             Test notification
@@ -270,15 +268,15 @@ export default function HomeScreen() {
                                                     ? "RIDE"
                                                     : item.sportType === "VIRTUALRIDE"
                                                         ? "VIRTUALRIDE"
-                                                    : item.sportType === "RUN"
-                                                        ? "RUN"
-                                                        : item.sportType === "WEIGHTTRAINING"
-                                                            ? "WEIGHTTRAINING"
-                                                            : item.sportType === "WORKOUT"
-                                                                ? "WORKOUT"
-                                                                : item.sportType === "WALK"
-                                                                    ? "WALK"
-                                                                    : "OTHER",
+                                                        : item.sportType === "RUN"
+                                                            ? "RUN"
+                                                            : item.sportType === "WEIGHTTRAINING"
+                                                                ? "WEIGHTTRAINING"
+                                                                : item.sportType === "WORKOUT"
+                                                                    ? "WORKOUT"
+                                                                    : item.sportType === "WALK"
+                                                                        ? "WALK"
+                                                                        : "OTHER",
                                             name: item.name,
                                             date: item.startDate,
                                             distance: `${item.distanceMiles} mi`,
@@ -431,65 +429,65 @@ const styles = StyleSheet.create({
     },
 
     //Modal Styling//
-        container: {
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: '#f5f5f5',
-        },
-        openButton: {
-            backgroundColor: '#007AFF',
-            paddingVertical: 12,
-            paddingHorizontal: 24,
-            borderRadius: 8,
-        },
-        buttonText: {
-            color: '#fff',
-            fontSize: 16,
-            fontWeight: '600',
-        },
-        overlay: {
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: 'rgba(0, 0, 0, 0.5)', // Dims the background screen
-        },
-        modalView: {
-            width: '80%',
-            backgroundColor: 'white',
-            borderRadius: 16,
-            padding: 24,
-            alignItems: 'center',
-            // Material elevation for Android & Shadow for iOS
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.25,
-            shadowRadius: 4,
-            elevation: 5,
-        },
-        reminderTitle: {
-            fontSize: 20,
-            fontWeight: 'bold',
-            marginBottom: 12,
-        },
-        reminderText: {
-            fontSize: 16,
-            color: '#333',
-            textAlign: 'center',
-            marginBottom: 24,
-        },
-        closeButton: {
-            backgroundColor: '#fd5900',
-            width: '100%',
-            paddingVertical: 12,
-            borderRadius: 8,
-            alignItems: 'center',
-        },
-        closeButtonText: {
-            color: '#fff',
-            fontSize: 16,
-            fontWeight: 'bold',
-        },
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#f5f5f5',
+    },
+    openButton: {
+        backgroundColor: '#007AFF',
+        paddingVertical: 12,
+        paddingHorizontal: 24,
+        borderRadius: 8,
+    },
+    buttonText: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: '600',
+    },
+    overlay: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)', // Dims the background screen
+    },
+    modalView: {
+        width: '80%',
+        backgroundColor: 'white',
+        borderRadius: 16,
+        padding: 24,
+        alignItems: 'center',
+        // Material elevation for Android & Shadow for iOS
+        shadowColor: '#000',
+        shadowOffset: {width: 0, height: 2},
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+    },
+    reminderTitle: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginBottom: 12,
+    },
+    reminderText: {
+        fontSize: 16,
+        color: '#333',
+        textAlign: 'center',
+        marginBottom: 24,
+    },
+    closeButton: {
+        backgroundColor: '#fd5900',
+        width: '100%',
+        paddingVertical: 12,
+        borderRadius: 8,
+        alignItems: 'center',
+    },
+    closeButtonText: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
 
     notificationButton: {
         alignSelf: 'flex-start',

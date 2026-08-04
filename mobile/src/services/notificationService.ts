@@ -2,15 +2,11 @@ import Constants from 'expo-constants';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
-import {useDashboardData} from "@/context/DashboardDataContext";
 import {API_BASE_URL} from "@/constants/api";
 import {getSessionToken} from "@/services/athleteStorage";
 
 
 export async function registerForNotifications(): Promise<string | null> {
-
-    const {feedItems} = useDashboardData();
-    const theNumberOfActivity = feedItems.filter((feedItem) => feedItem.checkinStatus === 'PENDING').length;
 
     if (Platform.OS !== 'ios') {
         return null;
@@ -59,12 +55,14 @@ export async function registerForNotifications(): Promise<string | null> {
 }
 
 
-      export async function scheduleTestNotification(): Promise<void> {
+      export async function scheduleTestNotification(pendingCheckins: number): Promise<void> {
 
         await Notifications.scheduleNotificationAsync({
             content: {
                 title: 'Smart Gauge',
-                body: `You have  pending check-in.`,
+                body: pendingCheckins === 1
+                ? 'You have 1 pending check-in.'
+                : `You have ${pendingCheckins} pending check-ins.`,
                 sound: 'default',
                 data: {
                     route: '/dashboard',
@@ -77,10 +75,10 @@ export async function registerForNotifications(): Promise<string | null> {
         });
     }
 
-    export async function saveUserNotificationToken(notificationToken: string) {
+    export async function saveUserNotificationToken(notificationToken: any) {
         const token = await getSessionToken();
 
-        await fetch(`${API_BASE_URL}/api/contactUs/notifications`, {
+        await fetch(`${API_BASE_URL}/api/contactUs/notification`, {
             method: 'POST',
             headers: {
                 authorization: `Bearer ${token}`,
