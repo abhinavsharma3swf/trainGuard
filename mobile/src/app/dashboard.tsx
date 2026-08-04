@@ -192,11 +192,14 @@ export default function HomeScreen() {
                                 : "All recent activities have recovery check-ins."}
                     </Text>
                     <Pressable
+                        style={styles.notificationButton}
                         onPress={() =>
                             void requestTestPush().catch(console.error)
                         }
                     >
-                        <Text>Send backend push</Text>
+                        <Text style={styles.notificationButtonText}>
+                            Test notification
+                        </Text>
                     </Pressable>
                 </View>
 

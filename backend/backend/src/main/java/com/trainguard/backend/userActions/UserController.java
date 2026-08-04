@@ -33,7 +33,7 @@ public class UserController {
     }
 
     @PostMapping("/notification/test")
-    public ResponseEntity<Void> testNotification(@RequestHeader("Authorization") String authorizationHeader, @RequestBody String notificationToken) {
+    public ResponseEntity<Void> testNotification(@RequestHeader("Authorization") String authorizationHeader) {
         Long athleteId =
                 sessionService.getAthleteIdFromAuthorizationHeader(
                         authorizationHeader
