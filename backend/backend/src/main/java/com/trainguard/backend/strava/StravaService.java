@@ -3,8 +3,11 @@ package com.trainguard.backend.strava;
 import com.trainguard.backend.activity.ActivityImportRequestRecord;
 import com.trainguard.backend.activity.ActivityResponseRecord;
 import com.trainguard.backend.activity.ActivityService;
+import com.trainguard.backend.userActions.ExpoPushRequest;
+import com.trainguard.backend.userActions.UserNotificationTokenEntity;
+import com.trainguard.backend.userActions.UserNotificationTokenRepository;
+import com.trainguard.backend.userActions.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -19,6 +22,8 @@ public class StravaService {
     private final ActivityService activityService;
     private final StravaProperties stravaProperties;
     private final StravaUserRepository stravaUserRepository;
+    private final UserNotificationTokenRepository userNotificationTokenRepository;
+    private final UserService userService;
 
 //    public List<ActivityResponseRecord> syncLastSevenActivities(Long athleteId) {
 //        StravaUserEntity stravaUser = stravaUserRepository.findById(athleteId)
@@ -231,6 +236,7 @@ public class StravaService {
                         athleteId
                 );
 
+        userService.sendNotificationsToUser(athleteId);
         activityService.importActivity(request);
     }
 

@@ -330,7 +330,7 @@ export default function RecoveryCheckInScreen() {
                                 )}
                             />
 
-                            <View style={styles.weatherRow}>
+                            <Text style={styles.weatherRow}>
                                 {currentActivity.sportType === "RIDE" ? "RIDE"
                                     : currentActivity.sportType === "RUN" ?
                                     <>
@@ -368,7 +368,7 @@ export default function RecoveryCheckInScreen() {
                                         ? `${weatherData.dewPoint.toFixed(0)}°F`
                                         : "N/A"}
                                 </Text> </> : <Text style={styles.weatherText}> No Weather Data Available</Text>}
-                            </View>
+                            </Text>
                         </View>
 
                         {errors.root?.message ? (

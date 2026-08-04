@@ -7,15 +7,19 @@ import com.trainguard.backend.strava.StravaUserRepository;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.client.RestClient;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @Getter
 @Setter
 @RequiredArgsConstructor
+@Slf4j
 public class UserService {
 
     private final UserContactUsRepository userContactUsRepository;
@@ -23,6 +27,7 @@ public class UserService {
     private final StravaUserRepository stravaUserRepository;
     private final SessionService sessionService;
     private final UserNotificationTokenRepository userNotificationTokenRepository;
+
 
     public UserContactUsResponseRecord contactUsInformation(UserContactUsRecord contactUsRecord) {
 
@@ -62,7 +67,7 @@ public class UserService {
     }
 
 
-    public void notificationToken(String authorizationHeader, @RequestBody String notificationToken) {
+    public void notificationToken(String authorizationHeader, String notificationToken) {
 
         Long athleteId = sessionService.getAthleteIdFromAuthorizationHeader(authorizationHeader);
 
@@ -95,5 +100,48 @@ public class UserService {
                             userNotificationTokenRepository.save(userNotificationTokenEntity);
                         }
                 );
+    }
+
+    public void sendNotificationsToUser(Long athleteId) {
+
+        List<UserNotificationTokenEntity> targetDevices = userNotificationTokenRepository.findByStravaUser_AthleteId(athleteId);
+
+        if (targetDevices.isEmpty()) {
+            log.info(
+                    "No notification tokens found for athlete {}",
+                    athleteId
+            );
+            return;
+        }
+
+        List<ExpoPushRequest> notifications = targetDevices.stream().map(device ->
+                ExpoPushRequest.builder()
+                        .to(device.getNotificationToken())
+                        .title("New activity uploaded")
+                        .body("Your activity was imported, Don't forget to check-in")
+                        .sound("default")
+                        .data(new ExpoPushData("/dashboard")).build()).toList();
+
+        RestClient restClient = RestClient.builder()
+                .baseUrl("https://exp.host")
+                .build();
+
+        try {
+            String response = restClient.post()
+                    .uri("/--api/v2/push/send")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(notifications)
+                    .retrieve()
+                    .body(String.class);
+
+            log.info(
+                    "Submitted {} push notification(s) for athlete {}: {}",
+                    notifications.size(),
+                    athleteId,
+                    response
+            );
+        } catch (Exception e) {
+            log.error("Failed to send notification");
+        }
     }
 }
