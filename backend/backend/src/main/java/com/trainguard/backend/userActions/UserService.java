@@ -8,19 +8,22 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @Getter
 @Setter
 @RequiredArgsConstructor
-public class UserContactUsService {
+public class UserService {
 
     private final UserContactUsRepository userContactUsRepository;
     private final UserAgreementRepository userAgreementRepository;
     private final StravaUserRepository stravaUserRepository;
     private final SessionService sessionService;
+    private final UserNotificationTokenRepository userNotificationTokenRepository;
 
     public UserContactUsResponseRecord contactUsInformation(UserContactUsRecord contactUsRecord) {
 
@@ -49,5 +52,41 @@ public class UserContactUsService {
                 .acceptedAt(userAcceptedStatementsRecord.createdAt())
                 .build();
         userAgreementRepository.save(userAgreementsEntity);
+    }
+
+
+    public void notificationToken(String authorizationHeader, @RequestBody String notificationToken) {
+
+        Long athleteId = sessionService.getAthleteIdFromAuthorizationHeader(authorizationHeader);
+
+        StravaUserEntity stravaUser = stravaUserRepository.findById(athleteId).orElseThrow(()->
+                new IllegalArgumentException("User Not Found")
+        );
+
+//        boolean notificationTokenExist = userNotificationTokenRepository.existsByStravaUserAndNotificationToken(stravaUser, notificationToken);
+//
+//        if(!notificationTokenExist) {
+//            UserNotificationTokenEntity userNotificationTokenEntity = UserNotificationTokenEntity.builder()
+//                    .notificationToken(notificationToken)
+//                    .createdAt(LocalDateTime.now())
+//                    .stravaUser(stravaUser)
+//                    .build();
+//            userNotificationTokenRepository.save(userNotificationTokenEntity);
+//        }
+
+        userNotificationTokenRepository.findByStravaUserAndNotificationToken(stravaUser, notificationToken)
+                .ifPresentOrElse(
+                        existingToken -> {
+                            System.out.println("token already exists");
+                        },
+                        () -> {
+                            UserNotificationTokenEntity userNotificationTokenEntity = UserNotificationTokenEntity.builder()
+                                    .notificationToken(notificationToken)
+                                    .createdAt(LocalDateTime.now())
+                                    .stravaUser(stravaUser)
+                                    .build();
+                            userNotificationTokenRepository.save(userNotificationTokenEntity);
+                        }
+                );
     }
 }

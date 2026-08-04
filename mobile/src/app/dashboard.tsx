@@ -1,4 +1,4 @@
-import {Image, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
+import {Image, Modal, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import React, {useCallback, useEffect, useState} from "react";
 import {ActivityCard} from "@/components/ActivityCard";
 import {SummaryCard} from "@/components/SummaryCard";
@@ -8,6 +8,12 @@ import {useDashboardData} from "@/context/DashboardDataContext";
 import {router, useFocusEffect} from "expo-router";
 import SummaryProgressBar from "@/components/SummaryProgressBar";
 import {acceptedUserDisclaimers} from "@/services/agreementService";
+import {
+    registerForNotifications,
+    saveUserNotificationToken,
+    scheduleTestNotification
+} from "@/services/notificationService";
+import * as Notifications from "expo-notifications";
 
 
 export default function HomeScreen() {
@@ -33,7 +39,7 @@ export default function HomeScreen() {
 
     useFocusEffect(
         useCallback(() => {
-            refreshDashboardFeed();
+           void refreshDashboardFeed();
         }, [])
     );
 
@@ -48,9 +54,43 @@ export default function HomeScreen() {
                 );
             }
         };
-
         void submitPendingAgreement();
     }, []);
+
+
+
+    useEffect(() => {
+        const initializeDashboard = async () => {
+            try {
+                await acceptedUserDisclaimers();
+
+                const pushToken = await registerForNotifications();
+
+                if(pushToken)await saveUserNotificationToken(pushToken);
+
+                if (pushToken) {
+                    console.log('Expo push token created');
+                }
+            } catch (error) {
+                console.error(
+                    'Dashboard initialization failed:',
+                    error,
+                );
+            }
+        };
+        void initializeDashboard();
+    }, []);
+
+    useEffect(() => {
+        void registerForNotifications().catch((error) => {
+            console.error(
+                'Notification registration failed:',
+                error,
+            );
+        });
+    }, []);
+
+
     const pendingCheckins = feedItems.filter(
         (item) => item.checkinStatus === "PENDING"
     ).length;
@@ -67,7 +107,7 @@ export default function HomeScreen() {
     useEffect(() => {
         const timer = setTimeout(()=> {
             setModalVisible(true)
-        }, 3000)
+        }, 5000)
 
         return () => clearTimeout(timer)
     }, []);
@@ -154,6 +194,15 @@ export default function HomeScreen() {
                             : pendingCheckins > 1 ? `${pendingCheckins} activities need recovery check-ins. Complete them to update the status.`
                                 : "All recent activities have recovery check-ins."}
                     </Text>
+
+                    <Pressable
+                        style={styles.notificationButton}
+                        onPress={() => void scheduleTestNotification()}
+                    >
+                        <Text style={styles.notificationButtonText}>
+                            Test notification
+                        </Text>
+                    </Pressable>
 
                 </View>
 
@@ -441,4 +490,17 @@ const styles = StyleSheet.create({
             fontSize: 16,
             fontWeight: 'bold',
         },
+
+    notificationButton: {
+        alignSelf: 'flex-start',
+        marginTop: 16,
+        paddingHorizontal: 14,
+        paddingVertical: 10,
+        backgroundColor: '#fd5900',
+        borderRadius: 10,
+    },
+    notificationButtonText: {
+        color: '#101415',
+        fontWeight: '800',
+    },
 });

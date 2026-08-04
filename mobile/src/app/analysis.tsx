@@ -941,7 +941,7 @@ export default function AnalysisScreen() {
 
     return (
         <View style={styles.screen}>
-            <ScrollView contentContainerStyle={styles.content} directionalLockEnabled canCancelContentTouches={false} disableScrollViewPanResponder nestedScrollEnabled>
+            <ScrollView contentContainerStyle={styles.content} directionalLockEnabled disableScrollViewPanResponder nestedScrollEnabled>
                 <View style={styles.headerRow}>
                     <View>
                         <Text style={styles.appName}>Smart Gauge</Text>
