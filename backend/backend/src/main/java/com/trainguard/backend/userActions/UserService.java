@@ -128,7 +128,7 @@ public class UserService {
 
         try {
             String response = restClient.post()
-                    .uri("/--api/v2/push/send")
+                    .uri("/--/api/v2/push/send")
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(notifications)
                     .retrieve()
@@ -141,7 +141,7 @@ public class UserService {
                     response
             );
         } catch (Exception e) {
-            log.error("Failed to send notification");
+            log.error("Failed to send notification {}", athleteId, e);
         }
     }
 }
