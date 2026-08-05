@@ -1,5 +1,8 @@
 import {Ionicons} from "@expo/vector-icons";
-import {Picker} from "@expo/ui";
+// import {Picker} from "@expo/ui";
+import { Picker } from '@react-native-picker/picker';
+
+
 import React, {Dispatch, SetStateAction, useMemo, useState} from "react";
 import {
     ActivityIndicator,
@@ -228,7 +231,7 @@ export function ContactModal({contactUsModal, setContactUsModal}: ContactModalPr
                         </Text>
 
                         <View style={styles.pickerContainer}>
-                            <Picker
+                            <Picker style={{color: 'white', backgroundColor: '#101415', borderColor: '#101415', minHeight: 50}}
                                 selectedValue={category}
                                 onValueChange={(value) =>
                                     setCategory(
@@ -414,7 +417,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         overflow: "hidden",
         marginBottom: 18,
-        color: "#d7dde1",
+        // color: "#d7dde1",
     },
     messageInput: {
         minHeight: 150,
