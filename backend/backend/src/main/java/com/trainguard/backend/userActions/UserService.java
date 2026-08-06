@@ -155,7 +155,10 @@ public class UserService {
 
     public void deleteUserNotificationToken(String authorizationHeader, String notificationToken) {
         Long athleteId = sessionService.getAthleteIdFromAuthorizationHeader(authorizationHeader);
-        userNotificationTokenRepository.deleteByStravaUser_AthleteIdAndNotificationToken(athleteId,notificationToken);
+        StravaUserEntity stravaUser = stravaUserRepository.findById(athleteId).orElseThrow(() ->
+                new IllegalArgumentException("User Not Found")
+        );
+        userNotificationTokenRepository.deleteByStravaUserAndNotificationToken(stravaUser,notificationToken);
 
     }
 }
