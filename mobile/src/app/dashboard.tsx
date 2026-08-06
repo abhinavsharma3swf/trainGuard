@@ -9,7 +9,7 @@ import {useFocusEffect} from "expo-router";
 import SummaryProgressBar from "@/components/SummaryProgressBar";
 import {acceptedUserDisclaimers} from "@/services/agreementService";
 import {
-    registerForRemoteNotifications, requestTestPush,
+    registerForRemoteNotifications, requestTestPush, syncNotificationPermission,
 } from "@/services/notificationService";
 import * as Notifications from "expo-notifications";
 import Constants from "expo-constants";
@@ -200,6 +200,7 @@ export default function HomeScreen() {
                             const token =  ( Notifications.getExpoPushTokenAsync({projectId}))
                             console.log(token, "token")
                             console.log(currentPermission, "currentPermission");
+                            syncNotificationPermission()
                         }}
                     >
                         <Text style={styles.notificationButtonText}>

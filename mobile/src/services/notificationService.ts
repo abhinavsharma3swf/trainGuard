@@ -5,6 +5,21 @@ import {Platform} from 'react-native';
 import {API_BASE_URL} from "@/constants/api";
 import {getSessionToken} from "@/services/athleteStorage";
 
+export async function syncNotificationPermission(): Promise<void> {
+    const permission = await Notifications.getPermissionsAsync();
+    const projectId =
+        Constants.expoConfig?.extra?.eas?.projectId ??
+        Constants.easConfig?.projectId;
+    const token = (await Notifications.getExpoPushTokenAsync({
+        projectId,
+    })).data;
+
+    if (permission.status !== 'denied') {
+        return;
+    }
+    await deleteNotificationToken(token);
+}
+
 
 export async function registerForRemoteNotifications(): Promise<void> {
 
@@ -42,15 +57,23 @@ export async function registerForRemoteNotifications(): Promise<void> {
         Constants.expoConfig?.extra?.eas?.projectId ??
         Constants.easConfig?.projectId;
 
-    if (!projectId) {
-        throw new Error('EAS project ID is missing.');
-    }
-
     const token = (await Notifications.getExpoPushTokenAsync({
         projectId,
     })).data;
 
-    await saveUserNotificationToken(token)
+    if (!projectId) {
+        throw new Error('EAS project ID is missing.');
+    }
+
+    if(currentPermission.status === 'denied') {
+        await deleteNotificationToken(token);
+    }
+    else{
+        await saveUserNotificationToken(token)
+    }
+
+
+
     // const sessionToken = await getSessionToken();
     //
     // if (!sessionToken) {
@@ -119,6 +142,27 @@ export async function saveUserNotificationToken(notificationToken: string): Prom
     else
         throw new Error("Unable to save notification token.");
 }
+
+
+export async function deleteNotificationToken(notificationToken: string): Promise<void> {
+    const token = await getSessionToken();
+
+    const response = await fetch(`${API_BASE_URL}/api/contactUs/token_deletion`, {
+        method: 'DELETE',
+        headers: {
+            authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({notificationToken}),
+    })
+
+    if(response.ok) {
+        console.log("token removed successfully.");
+    }
+    else
+        throw new Error("Unable to remove notification token.");
+}
+
 
 export async function requestTestPush(): Promise<void> {
     const token = await getSessionToken();
