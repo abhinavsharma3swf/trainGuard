@@ -42,6 +42,11 @@ public class UserController {
         userService.sendNotificationsToUser(athleteId);
         return ResponseEntity.noContent().build();
     }
+
+    @DeleteMapping("/token_deletion")
+    public void tokenDeletion(@RequestHeader("Authorization") String authorizationHeader, @RequestBody NotificationTokenRecord notificationToken) {
+        userService.deleteUserNotificationToken(authorizationHeader, notificationToken.notificationToken());
+    }
 }
 
 

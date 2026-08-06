@@ -126,6 +126,14 @@ public class UserService {
                 .baseUrl("https://exp.host")
                 .build();
 
+        if (notifications.isEmpty()) {
+            log.info(
+                    "No valid notification tokens for athlete {}",
+                    athleteId
+            );
+            return;
+        }
+
         try {
             String response = restClient.post()
                     .uri("/--/api/v2/push/send")
@@ -143,5 +151,11 @@ public class UserService {
         } catch (Exception e) {
             log.error("Failed to send notification {}", athleteId, e);
         }
+    }
+
+    public void deleteUserNotificationToken(String authorizationHeader, String notificationToken) {
+        Long athleteId = sessionService.getAthleteIdFromAuthorizationHeader(authorizationHeader);
+        userNotificationTokenRepository.deleteByStravaUser_AthleteIdAndNotificationToken(athleteId,notificationToken);
+
     }
 }
