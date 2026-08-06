@@ -28,8 +28,8 @@ public class UserController {
     }
 
     @PostMapping("/notification")
-    public void userNotificationToken(@RequestHeader("Authorization") String authorizationHeader, @RequestBody String notificationToken) {
-        userService.notificationToken(authorizationHeader, notificationToken);
+    public void userNotificationToken(@RequestHeader("Authorization") String authorizationHeader, @RequestBody NotificationTokenRecord notificationToken) {
+        userService.notificationToken(authorizationHeader, notificationToken.notificationToken());
     }
 
     @PostMapping("/notification/test")
@@ -43,6 +43,7 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 }
+
 
 
 

@@ -1,4 +1,6 @@
 package com.trainguard.backend.userActions;
 
-public class NotificationTokenRecord {
+public record NotificationTokenRecord (
+        String notificationToken
+){
 }

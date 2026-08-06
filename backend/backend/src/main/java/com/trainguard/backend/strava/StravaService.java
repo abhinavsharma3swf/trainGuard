@@ -235,9 +235,8 @@ public class StravaService {
                         stravaActivity,
                         athleteId
                 );
-
-        userService.sendNotificationsToUser(athleteId);
         activityService.importActivity(request);
+        userService.sendNotificationsToUser(athleteId);
     }
 
     private String getCurrentAccessToken(
