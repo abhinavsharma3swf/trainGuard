@@ -279,6 +279,7 @@ export default function AnalysisChart({
                             pointerLabelHeight: 45,
                             autoAdjustPointerLabelPosition:
                                 true,
+                            activatePointersOnLongPress: true,
                             pointerLabelComponent: (
                                 items: lineDataItem[]
                             ) => (

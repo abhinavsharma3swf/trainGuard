@@ -10,6 +10,7 @@
     "ios": {
       "icon": "./assets/images/smartGaugeAppIcon.png",
       "bundleIdentifier": "com.abhinavsharma3steam.smartgauge",
+      "appleTeamId": "UFBQPTK7YU",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
@@ -32,7 +33,11 @@
       "expo-status-bar",
       "expo-web-browser",
       "expo-localization",
-      "expo-notifications"
+      "expo-notifications",
+      {
+        "icon": "./assests/notification-icon.png",
+        "color": "#ffffff"
+      }
     ]
   }
 }

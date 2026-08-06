@@ -1,6 +1,6 @@
 import {Ionicons} from "@expo/vector-icons";
-// import {Picker} from "@expo/ui";
-import { Picker } from '@react-native-picker/picker';
+import {Picker} from "@expo/ui";
+// import { Picker } from '@react-native-picker/picker';
 
 
 import React, {Dispatch, SetStateAction, useMemo, useState} from "react";
@@ -26,7 +26,7 @@ type ContactCategory =
 export type ContactFormData = {
     name: string;
     email: string;
-    category: ContactCategory;
+    category: string;
     message: string;
 };
 
@@ -38,7 +38,7 @@ type ContactModalProps = {
 export function ContactModal({contactUsModal, setContactUsModal}: ContactModalProps) {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
-    const [category, setCategory] = useState<ContactCategory>("feedback");
+    const [category, setCategory] = useState("");
     const [message, setMessage] = useState("");
 
     const [error, setError] = useState("");
@@ -47,6 +47,7 @@ export function ContactModal({contactUsModal, setContactUsModal}: ContactModalPr
     const normalizedName = name.trim();
     const normalizedEmail = email.trim().toLowerCase();
     const normalizedMessage = message.trim();
+    const normalizeCategory = category.trim();
 
     const isEmailValid = useMemo(
         () => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail),
@@ -99,7 +100,7 @@ export function ContactModal({contactUsModal, setContactUsModal}: ContactModalPr
             await submitContactUsModalData({
                 name: normalizedName,
                 email: normalizedEmail,
-                category,
+                category: normalizeCategory,
                 message: normalizedMessage,
             });
 
@@ -230,29 +231,44 @@ export function ContactModal({contactUsModal, setContactUsModal}: ContactModalPr
                             Message type
                         </Text>
 
-                        <View style={styles.pickerContainer}>
-                            <Picker style={{color: 'white', backgroundColor: '#101415', borderColor: '#101415', minHeight: 50}}
-                                selectedValue={category}
-                                onValueChange={(value) =>
-                                    setCategory(
-                                        value as ContactCategory,
-                                    )
-                                }
-                            >
-                                <Picker.Item
-                                    label="Feedback"
-                                    value="feedback"
-                                />
-                                <Picker.Item
-                                    label="Question"
-                                    value="question"
-                                />
-                                <Picker.Item
-                                    label="Feature request"
-                                    value="feature_request"
-                                />
-                            </Picker>
-                        </View>
+                        <TextInput
+                            style={styles.input}
+                            accessibilityLabelledBy="contact-name-label"
+                            placeholder="Feedback / Question / Request"
+                            placeholderTextColor="#8b8e8f"
+                            value={category}
+                            onChangeText={setCategory}
+                            autoCapitalize="words"
+                            autoComplete="name"
+                            textContentType="name"
+                            returnKeyType="next"
+                            maxLength={100}
+                        />
+
+
+                        {/*<View style={styles.pickerContainer}>*/}
+                        {/*    <Picker*/}
+                        {/*        selectedValue={category}*/}
+                        {/*        onValueChange={(value) =>*/}
+                        {/*            setCategory(*/}
+                        {/*                value as ContactCategory,*/}
+                        {/*            )*/}
+                        {/*        }*/}
+                        {/*    >*/}
+                        {/*        <Picker.Item*/}
+                        {/*            label="Feedback"*/}
+                        {/*            value="feedback"*/}
+                        {/*        />*/}
+                        {/*        <Picker.Item*/}
+                        {/*            label="Question"*/}
+                        {/*            value="question"*/}
+                        {/*        />*/}
+                        {/*        <Picker.Item*/}
+                        {/*            label="Feature request"*/}
+                        {/*            value="feature_request"*/}
+                        {/*        />*/}
+                        {/*    </Picker>*/}
+                        {/*</View>*/}
 
                         <Text
                             nativeID="contact-message-label"

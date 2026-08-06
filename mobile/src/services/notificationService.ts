@@ -1,20 +1,20 @@
 import Constants from 'expo-constants';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
-import { Platform } from 'react-native';
+import {Platform} from 'react-native';
 import {API_BASE_URL} from "@/constants/api";
 import {getSessionToken} from "@/services/athleteStorage";
 
 
-export async function registerForNotifications(): Promise<string | null> {
+export async function registerForRemoteNotifications(): Promise<void> {
 
     if (Platform.OS !== 'ios') {
-        return null;
+        return;
     }
 
     if (!Device.isDevice) {
         console.log('Push notifications require a physical device.');
-        return null;
+        return;
     }
 
     const currentPermission = await Notifications.getPermissionsAsync();
@@ -35,7 +35,7 @@ export async function registerForNotifications(): Promise<string | null> {
     }
 
     if (status !== 'granted') {
-        return null;
+        return;
     }
 
     const projectId =
@@ -46,47 +46,79 @@ export async function registerForNotifications(): Promise<string | null> {
         throw new Error('EAS project ID is missing.');
     }
 
-    const token = await Notifications.getExpoPushTokenAsync({
+    const token = (await Notifications.getExpoPushTokenAsync({
         projectId,
-    });
+    })).data;
 
-    return token.data;
+    await saveUserNotificationToken(token)
+    // const sessionToken = await getSessionToken();
+    //
+    // if (!sessionToken) {
+    //     throw new Error('Session token is missing.');
+    // }
+    //
+    // const response = await fetch(
+    //     `${API_BASE_URL}/api/contactUs/notification`,
+    //     {
+    //         method: 'POST',
+    //         headers: {
+    //             Authorization: `Bearer ${sessionToken}`,
+    //             'Content-Type': 'application/json',
+    //         },
+    //         body: JSON.stringify({
+    //             token,
+    //         }),
+    //     },
+    // );
 
+    // if (!response.ok) {
+    //     const error = await response.text();
+    //
+    //     throw new Error(
+    //         `Could not save push token: ${response.status} ${error}`,
+    //     );
+    // }
 }
 
 
-    //   export async function scheduleTestNotification(pendingCheckins: number): Promise<void> {
-    //
-    //     await Notifications.scheduleNotificationAsync({
-    //         content: {
-    //             title: 'Smart Gauge',
-    //             body: pendingCheckins === 1
-    //             ? 'You have 1 pending check-in.'
-    //             : `You have ${pendingCheckins} pending check-ins.`,
-    //             sound: 'default',
-    //             data: {
-    //                 route: '/dashboard',
-    //             },
-    //         },
-    //         trigger: {
-    //             type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
-    //             seconds: 3,
-    //         },
-    //     });
-    // }
+//   export async function scheduleTestNotification(pendingCheckins: number): Promise<void> {
+//
+//     await Notifications.scheduleNotificationAsync({
+//         content: {
+//             title: 'Smart Gauge',
+//             body: pendingCheckins === 1
+//             ? 'You have 1 pending check-in.'
+//             : `You have ${pendingCheckins} pending check-ins.`,
+//             sound: 'default',
+//             data: {
+//                 route: '/dashboard',
+//             },
+//         },
+//         trigger: {
+//             type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+//             seconds: 3,
+//         },
+//     });
+// }
 
-    export async function saveUserNotificationToken(notificationToken: any) {
-        const token = await getSessionToken();
+export async function saveUserNotificationToken(notificationToken: string): Promise<void> {
+    const token = await getSessionToken();
 
-        await fetch(`${API_BASE_URL}/api/contactUs/notification`, {
-            method: 'POST',
-            headers: {
-                authorization: `Bearer ${token}`,
-                contentType: 'application/json',
-            },
-            body: JSON.stringify(notificationToken),
-        })
+    const response = await fetch(`${API_BASE_URL}/api/contactUs/notification`, {
+        method: 'POST',
+        headers: {
+            authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({notificationToken}),
+    })
+
+    if(response.ok) {
+        console.log("token saved successfully.");
     }
+    else
+        throw new Error("Unable to save notification token.");
+}
 
 export async function requestTestPush(): Promise<void> {
     const token = await getSessionToken();

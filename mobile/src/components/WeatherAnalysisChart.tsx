@@ -100,6 +100,7 @@ export default function WeatherAnalysisChart({
                             pointerLabelWidth: 165,
                             pointerLabelHeight: 90,
                             autoAdjustPointerLabelPosition: true,
+                            activatePointersOnLongPress: true,
                             pointerLabelComponent: (items: lineDataItem[]) => (
                                 <View style={styles.tooltip}>
                                     <Text style={styles.tooltipDate}>

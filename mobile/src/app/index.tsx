@@ -251,7 +251,7 @@ function ConsentRow({
                     pressed && styles.reviewButtonPressed,
                 ]}
             >
-                <Text style={styles.reviewButtonText}>Review</Text>
+                <Text style={styles.reviewButtonText}>Press review to continue</Text>
             </Pressable>
         </View>
     );

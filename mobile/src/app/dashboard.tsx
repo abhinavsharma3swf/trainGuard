@@ -9,9 +9,10 @@ import {useFocusEffect} from "expo-router";
 import SummaryProgressBar from "@/components/SummaryProgressBar";
 import {acceptedUserDisclaimers} from "@/services/agreementService";
 import {
-    registerForNotifications, requestTestPush,
-    saveUserNotificationToken,
+    registerForRemoteNotifications, requestTestPush,
 } from "@/services/notificationService";
+import * as Notifications from "expo-notifications";
+import Constants from "expo-constants";
 
 
 export default function HomeScreen() {
@@ -61,13 +62,10 @@ export default function HomeScreen() {
             try {
                 await acceptedUserDisclaimers();
 
-                const pushToken = await registerForNotifications();
+                await registerForRemoteNotifications().catch((error)=> {
+                    console.error("push registration failed", error)
+                });
 
-                if (pushToken) await saveUserNotificationToken(pushToken);
-
-                if (pushToken) {
-                    console.log('Expo push token created');
-                }
             } catch (error) {
                 console.error(
                     'Dashboard initialization failed:',
@@ -79,7 +77,7 @@ export default function HomeScreen() {
     }, []);
 
     useEffect(() => {
-        void registerForNotifications().catch((error) => {
+        void registerForRemoteNotifications().catch((error) => {
             console.error(
                 'Notification registration failed:',
                 error,
@@ -193,9 +191,16 @@ export default function HomeScreen() {
                     </Text>
                     <Pressable
                         style={styles.notificationButton}
-                        onPress={() =>
+                        onPress={() => {
                             void requestTestPush().catch(console.error)
-                        }
+                            const currentPermission = Notifications.getPermissionsAsync();
+                            const projectId =
+                                Constants.expoConfig?.extra?.eas?.projectId ??
+                                Constants.easConfig?.projectId;
+                            const token =  ( Notifications.getExpoPushTokenAsync({projectId}))
+                            console.log(token, "token")
+                            console.log(currentPermission, "currentPermission");
+                        }}
                     >
                         <Text style={styles.notificationButtonText}>
                             Test notification
