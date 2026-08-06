@@ -33,11 +33,7 @@
       "expo-status-bar",
       "expo-web-browser",
       "expo-localization",
-      "expo-notifications",
-      {
-        "icon": "./assests/notification-icon.png",
-        "color": "#ffffff"
-      }
+      "expo-notifications"
     ]
   }
 }
