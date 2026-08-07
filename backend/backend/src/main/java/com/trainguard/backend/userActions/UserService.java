@@ -1,9 +1,13 @@
 package com.trainguard.backend.userActions;
 
 
+import com.trainguard.backend.activity.ActivityRepository;
+import com.trainguard.backend.recovery.RecoveryCheckinEntity;
+import com.trainguard.backend.recovery.RecoveryCheckinRepository;
 import com.trainguard.backend.session.SessionService;
 import com.trainguard.backend.strava.StravaUserEntity;
 import com.trainguard.backend.strava.StravaUserRepository;
+import jakarta.transaction.Transactional;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -14,6 +18,7 @@ import org.springframework.web.client.RestClient;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Getter
@@ -27,6 +32,8 @@ public class UserService {
     private final StravaUserRepository stravaUserRepository;
     private final SessionService sessionService;
     private final UserNotificationTokenRepository userNotificationTokenRepository;
+//    private final ActivityRepository activityRepository;
+//    private final RecoveryCheckinRepository recoveryCheckinRepository;
 
 
     public UserContactUsResponseRecord contactUsInformation(UserContactUsRecord contactUsRecord) {
@@ -114,12 +121,25 @@ public class UserService {
             return;
         }
 
+//        int pendingCheckinCount =
+//                Math.toIntExact(
+//                        activityRepository
+//                                .countActivitiesWithoutCheckin(athleteId)
+//                );
+
         List<ExpoPushRequest> notifications = targetDevices.stream().map(device ->
                 ExpoPushRequest.builder()
                         .to(device.getNotificationToken())
                         .title("New activity uploaded")
-                        .body("Your activity was imported, Don't forget to check-in")
+//                        .body(
+//                                pendingCheckinCount == 1
+//                                        ? "You have 1 pending check-in."
+//                                        : "You have " + pendingCheckinCount
+//                                          + " pending check-ins."
+//                        )
+//                        .body("Your activity was imported, Don't forget to check-in")
                         .sound("default")
+//                        .notificationCount(pendingCheckinCount)
                         .data(new ExpoPushData("/dashboard")).build()).toList();
 
         RestClient restClient = RestClient.builder()
@@ -153,12 +173,12 @@ public class UserService {
         }
     }
 
+    @Transactional
     public void deleteUserNotificationToken(String authorizationHeader, String notificationToken) {
         Long athleteId = sessionService.getAthleteIdFromAuthorizationHeader(authorizationHeader);
         StravaUserEntity stravaUser = stravaUserRepository.findById(athleteId).orElseThrow(() ->
                 new IllegalArgumentException("User Not Found")
         );
         userNotificationTokenRepository.deleteByStravaUserAndNotificationToken(stravaUser,notificationToken);
-
     }
 }
