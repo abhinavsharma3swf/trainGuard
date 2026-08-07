@@ -20,7 +20,6 @@ export async function syncNotificationPermission(): Promise<void> {
     await deleteNotificationToken(token);
 }
 
-
 export async function registerForRemoteNotifications(): Promise<void> {
 
     if (Platform.OS !== 'ios') {

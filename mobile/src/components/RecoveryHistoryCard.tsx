@@ -16,8 +16,15 @@ export function RecoveryHistoryCard({ item }: RecoveryHistoryCardProps) {
 
     return (
         <View style={styles.card}>
-            {item.sportType === "RUN" ? <Text style={styles.title}>🏃 {item.sportType} - Check-in</Text> :
-                <Text style={styles.title}>🚴 {item.sportType} - Check-in</Text> }
+            {item.sportType === "RUN" && <Text style={styles.title}>🏃 {item.sportType} - Check-in</Text>}
+            {item.sportType === "RIDE" &&<Text style={styles.title}>🚴 {item.sportType} - Check-in</Text>}
+            {item.sportType === "VIRTUALRIDE" &&<Text style={styles.title}>🚴 {item.sportType} - Check-in</Text>}
+            {item.sportType === "WALK" &&<Text style={styles.title}>🚶 {item.sportType} - Check-in</Text>}
+            {item.sportType === "WEIGHTTRAINING" &&<Text style={styles.title}>🏋 {item.sportType} - Check-in</Text>}
+            {item.sportType === "WORKOUT" &&<Text style={styles.title}>💪 {item.sportType} - Check-in</Text>}
+            {item.sportType === "YOGA" &&<Text style={styles.title}>🧘 {item.sportType} - Check-in</Text>}
+            {item.sportType === "TENNIS" &&<Text style={styles.title}>🎾 {item.sportType} - Check-in</Text>}
+            {item.sportType === "PICKLEBALL" &&<Text style={styles.title}>🏓 {item.sportType} - Check-in</Text>}
             <Text style={styles.date}>{date}</Text>
 
             <View style={styles.chipRow}>

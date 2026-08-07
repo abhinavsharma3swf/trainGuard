@@ -487,6 +487,7 @@ import AnalysisChart from "@/components/AnalysisChart";
 import {useDashboardData} from "@/context/DashboardDataContext";
 import {useHistoryData} from "@/context/HistoryDataContext";
 import WeatherAnalysisChart from "@/components/WeatherAnalysisChart";
+import * as Localization from "expo-localization";
 
 type TimeRange = 7 | 30 | "ALL";
 
@@ -605,6 +606,19 @@ export default function AnalysisScreen() {
         filteredCheckins.map((item) => item.humidity),
     );
 
+
+    const formatLocalDate = (date: string) => {
+        const calendars = Localization.getCalendars();
+        const deviceTimeZone =
+            calendars[0]?.timeZone ?? 'America/Los_Angeles';
+
+        return new Date(date).toLocaleDateString('en-US', {
+            timeZone: deviceTimeZone,
+            month: 'short',
+            day: 'numeric',
+        });
+    };
+
     const painData = useMemo<lineDataItem[]>(
         () =>
             [...filteredCheckins]
@@ -620,13 +634,14 @@ export default function AnalysisScreen() {
                 )
                 .map((item) => ({
                     value: item.painScore as number,
-                    label: new Date(item.createdAt).toLocaleDateString(
-                        "en-US",
-                        {
-                            month: "short",
-                            day: "numeric",
-                        },
-                    ),
+                    label: formatLocalDate(item.createdAt),
+                    // label: new Date(item.createdAt).toLocaleDateString(
+                    //     "en-US",
+                    //     {
+                    //         month: "short",
+                    //         day: "numeric",
+                    //     },
+                    // ),
                 })),
         [filteredCheckins],
     );
@@ -647,16 +662,37 @@ export default function AnalysisScreen() {
                 )
                 .map((item) => ({
                     value: item.rpe as number,
-                    label: new Date(item.createdAt).toLocaleDateString(
-                        "en-US",
-                        {
-                            month: "short",
-                            day: "numeric",
-                        },
-                    ),
+                    label: formatLocalDate(item.createdAt),
                 })),
         [filteredCheckins],
     );
+
+    // const rpeData = useMemo<lineDataItem[]>(
+    //     () =>
+    //         [...filteredCheckins]
+    //             .filter(
+    //                 (item) =>
+    //                     item.rpe !== null &&
+    //                     item.rpe !== undefined &&
+    //                     item.rpe !== 0,
+    //             )
+    //             .sort(
+    //                 (a, b) =>
+    //                     new Date(a.createdAt).getTime() -
+    //                     new Date(b.createdAt).getTime(),
+    //             )
+    //             .map((item) => ({
+    //                 value: item.rpe as number,
+    //                 label: new Date(item.createdAt).toLocaleDateString(
+    //                     "en-US",
+    //                     {
+    //                         month: "short",
+    //                         day: "numeric",
+    //                     },
+    //                 ),
+    //             })),
+    //     [filteredCheckins],
+    // );
 
     const temperatureData = useMemo<lineDataItem[]>(
         () =>

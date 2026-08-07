@@ -41,10 +41,10 @@ export function BottomNav({
                               activeRoute,
                               storedAthleteId,
                           }: BottomNavProps) {
-    const handleLogout = async () => {
-        await clearSessionToken();
-        router.replace("/");
-    };
+    // const handleLogout = async () => {
+    //     await clearSessionToken();
+    //     router.replace("/");
+    // };
 
     return (
         <View style={styles.container}>

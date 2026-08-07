@@ -37,7 +37,7 @@ export default function ConnectScreen() {
                 const sessionToken = await getSessionToken();
 
                 if (sessionToken && isMounted) {
-                    // router.replace("/dashboard");
+                    router.replace("/dashboard");
 
                 }
             } catch (sessionError) {
