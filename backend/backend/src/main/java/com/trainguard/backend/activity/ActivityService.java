@@ -38,8 +38,6 @@ public class ActivityService {
         activity.setMovingTimeSeconds(requestRecord.movingTimeSeconds());
         activity.setElapsedTimeSeconds(requestRecord.elapsedTimeSeconds());
         activity.setTotalElevationGain(requestRecord.totalElevationGain());
-//        activity.setAverageHeartbeat(requestRecord.averageHeartbeat());
-//        activity.setMaxHeartbeat(requestRecord.maxHeartbeat());
         activity.setAverageWatts(requestRecord.averageWatts());
         activity.setWeightedAverageWatts(requestRecord.weightedAverageWatts());
         activity.setStart_latlng(requestRecord.start_latlng());

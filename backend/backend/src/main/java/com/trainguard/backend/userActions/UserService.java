@@ -110,8 +110,18 @@ public class UserService {
     }
 
     public void sendNotificationsToUser(Long athleteId) {
+        log.info(
+                "Looking for notification tokens for athlete {}",
+                athleteId
+        );
 
         List<UserNotificationTokenEntity> targetDevices = userNotificationTokenRepository.findByStravaUser_AthleteId(athleteId);
+
+        log.info(
+                "Found {} notification token(s) for athlete {}",
+                targetDevices.size(),
+                athleteId
+        );
 
         if (targetDevices.isEmpty()) {
             log.info(

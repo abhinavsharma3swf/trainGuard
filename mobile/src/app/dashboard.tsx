@@ -8,8 +8,11 @@ import {useDashboardData} from "@/context/DashboardDataContext";
 import {useFocusEffect} from "expo-router";
 import SummaryProgressBar from "@/components/SummaryProgressBar";
 import {acceptedUserDisclaimers} from "@/services/agreementService";
-import {registerForRemoteNotifications} from "@/services/notificationService";
-
+import {
+    registerForRemoteNotifications, requestTestPush, syncNotificationPermission,
+} from "@/services/notificationService";
+import * as Notifications from "expo-notifications";
+import Constants from "expo-constants";
 
 
 export default function HomeScreen() {
@@ -22,6 +25,7 @@ export default function HomeScreen() {
         try {
             setIsSyncing(true);
             setError("");
+
             await syncStravaActivities();
             await refreshDashboardFeed();
         } catch (error) {
@@ -185,6 +189,16 @@ export default function HomeScreen() {
                             : pendingCheckins > 1 ? `${pendingCheckins} activities need recovery check-ins. Complete them to update the status.`
                                 : "All recent activities have recovery check-ins."}
                     </Text>
+                    <Pressable
+                        style={styles.notificationButton}
+                        onPress={() => {
+                            void requestTestPush().catch(console.error)
+                        }}
+                    >
+                        <Text style={styles.notificationButtonText}>
+                            Test notification
+                        </Text>
+                    </Pressable>
                 </View>
 
                 <View style={styles.summaryGrid}>
