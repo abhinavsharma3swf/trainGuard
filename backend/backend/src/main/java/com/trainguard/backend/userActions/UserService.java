@@ -147,7 +147,7 @@ public class UserService {
 //                                        : "You have " + pendingCheckinCount
 //                                          + " pending check-ins."
 //                        )
-//                        .body("Your activity was imported, Don't forget to check-in")
+                        .body("Your activity was imported, Don't forget to check-in")
                         .sound("default")
 //                        .notificationCount(pendingCheckinCount)
                         .data(new ExpoPushData("/dashboard")).build()).toList();
