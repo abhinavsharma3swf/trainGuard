@@ -7,6 +7,7 @@ import {
     useState,
 } from "react";
 import { getDashboardFeed } from "@/services/dashboardApi";
+import {AppState} from "react-native";
 
 export type DashboardFeedItem = {
     activityId: number | null;
@@ -66,9 +67,21 @@ export function DashboardDataProvider({ children }: { children: ReactNode }) {
         }
     }
 
+    // useEffect(() => {
+    //     refreshDashboardFeed();
+    // }, []);
+
     useEffect(() => {
-        refreshDashboardFeed();
-    }, []);
+        const subscription = AppState.addEventListener(
+            'change',
+            (state) => {
+                if (state === 'active') {
+                    void refreshDashboardFeed();
+                }
+            },
+        );
+        return () => subscription.remove();
+    }, [feedItems]);
 
     const clearDashboardData = useCallback(() => {
         setFeedItems([]);

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @Getter
@@ -28,10 +29,16 @@ public class ActivityService {
                 )
                 .orElseGet(ActivityEntity::new);
 
+        String activityType = requestRecord.sportType();
+        String activityToBeSaved = switch(activityType) {
+            case "RUN", "RIDE", "VIRTUALRIDE", "WALK", "WEIGHTTRAINING", "WORKOUT", "YOGA", "TENNIS", "PICKLEBALL", "PILATES", "TRAILRUN", "SWIM" -> activityType;
+            default -> "OTHER";
+        };
+
         activity.setAthleteId(requestRecord.athleteId());
         activity.setExternalSource(requestRecord.externalSource());
         activity.setExternalActivityId(requestRecord.externalActivityId());
-        activity.setSportType(requestRecord.sportType());
+        activity.setSportType(activityToBeSaved);
         activity.setName(requestRecord.name());
         activity.setStartDate(requestRecord.startDate());
         activity.setDistanceMeters(requestRecord.distanceMeters());

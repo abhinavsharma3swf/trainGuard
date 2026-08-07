@@ -15,8 +15,6 @@ public record ActivityImportRequestRecord(
         Integer movingTimeSeconds,
         Integer elapsedTimeSeconds,
         Double totalElevationGain,
-//        Double averageHeartbeat,
-//        Double maxHeartbeat,
         Double averageWatts,
         Double weightedAverageWatts,
         Long athleteId,

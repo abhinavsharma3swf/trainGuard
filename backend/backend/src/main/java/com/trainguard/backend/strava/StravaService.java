@@ -241,16 +241,8 @@ public class StravaService {
                         athleteId
                 );
         activityService.importActivity(request);
-
-        log.info(
-                "Activity saved for athlete {}, sending notification",
-                athleteId
-        );
         userService.sendNotificationsToUser(athleteId);
 
-        log.info( "Notification method completed for athlete {}",
-                athleteId
-);
     }
 
     private String getCurrentAccessToken(

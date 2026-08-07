@@ -32,16 +32,16 @@ public class UserController {
         userService.notificationToken(authorizationHeader, notificationToken.notificationToken());
     }
 
-    @PostMapping("/notification/test")
-    public ResponseEntity<Void> testNotification(@RequestHeader("Authorization") String authorizationHeader) {
-        Long athleteId =
-                sessionService.getAthleteIdFromAuthorizationHeader(
-                        authorizationHeader
-                );
-
-        userService.sendNotificationsToUser(athleteId);
-        return ResponseEntity.noContent().build();
-    }
+//    @PostMapping("/notification/test")
+//    public ResponseEntity<Void> testNotification(@RequestHeader("Authorization") String authorizationHeader) {
+//        Long athleteId =
+//                sessionService.getAthleteIdFromAuthorizationHeader(
+//                        authorizationHeader
+//                );
+//
+//        userService.sendNotificationsToUser(athleteId);
+//        return ResponseEntity.noContent().build();
+//    }
 
     @DeleteMapping("/token_deletion")
     public ResponseEntity<Void> tokenDeletion(@RequestHeader("Authorization") String authorizationHeader, @RequestBody NotificationTokenRecord notificationToken) {
