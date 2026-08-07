@@ -1,6 +1,6 @@
 package com.trainguard.backend.recovery;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 public record RecoveryCheckinResponseRecord(
         Long id,
@@ -11,7 +11,7 @@ public record RecoveryCheckinResponseRecord(
         String mood,
         String note,
         String sportType,
-        LocalDateTime createdAt,
+        Instant createdAt,
         Integer temperature,
         Integer feelsLikeTemperature,
         Integer humidity,

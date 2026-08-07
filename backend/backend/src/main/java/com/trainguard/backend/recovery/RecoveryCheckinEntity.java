@@ -5,6 +5,7 @@ import com.trainguard.backend.strava.StravaUserEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Entity
@@ -38,7 +39,7 @@ public class RecoveryCheckinEntity {
 
     private String sportType;
 
-    private LocalDateTime createdAt;
+    private Instant createdAt;
 
     private Integer temperature;
 

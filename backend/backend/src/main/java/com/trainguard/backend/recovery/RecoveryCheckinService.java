@@ -114,6 +114,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -153,7 +154,7 @@ public class RecoveryCheckinService {
                 .orElseGet(() -> RecoveryCheckinEntity.builder()
                         .activity(activity)
                         .athleteId(athleteId)
-                        .createdAt(LocalDateTime.now())
+                        .createdAt(Instant.now())
                         .build());
 
         checkin.setAthleteId(athleteId);
