@@ -10,14 +10,14 @@ export async function syncNotificationPermission(): Promise<void> {
     const projectId =
         Constants.expoConfig?.extra?.eas?.projectId ??
         Constants.easConfig?.projectId;
-    const token = (await Notifications.getExpoPushTokenAsync({
-        projectId,
-    })).data;
-
-    if (permission.status !== 'denied') {
-        return;
-    }
-    await deleteNotificationToken(token);
+    // const token = (await Notifications.getExpoPushTokenAsync({
+    //     projectId,
+    // })).data;
+    //
+    // if (permission.status !== 'denied') {
+    //     return;
+    // }
+    // await deleteNotificationToken(token);
 }
 
 export async function registerForRemoteNotifications(): Promise<void> {

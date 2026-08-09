@@ -11,6 +11,8 @@ import {acceptedUserDisclaimers} from "@/services/agreementService";
 import {
     registerForRemoteNotifications
 } from "@/services/notificationService";
+import HumanBody from "@/components/HumanBody";
+
 
 
 
@@ -110,7 +112,6 @@ export default function HomeScreen() {
     return (
         <View style={styles.screen}>
             <ScrollView contentContainerStyle={styles.content}>
-
                 {pendingCheckins > 0 ?
                     <View style={styles.container}>
                         {/* Reminder Modal */}

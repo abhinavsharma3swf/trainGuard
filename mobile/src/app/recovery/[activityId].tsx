@@ -3,6 +3,7 @@ import {useEffect, useState} from "react";
 import {
     KeyboardAvoidingView,
     Platform,
+    Pressable,
     ScrollView,
     StyleSheet,
     Text,
@@ -18,11 +19,13 @@ import {API_BASE_URL} from "@/constants/api";
 import {useDashboardData} from "@/context/DashboardDataContext";
 import {getSessionToken} from "@/services/athleteStorage";
 import {fetchWeatherApi} from "openmeteo";
+import HumanBody from "@/components/HumanBody";
+import {BodyPart} from "@/components/PathPoints";
 
 type RecoveryCheckinForm = {
     rpe: number | null;
     painScore: number | null;
-    painLocation: string;
+    painLocation: BodyPart[];
     mood: string;
     note: string;
 };
@@ -38,6 +41,8 @@ type WeatherData = {
 export default function RecoveryCheckInScreen() {
     const {activityId} = useLocalSearchParams<{ activityId: string }>();
     const {feedItems, refreshDashboardFeed} = useDashboardData();
+
+    const [havePain, setHavePain] = useState<boolean>(false);
 
     const [weatherData, setWeatherData] = useState<WeatherData>({
         temperature: 0,
@@ -142,7 +147,7 @@ export default function RecoveryCheckInScreen() {
         if (currentActivity.start_latlng === null) {
             return;
         }
-        if(currentActivity.sportType === "RIDE" || currentActivity.sportType === "RUN")fetchWeatherData()
+        if (currentActivity.sportType === "RIDE" || currentActivity.sportType === "RUN") fetchWeatherData()
 
         // reset({
         //     // rpe: currentActivity.rpe ?? null,
@@ -240,141 +245,146 @@ export default function RecoveryCheckInScreen() {
                     </View>
 
                     <View style={styles.card}>
-                        <Controller
-                            control={control}
-                            name="rpe"
-                            render={({field: {onChange, value}}) => (
-                                <NumberSelector
-                                    label="RPE"
-                                    helper="How hard did this feel? 1–10"
-                                    values={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}
-                                    selectedValue={value}
-                                    onSelect={(selectedValue) => {
-                                        onChange(selectedValue);
-                                        clearErrors("rpe");
-                                    }}
+                        {!havePain ? (
+                            <>
+                                <Controller
+                                    control={control}
+                                    name="rpe"
+                                    render={({field: {onChange, value}}) => (
+                                        <NumberSelector
+                                            label="RPE"
+                                            helper="How hard did this feel? 1–10"
+                                            values={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}
+                                            selectedValue={value}
+                                            onSelect={(selectedValue) => {
+                                                onChange(selectedValue);
+                                                clearErrors("rpe");
+                                            }}
+                                        />
+                                    )}
                                 />
-                            )}
-                        />
-                        {errors.rpe?.message ? (
-                            <Text style={styles.errorText}>{errors.rpe.message}</Text>
-                        ) : null}
+                                {errors.rpe?.message ? (
+                                    <Text style={styles.errorText}>{errors.rpe.message}</Text>
+                                ) : null}
 
-                        <Controller
-                            control={control}
-                            name="painScore"
-                            render={({field: {onChange, value}}) => (
-                                <NumberSelector
-                                    label="Pain Score"
-                                    helper="Pain level from 0–10"
-                                    values={[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}
-                                    selectedValue={value}
-                                    onSelect={(selectedValue) => {
-                                        onChange(selectedValue);
-                                        clearErrors("painScore");
-                                    }}
+                                <View>
+                                    <Text style={styles.labelText}>
+                                        Do you want to log any pain?
+                                    </Text>
+
+                                    <Pressable
+                                        style={styles.option}
+                                        onPress={() => setHavePain(!havePain)}
+                                    >
+                                        <Text style={styles.optionText}>Yes</Text>
+                                    </Pressable>
+                                </View>
+
+                                <Controller
+                                    control={control}
+                                    name="mood"
+                                    render={({field: {onChange, value}}) => (
+                                        <MoodSelector
+                                            selectedMood={value}
+                                            onSelect={(selectedValue) => {
+                                                onChange(selectedValue);
+                                                clearErrors("mood");
+                                            }}
+                                        />
+                                    )}
                                 />
-                            )}
-                        />
-                        {errors.painScore?.message ? (
-                            <Text style={styles.errorText}>{errors.painScore.message}</Text>
-                        ) : null}
+                                {errors.mood?.message ? (
+                                    <Text style={styles.errorText}>{errors.mood.message}</Text>
+                                ) : null}
 
-                        <Text style={styles.label}>Pain Location</Text>
-                        <Controller
-                            control={control}
-                            name="painLocation"
-                            render={({field: {onChange, value}}) => (
-                                <TextInput
-                                    style={styles.input}
-                                    value={value}
-                                    onChangeText={onChange}
-                                    placeholder="Example: right adductor, hip, knee"
-                                    placeholderTextColor="#8f9097"
-                                />
-                            )}
-                        />
+                                <Text style={styles.label}>Note</Text>
 
-                        <Controller
-                            control={control}
-                            name="mood"
-                            render={({field: {onChange, value}}) => (
-                                <MoodSelector
-                                    selectedMood={value}
-                                    onSelect={(selectedValue) => {
-                                        onChange(selectedValue);
-                                        clearErrors("mood");
-                                    }}
-                                />
-                            )}
-                        />
-                        {errors.mood?.message ? (
-                            <Text style={styles.errorText}>{errors.mood.message}</Text>
-                        ) : null}
-
-                        <Text style={styles.label}>Note</Text>
-
-                        <View style={styles.noteContainer}>
-                            <Controller
-                                control={control}
-                                name="note"
-                                render={({field: {onChange, value}}) => (
-                                    <TextInput
-                                        style={styles.noteInput}
-                                        value={value}
-                                        onChangeText={onChange}
-                                        placeholder="Optional note"
-                                        placeholderTextColor="#8f9097"
-                                        multiline
+                                <View style={styles.noteContainer}>
+                                    <Controller
+                                        control={control}
+                                        name="note"
+                                        render={({field: {onChange, value}}) => (
+                                            <TextInput
+                                                style={styles.noteInput}
+                                                value={value}
+                                                onChangeText={onChange}
+                                                placeholder="Optional note"
+                                                placeholderTextColor="#8f9097"
+                                                multiline
+                                            />
+                                        )}
                                     />
-                                )}
-                            />
 
-                            <Text style={styles.weatherRow}>
-                                {currentActivity.sportType === "RIDE" ? "RIDE"
-                                    : currentActivity.sportType === "RUN" ?
-                                    <>
-                                    <Text style={styles.weatherText}>
-                                    Temp:{" "}
-                                    {weatherData?.temperature !== undefined
-                                        ? `${weatherData.temperature.toFixed(0)}°F`
-                                        : "N/A"}
-                                </Text>
+                                    <Text style={styles.weatherRow}>
+                                        {currentActivity.sportType === "RIDE" ? "RIDE"
+                                            : currentActivity.sportType === "RUN" ?
+                                                <>
+                                                    <Text style={styles.weatherText}>
+                                                        Temp:{" "}
+                                                        {weatherData?.temperature !== undefined
+                                                            ? `${weatherData.temperature.toFixed(0)}°F`
+                                                            : "N/A"}
+                                                    </Text>
 
-                                <Text style={styles.weatherText}>
-                                    Feels Like Temp:{" "}
-                                    {weatherData?.feelsLikeTemperature !== undefined
-                                        ? `${weatherData.feelsLikeTemperature.toFixed(0)}°F`
-                                        : "N/A"}
-                                </Text>
+                                                    <Text style={styles.weatherText}>
+                                                        Feels Like Temp:{" "}
+                                                        {weatherData?.feelsLikeTemperature !== undefined
+                                                            ? `${weatherData.feelsLikeTemperature.toFixed(0)}°F`
+                                                            : "N/A"}
+                                                    </Text>
 
-                                <Text style={styles.weatherText}>
-                                    Humidity:{" "}
-                                    {weatherData?.humidity !== undefined
-                                        ? `${weatherData.humidity.toFixed(0)}%`
-                                        : "N/A"}
-                                </Text>
+                                                    <Text style={styles.weatherText}>
+                                                        Humidity:{" "}
+                                                        {weatherData?.humidity !== undefined
+                                                            ? `${weatherData.humidity.toFixed(0)}%`
+                                                            : "N/A"}
+                                                    </Text>
 
-                                <Text style={styles.weatherText}>
-                                    Wind:{""}
-                                    {weatherData?.windSpeed !== undefined
-                                        ? `${weatherData.windSpeed.toFixed(0)} mph`
-                                        : "N/A"}
-                                </Text>
+                                                    <Text style={styles.weatherText}>
+                                                        Wind:{""}
+                                                        {weatherData?.windSpeed !== undefined
+                                                            ? `${weatherData.windSpeed.toFixed(0)} mph`
+                                                            : "N/A"}
+                                                    </Text>
 
-                                <Text style={styles.weatherText}>
-                                    DewPoint:{""}
-                                    {weatherData?.dewPoint !== undefined
-                                        ? `${weatherData.dewPoint.toFixed(0)}°F`
-                                        : "N/A"}
-                                </Text> </> : <Text style={styles.weatherText}> No Weather Data Available</Text>}
-                            </Text>
-                        </View>
+                                                    <Text style={styles.weatherText}>
+                                                        DewPoint:{""}
+                                                        {weatherData?.dewPoint !== undefined
+                                                            ? `${weatherData.dewPoint.toFixed(0)}°F`
+                                                            : "N/A"}
+                                                    </Text> </> :
+                                                <Text style={styles.weatherText}> No Weather Data Available</Text>}
+                                    </Text>
+                                </View>
 
-                        {errors.root?.message ? (
-                            <Text style={styles.errorText}>{errors.root.message}</Text>
-                        ) : null}
+                                {errors.root?.message ? (
+                                    <Text style={styles.errorText}>{errors.root.message}</Text>
+                                ) : null}
 
+                            </>
+                        ) : (
+                            <>
+                                <View style={styles.bodySelectorScreen}>
+                                    <HumanBody/>
+                                </View>
+                                <Controller
+                                    control={control}
+                                    name="painScore"
+                                    render={({field: {onChange, value}}) => (
+                                        <NumberSelector
+                                            label="Pain Score"
+                                            helper="Pain level from 0–10"
+                                            values={[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}
+                                            selectedValue={value}
+                                            onSelect={(selectedValue) => {
+                                                onChange(selectedValue);
+                                                clearErrors("painScore");
+                                            }}
+                                        />
+                                    )}
+                                />
+                            </>
+                        )}
                         <TouchableOpacity
                             style={[styles.saveButton, isSubmitting && styles.disabledButton]}
                             onPress={handleSubmit(handleSave)}
@@ -388,8 +398,10 @@ export default function RecoveryCheckInScreen() {
                 </ScrollView>
             </View>
         </KeyboardAvoidingView>
-    );
+    )
+
 }
+
 
 const styles = StyleSheet.create({
     screen: {
@@ -499,6 +511,41 @@ const styles = StyleSheet.create({
     weatherText: {
         color: "#8f9097",
         fontSize: 11,
+    },
+    labelText: {
+        paddingTop: 20,
+        color: "#e0e3e5",
+        fontSize: 14,
+        fontWeight: "800",
+        marginBottom: 4,
+        paddingBottom: 8
+    },
+    option: {
+        backgroundColor: "#1d2022",
+        borderWidth: 1,
+        borderColor: "#323537",
+        borderRadius: 999,
+        paddingHorizontal: 14,
+        paddingVertical: 10,
+        width: 65
+    },
+    selectedOption: {
+        backgroundColor: "#fd5900",
+        borderColor: "#fd5900",
+    },
+    optionText: {
+        color: "#e0e3e5",
+        fontWeight: "800",
+        alignSelf: "center",
+    },
+    selectedOptionText: {
+        color: "#501600",
+    },
+    bodySelectorScreen: {
+        flexDirection: "row",
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginLeft: 150
     },
 });
 
