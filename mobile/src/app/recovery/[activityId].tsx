@@ -25,7 +25,8 @@ import {BodyPart} from "@/components/PathPoints";
 type RecoveryCheckinForm = {
     rpe: number | null;
     painScore: number | null;
-    painLocation: BodyPart[];
+    painLocation: string | null;
+    painLocationEnum: BodyPart[];
     mood: string;
     note: string;
 };
@@ -131,18 +132,27 @@ export default function RecoveryCheckInScreen() {
         reset,
         setError,
         clearErrors,
+        watch,
         formState: {errors, isSubmitting},
     } = useForm<RecoveryCheckinForm>({
         values: {
             rpe: currentActivity.rpe ?? null,
             painScore: currentActivity.painScore ?? null,
-            painLocation: currentActivity.painLocation ?? [],
+            painLocation: currentActivity.painLocation ?? "",
+            painLocationEnum: currentActivity.painLocationEnum ?? [],
             mood: currentActivity.mood ?? "",
             note: currentActivity.note ? currentActivity.note : currentActivity.description ?? "",
         },
     });
 
+    const painEnum = watch('painLocationEnum')
+
+
     useEffect(() => {
+        if(painEnum){
+            setSelectedBodyParts(painEnum);
+            setHavePainStyling(true)
+        }
         if (!currentActivity) {
             return;
         }
@@ -189,7 +199,7 @@ export default function RecoveryCheckInScreen() {
             activityId: Number(activityId),
             rpe: formValues.rpe,
             painScore: formValues.painScore,
-            painLocation: selectedBodyParts ?? [],
+            painLocationEnum: selectedBodyParts ?? [],
             mood: formValues.mood ?? '',
             note: formValues.note.trim() ?? '',
             sportType: currentActivity?.sportType,
@@ -200,8 +210,6 @@ export default function RecoveryCheckInScreen() {
             dewPoint: weatherData.dewPoint.toFixed(0),
 
         };
-
-        console.log(payload, "payload from acitivty file");
         try {
             const response = await fetch(`${API_BASE_URL}/api/recovery-checkins`, {
                 method: "POST",

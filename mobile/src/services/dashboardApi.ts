@@ -14,7 +14,7 @@ export type DashboardFeedItem = {
     checkinStatus: "COMPLETED" | "PENDING";
     rpe: number | null;
     painScore: number | null;
-    painLocation: BodyPart[] | null;
+    painLocation: string | null;
     mood: string | null;
     note: string | null;
     averageWatts: string;

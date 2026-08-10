@@ -11,10 +11,6 @@ import {acceptedUserDisclaimers} from "@/services/agreementService";
 import {
     registerForRemoteNotifications
 } from "@/services/notificationService";
-import HumanBody from "@/components/HumanBody";
-
-
-
 
 export default function HomeScreen() {
 

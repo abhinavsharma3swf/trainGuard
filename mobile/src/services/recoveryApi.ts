@@ -1,5 +1,6 @@
 import {API_BASE_URL} from "@/constants/api";
 import {getSessionToken} from "@/services/athleteStorage";
+import {BodyPart} from "@/components/PathPoints";
 
 
 export type RecoveryCheckin = {
@@ -8,6 +9,7 @@ export type RecoveryCheckin = {
     rpe: number;
     painScore: number;
     painLocation: string;
+    painLocationEnum: BodyPart[];
     mood: string;
     note: string;
     sportType: string;

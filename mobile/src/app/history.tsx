@@ -36,6 +36,7 @@ export default function History() {
                                 createdAt: item.createdAt,
                                 painScore: item.painScore ?? 0,
                                 painLocation: item.painLocation,
+                                painLocationEnum: item.painLocationEnum,
                                 rpe: item.rpe ?? 0,
                                 mood: item.mood,
                                 note: item.note,

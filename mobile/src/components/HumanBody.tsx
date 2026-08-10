@@ -63,9 +63,6 @@ export default function HumanBody({
 
     const togglePart = (part: BodyPart) => {
         setSelectedBodyParts((currentSelection) => {
-
-            console.log(currentSelection, "currentSelections", part);
-
             if (currentSelection.includes(part)) {
                 // Already selected → deselect it
                 return currentSelection.filter(

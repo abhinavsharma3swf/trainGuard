@@ -9,7 +9,6 @@ import {PrivacyStatement} from "@/components/PrivacyStatement";
 import {BetaDisclaimer} from "@/components/BetaDisclaimer";
 import {SafeAreaProvider} from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {acceptedUserDisclaimers} from "@/services/agreementService";
 
 export default function ConnectScreen() {
     const [error, setError] = useState("");

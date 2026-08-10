@@ -1,6 +1,7 @@
-import { StyleSheet, Text, View } from "react-native";
+import {StyleSheet, Text, View} from "react-native";
 import {RecoveryCheckin} from "@/services/recoveryApi";
-
+import {useEffect} from "react";
+import {BodyPart} from "@/components/PathPoints";
 
 
 type RecoveryHistoryCardProps = {
@@ -13,6 +14,11 @@ export function RecoveryHistoryCard({ item }: RecoveryHistoryCardProps) {
         day: "numeric",
         year: "numeric",
     });
+
+    const convertingEnumToString = (bodyPartEnum: BodyPart[]) => {
+        const bodyPartsEnumStrings = bodyPartEnum.map((part)=> BodyPart[part]).join(", ");
+        return bodyPartsEnumStrings.replace(/([A-Z])/g, " $1").trim();
+    }
 
     return (
         <View style={styles.card}>
@@ -34,9 +40,9 @@ export function RecoveryHistoryCard({ item }: RecoveryHistoryCardProps) {
             <View style={styles.chipRow}>
                 <Chip label={`RPE ${item.rpe}`} />
                 <Chip label={`Pain ${item.painScore}`} />
-
                 {item.mood ? <Chip label={item.mood} /> : null}
                 {item.painLocation ? <Chip label={item.painLocation} /> : null}
+                {item.painLocationEnum ? <Chip label={convertingEnumToString(item.painLocationEnum)}/> : null }
             </View>
 
             {item.note?.trim() ? (
