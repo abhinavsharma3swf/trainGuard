@@ -67,6 +67,7 @@ public class DashboardService {
                 .rpe(matchingCheckin.map(RecoveryCheckinEntity::getRpe).orElse(null))
                 .painScore(matchingCheckin.map(RecoveryCheckinEntity::getPainScore).orElse(null))
                 .painLocation(matchingCheckin.map(RecoveryCheckinEntity::getPainLocation).orElse(null))
+                .painLocationEnum(matchingCheckin.map(RecoveryCheckinEntity::getPainLocationEnum).orElse(null))
                 .mood(matchingCheckin.map(RecoveryCheckinEntity::getMood).orElse(null))
                 .note(matchingCheckin.map(RecoveryCheckinEntity::getNote).orElse(null))
                 .start_latlng(activity.getStart_latlng())

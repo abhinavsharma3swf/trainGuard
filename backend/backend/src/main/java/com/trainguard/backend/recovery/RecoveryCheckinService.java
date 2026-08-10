@@ -162,6 +162,7 @@ public class RecoveryCheckinService {
         checkin.setRpe(request.rpe());
         checkin.setPainScore(request.painScore());
         checkin.setPainLocation(request.painLocation());
+        checkin.setPainLocationEnum(request.painLocationEnum());
         checkin.setMood(request.mood());
         checkin.setNote(request.note());
         checkin.setSportType(activity.getSportType());
@@ -185,6 +186,7 @@ public class RecoveryCheckinService {
                 checkin.getRpe(),
                 checkin.getPainScore(),
                 checkin.getPainLocation(),
+                checkin.getPainLocationEnum(),
                 checkin.getMood(),
                 checkin.getNote(),
                 checkin.getSportType(),

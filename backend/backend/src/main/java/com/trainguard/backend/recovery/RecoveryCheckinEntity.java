@@ -32,7 +32,9 @@ public class RecoveryCheckinEntity {
 
     private Integer painScore;
 
-    private List<Integer> painLocation;
+    private String painLocation;
+
+    private List<Integer> painLocationEnum;
 
     private String mood;
 
