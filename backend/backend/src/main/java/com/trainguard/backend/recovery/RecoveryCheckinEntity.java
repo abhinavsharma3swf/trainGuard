@@ -7,6 +7,7 @@ import lombok.*;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "recovery_checkins")
@@ -31,7 +32,7 @@ public class RecoveryCheckinEntity {
 
     private Integer painScore;
 
-    private String painLocation;
+    private List<Integer> painLocation;
 
     private String mood;
 

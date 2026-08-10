@@ -2,12 +2,14 @@ package com.trainguard.backend.recovery;
 
 import lombok.Builder;
 
+import java.util.List;
+
 @Builder
 public record RecoveryCheckinRequestRecord (
         Long activityId,
         Integer rpe,
         Integer painScore,
-        String painLocation,
+        List<Integer> painLocation,
         String mood,
         String note,
         String sportType,

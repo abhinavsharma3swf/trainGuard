@@ -1,6 +1,7 @@
 package com.trainguard.backend.dashboard;
 import lombok.Builder;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Builder
 public record DashboardFeedRecord(
@@ -15,7 +16,7 @@ public record DashboardFeedRecord(
         String checkinStatus,
         Integer rpe,
         Integer painScore,
-        String painLocation,
+        List<Integer> painLocation,
         String mood,
         String note,
         Double start_latlng,
