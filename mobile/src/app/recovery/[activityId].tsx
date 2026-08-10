@@ -44,7 +44,6 @@ export default function RecoveryCheckInScreen() {
     const {feedItems, refreshDashboardFeed} = useDashboardData();
 
     const [havePain, setHavePain] = useState<boolean>(false);
-    const [havePainStyling, setHavePainStyling] = useState<boolean>(false);
     const [selectedBodyParts, setSelectedBodyParts] = useState<BodyPart[]>([]);
 
     const [weatherData, setWeatherData] = useState<WeatherData>({
@@ -149,9 +148,8 @@ export default function RecoveryCheckInScreen() {
 
 
     useEffect(() => {
-        if(painEnum){
+        if (painEnum) {
             setSelectedBodyParts(painEnum);
-            setHavePainStyling(true)
         }
         if (!currentActivity) {
             return;
@@ -236,7 +234,6 @@ export default function RecoveryCheckInScreen() {
     };
 
 
-
     return (
         <KeyboardAvoidingView style={styles.screen} behavior={Platform.OS === "ios" ? "padding" : "height"}>
             <View style={styles.screen}>
@@ -286,14 +283,14 @@ export default function RecoveryCheckInScreen() {
                                     </Text>
 
                                     <Pressable
-                                        style={[styles.option, havePainStyling && styles.selectedOption]}
+                                        style={[styles.option, selectedBodyParts.length > 0 && styles.selectedOption]}
                                         onPress={() => {
                                             setHavePain(true)
-                                            setHavePainStyling(true)
                                         }
                                         }
                                     >
-                                        <Text style={[styles.optionText, havePainStyling && styles.selectedOptionText]}>Yes</Text>
+                                        <Text
+                                            style={[styles.optionText, selectedBodyParts.length > 0 && styles.selectedOptionText]}>Yes</Text>
                                     </Pressable>
                                 </View>
 
@@ -392,8 +389,8 @@ export default function RecoveryCheckInScreen() {
                             <>
                                 <View style={styles.bodySelectorScreen}>
                                     <HumanBody
-                                    selectedBodyParts={selectedBodyParts}
-                                    setSelectedBodyParts={setSelectedBodyParts}
+                                        selectedBodyParts={selectedBodyParts}
+                                        setSelectedBodyParts={setSelectedBodyParts}
                                     />
                                 </View>
                                 <Controller
@@ -413,8 +410,8 @@ export default function RecoveryCheckInScreen() {
                                     )}
                                 />
 
-                                <Pressable   style={[styles.saveButton, isSubmitting && styles.disabledButton]}
-                                onPress={()=> setHavePain(false)}>
+                                <Pressable style={[styles.saveButton, isSubmitting && styles.disabledButton]}
+                                           onPress={() => setHavePain(false)}>
                                     <Text style={styles.saveButtonText}>
                                         Done
                                     </Text>

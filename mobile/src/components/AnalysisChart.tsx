@@ -244,7 +244,7 @@ export default function AnalysisChart({
                         data={checkinData}
                         width={chartWidth - 20}
                         height={150}
-                        initialSpacing={10}
+                        initialSpacing={16}
                         endSpacing={20}
                         spacing={55}
                         noOfSections={
