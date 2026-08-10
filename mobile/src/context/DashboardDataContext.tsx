@@ -8,6 +8,7 @@ import {
 } from "react";
 import { getDashboardFeed } from "@/services/dashboardApi";
 import {AppState} from "react-native";
+import {BodyPart} from "@/components/PathPoints";
 
 export type DashboardFeedItem = {
     activityId: number | null;
@@ -20,7 +21,7 @@ export type DashboardFeedItem = {
     checkinStatus: "COMPLETED" | "PENDING";
     rpe?: number |null;
     painScore?: number | null;
-    painLocation?: string | null;
+    painLocation?: BodyPart[] | null;
     mood?: string | null;
     note?: string | null;
     averageWatts: string;

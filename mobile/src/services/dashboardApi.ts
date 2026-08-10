@@ -1,5 +1,6 @@
 import { API_BASE_URL } from "@/constants/api";
 import {clearSessionToken, getSessionToken} from "@/services/athleteStorage";
+import {BodyPart} from "@/components/PathPoints";
 
 
 export type DashboardFeedItem = {
@@ -13,7 +14,7 @@ export type DashboardFeedItem = {
     checkinStatus: "COMPLETED" | "PENDING";
     rpe: number | null;
     painScore: number | null;
-    painLocation: string | null;
+    painLocation: BodyPart[] | null;
     mood: string | null;
     note: string | null;
     averageWatts: string;

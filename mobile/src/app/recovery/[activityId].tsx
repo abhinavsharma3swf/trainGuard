@@ -43,6 +43,8 @@ export default function RecoveryCheckInScreen() {
     const {feedItems, refreshDashboardFeed} = useDashboardData();
 
     const [havePain, setHavePain] = useState<boolean>(false);
+    const [havePainStyling, setHavePainStyling] = useState<boolean>(false);
+    const [selectedBodyParts, setSelectedBodyParts] = useState<BodyPart[]>([]);
 
     const [weatherData, setWeatherData] = useState<WeatherData>({
         temperature: 0,
@@ -134,7 +136,7 @@ export default function RecoveryCheckInScreen() {
         values: {
             rpe: currentActivity.rpe ?? null,
             painScore: currentActivity.painScore ?? null,
-            painLocation: currentActivity.painLocation ?? "",
+            painLocation: currentActivity.painLocation ?? [],
             mood: currentActivity.mood ?? "",
             note: currentActivity.note ? currentActivity.note : currentActivity.description ?? "",
         },
@@ -187,7 +189,7 @@ export default function RecoveryCheckInScreen() {
             activityId: Number(activityId),
             rpe: formValues.rpe,
             painScore: formValues.painScore,
-            painLocation: formValues.painLocation.trim().toUpperCase() ?? '',
+            painLocation: selectedBodyParts ?? [],
             mood: formValues.mood ?? '',
             note: formValues.note.trim() ?? '',
             sportType: currentActivity?.sportType,
@@ -199,6 +201,7 @@ export default function RecoveryCheckInScreen() {
 
         };
 
+        console.log(payload, "payload from acitivty file");
         try {
             const response = await fetch(`${API_BASE_URL}/api/recovery-checkins`, {
                 method: "POST",
@@ -223,6 +226,8 @@ export default function RecoveryCheckInScreen() {
             });
         }
     };
+
+
 
     return (
         <KeyboardAvoidingView style={styles.screen} behavior={Platform.OS === "ios" ? "padding" : "height"}>
@@ -273,10 +278,14 @@ export default function RecoveryCheckInScreen() {
                                     </Text>
 
                                     <Pressable
-                                        style={styles.option}
-                                        onPress={() => setHavePain(!havePain)}
+                                        style={[styles.option, havePainStyling && styles.selectedOption]}
+                                        onPress={() => {
+                                            setHavePain(true)
+                                            setHavePainStyling(true)
+                                        }
+                                        }
                                     >
-                                        <Text style={styles.optionText}>Yes</Text>
+                                        <Text style={[styles.optionText, havePainStyling && styles.selectedOptionText]}>Yes</Text>
                                     </Pressable>
                                 </View>
 
@@ -316,44 +325,43 @@ export default function RecoveryCheckInScreen() {
                                     />
 
                                     <Text style={styles.weatherRow}>
-                                        {currentActivity.sportType === "RIDE" ? "RIDE"
-                                            : currentActivity.sportType === "RUN" ?
-                                                <>
-                                                    <Text style={styles.weatherText}>
-                                                        Temp:{" "}
-                                                        {weatherData?.temperature !== undefined
-                                                            ? `${weatherData.temperature.toFixed(0)}°F`
-                                                            : "N/A"}
-                                                    </Text>
+                                        {currentActivity.sportType === "RIDE" || currentActivity.sportType === "RUN" ?
+                                            <>
+                                                <Text style={styles.weatherText}>
+                                                    Temp:{" "}
+                                                    {weatherData?.temperature !== undefined
+                                                        ? `${weatherData.temperature.toFixed(0)}°F`
+                                                        : "N/A"}
+                                                </Text>
 
-                                                    <Text style={styles.weatherText}>
-                                                        Feels Like Temp:{" "}
-                                                        {weatherData?.feelsLikeTemperature !== undefined
-                                                            ? `${weatherData.feelsLikeTemperature.toFixed(0)}°F`
-                                                            : "N/A"}
-                                                    </Text>
+                                                <Text style={styles.weatherText}>
+                                                    Feels Like Temp:{" "}
+                                                    {weatherData?.feelsLikeTemperature !== undefined
+                                                        ? `${weatherData.feelsLikeTemperature.toFixed(0)}°F`
+                                                        : "N/A"}
+                                                </Text>
 
-                                                    <Text style={styles.weatherText}>
-                                                        Humidity:{" "}
-                                                        {weatherData?.humidity !== undefined
-                                                            ? `${weatherData.humidity.toFixed(0)}%`
-                                                            : "N/A"}
-                                                    </Text>
+                                                <Text style={styles.weatherText}>
+                                                    Humidity:{" "}
+                                                    {weatherData?.humidity !== undefined
+                                                        ? `${weatherData.humidity.toFixed(0)}%`
+                                                        : "N/A"}
+                                                </Text>
 
-                                                    <Text style={styles.weatherText}>
-                                                        Wind:{""}
-                                                        {weatherData?.windSpeed !== undefined
-                                                            ? `${weatherData.windSpeed.toFixed(0)} mph`
-                                                            : "N/A"}
-                                                    </Text>
+                                                <Text style={styles.weatherText}>
+                                                    Wind:{""}
+                                                    {weatherData?.windSpeed !== undefined
+                                                        ? `${weatherData.windSpeed.toFixed(0)} mph`
+                                                        : "N/A"}
+                                                </Text>
 
-                                                    <Text style={styles.weatherText}>
-                                                        DewPoint:{""}
-                                                        {weatherData?.dewPoint !== undefined
-                                                            ? `${weatherData.dewPoint.toFixed(0)}°F`
-                                                            : "N/A"}
-                                                    </Text> </> :
-                                                <Text style={styles.weatherText}> No Weather Data Available</Text>}
+                                                <Text style={styles.weatherText}>
+                                                    DewPoint:{""}
+                                                    {weatherData?.dewPoint !== undefined
+                                                        ? `${weatherData.dewPoint.toFixed(0)}°F`
+                                                        : "N/A"}
+                                                </Text> </> :
+                                            <Text style={styles.weatherText}> No Weather Data Available</Text>}
                                     </Text>
                                 </View>
 
@@ -361,11 +369,24 @@ export default function RecoveryCheckInScreen() {
                                     <Text style={styles.errorText}>{errors.root.message}</Text>
                                 ) : null}
 
+                                <TouchableOpacity
+                                    style={[styles.saveButton, isSubmitting && styles.disabledButton]}
+                                    onPress={handleSubmit(handleSave)}
+                                    disabled={isSubmitting}
+                                >
+                                    <Text style={styles.saveButtonText}>
+                                        {isSubmitting ? "Saving..." : "Save Check-In"}
+                                    </Text>
+                                </TouchableOpacity>
+
                             </>
                         ) : (
                             <>
                                 <View style={styles.bodySelectorScreen}>
-                                    <HumanBody/>
+                                    <HumanBody
+                                    selectedBodyParts={selectedBodyParts}
+                                    setSelectedBodyParts={setSelectedBodyParts}
+                                    />
                                 </View>
                                 <Controller
                                     control={control}
@@ -374,7 +395,7 @@ export default function RecoveryCheckInScreen() {
                                         <NumberSelector
                                             label="Pain Score"
                                             helper="Pain level from 0–10"
-                                            values={[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}
+                                            values={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}
                                             selectedValue={value}
                                             onSelect={(selectedValue) => {
                                                 onChange(selectedValue);
@@ -383,17 +404,15 @@ export default function RecoveryCheckInScreen() {
                                         />
                                     )}
                                 />
+
+                                <Pressable   style={[styles.saveButton, isSubmitting && styles.disabledButton]}
+                                onPress={()=> setHavePain(false)}>
+                                    <Text style={styles.saveButtonText}>
+                                        Done
+                                    </Text>
+                                </Pressable>
                             </>
                         )}
-                        <TouchableOpacity
-                            style={[styles.saveButton, isSubmitting && styles.disabledButton]}
-                            onPress={handleSubmit(handleSave)}
-                            disabled={isSubmitting}
-                        >
-                            <Text style={styles.saveButtonText}>
-                                {isSubmitting ? "Saving..." : "Save Check-In"}
-                            </Text>
-                        </TouchableOpacity>
                     </View>
                 </ScrollView>
             </View>
@@ -545,7 +564,6 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: 'center',
         alignItems: 'center',
-        marginLeft: 150
     },
 });
 
