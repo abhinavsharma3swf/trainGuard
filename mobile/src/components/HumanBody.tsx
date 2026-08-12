@@ -53,12 +53,17 @@ import {StyleSheet, View} from "react-native";
 
 interface HumanBodyProps {
     selectedBodyParts: BodyPart[],
-    setSelectedBodyParts: (value: (((prevState: BodyPart[]) => BodyPart[]) | BodyPart[])) => void
+    setSelectedBodyParts: (value:
+                               | BodyPart[]
+                               | (((prevState: BodyPart[]) => BodyPart[]) | BodyPart[])
+    ) => void
+    mode: 'checkin' | 'heatmap'
 }
 
 export default function HumanBody({
                                       setSelectedBodyParts,
                                       selectedBodyParts,
+                                      mode
                                   }: HumanBodyProps): JSX.Element {
 
     const togglePart = (part: BodyPart) => {
@@ -73,6 +78,27 @@ export default function HumanBody({
             return [...currentSelection, part];
         });
     };
+
+    const painCounts = selectedBodyParts.reduce((acc, part) => {
+        acc[part] = (acc[part] || 0) + 1;
+        return acc;
+    }, {} as Record<number, number>);
+
+
+    const heatMapColor = (count: number) => {
+        if(count === 0)return 'grey'
+        if(count > 0 && count < 3)return 'green';
+        if(count >= 3 && count < 5)return 'orange'
+        if(count >= 6)return 'red'
+    }
+
+    const getFillColor = (part: BodyPart) => {
+        if(mode === 'checkin') {
+            return selectedBodyParts.includes(part) ? '#d85108' : 'grey'
+        }
+        const count = painCounts[part] ?? 0;
+        return heatMapColor(count);
+    }
 
     return (
         <View style={styles.bodyContainer}>
@@ -93,285 +119,262 @@ export default function HumanBody({
                     <Path
                         d={frontLeftShoulder}
                         fill={
-                            selectedBodyParts.includes(BodyPart.LeftShoulder)
-                                ? '#d85108'
-                                : 'grey'
+                            getFillColor(BodyPart.LeftShoulder)
+
                         }
                         // stroke="#777"
                         // strokeWidth={1.5}
-                        onPress={() => togglePart(BodyPart.LeftShoulder)}
+                        onPress={mode === 'checkin' ? () => togglePart(BodyPart.LeftShoulder) : undefined}
                     />
 
                     <Path
                         d={frontRightShoulder}
                         fill={
-                            selectedBodyParts.includes(BodyPart.RightShoulder)
-                                ? '#d85108'
-                                : 'grey'
+                            getFillColor(BodyPart.RightShoulder)
+
                         }
-                        onPress={() => togglePart(BodyPart.RightShoulder)}
+                        onPress={mode === 'checkin' ? () => togglePart(BodyPart.RightShoulder) : undefined}
                     />
 
                     <Path
                         d={frontRightChest}
                         fill={
-                            selectedBodyParts.includes(BodyPart.RightChest)
-                                ? '#d85108'
-                                : 'grey'
+                            getFillColor(BodyPart.RightChest)
+
                         }
-                        onPress={() => togglePart(BodyPart.RightChest)}
+                        onPress={mode === 'checkin' ? () => togglePart(BodyPart.RightChest) : undefined}
                     />
 
                     <Path
                         d={frontLeftChest}
                         fill={
-                            selectedBodyParts.includes(BodyPart.LeftChest)
-                                ? '#d85108'
-                                : 'grey'
+                            getFillColor(BodyPart.LeftChest)
+
                         }
-                        onPress={() => togglePart(BodyPart.LeftChest)}
+                        onPress={mode === 'checkin' ? () => togglePart(BodyPart.LeftChest) : undefined}
                     />
 
                     <Path
                         d={frontRightUpperArm}
                         fill={
-                            selectedBodyParts.includes(BodyPart.RightUpperArm)
-                                ? '#d85108'
-                                : 'grey'
+                            getFillColor(BodyPart.RightUpperArm)
+
                         }
-                        onPress={() => togglePart(BodyPart.RightUpperArm)}
+                        onPress={mode === 'checkin' ? () => togglePart(BodyPart.RightUpperArm) : undefined}
                     />
 
                     <Path
                         d={frontLeftUpperArm}
                         fill={
-                            selectedBodyParts.includes(BodyPart.LeftUpperArm)
-                                ? '#d85108'
-                                : 'grey'
+                            getFillColor(BodyPart.LeftUpperArm)
+
                         }
-                        onPress={() => togglePart(BodyPart.LeftUpperArm)}
+                        onPress={mode === 'checkin' ? () => togglePart(BodyPart.LeftUpperArm) : undefined}
                     />
 
                     <Path
                         d={frontRightUpperAbs}
                         fill={
-                            selectedBodyParts.includes(BodyPart.RightUpperAbs)
-                                ? '#d85108'
-                                : 'grey'
+                            getFillColor(BodyPart.RightUpperAbs)
+
                         }
-                        onPress={() => togglePart(BodyPart.RightUpperAbs)}
+                        onPress={mode === 'checkin' ? () => togglePart(BodyPart.RightUpperAbs) : undefined}
                     />
 
                     <Path
                         d={frontLeftUpperAbs}
                         fill={
-                            selectedBodyParts.includes(BodyPart.LeftUpperAbs)
-                                ? '#d85108'
-                                : 'grey'
+                            getFillColor(BodyPart.LeftUpperAbs)
+
                         }
-                        onPress={() => togglePart(BodyPart.LeftUpperAbs)}
+                        onPress={mode === 'checkin' ? () => togglePart(BodyPart.LeftUpperAbs) : undefined}
                     />
 
                     <Path
                         d={frontRightMidAbs}
                         fill={
-                            selectedBodyParts.includes(BodyPart.RightMidAbs)
-                                ? '#d85108'
-                                : 'grey'
+                            getFillColor(BodyPart.RightMidAbs)
+
                         }
-                        onPress={() => togglePart(BodyPart.RightMidAbs)}
+                        onPress={mode === 'checkin' ? () => togglePart(BodyPart.RightMidAbs) : undefined}
                     />
 
                     <Path
                         d={frontLeftMidAbs}
                         fill={
-                            selectedBodyParts.includes(BodyPart.LeftMidAbs)
-                                ? '#d85108'
-                                : 'grey'
+                            getFillColor(BodyPart.LeftMidAbs)
+
                         }
-                        onPress={() => togglePart(BodyPart.LeftMidAbs)}
+                        onPress={mode === 'checkin' ? () => togglePart(BodyPart.LeftMidAbs) : undefined}
                     />
 
                     <Path
                         d={frontRightOblique}
                         fill={
-                            selectedBodyParts.includes(BodyPart.RightOblique)
-                                ? '#d85108'
-                                : 'grey'
+                            getFillColor(BodyPart.RightOblique)
+
                         }
-                        onPress={() => togglePart(BodyPart.RightOblique)}
+                        onPress={mode === 'checkin' ? () => togglePart(BodyPart.RightOblique) : undefined}
                     />
 
                     <Path
                         d={frontLeftOblique}
                         fill={
-                            selectedBodyParts.includes(BodyPart.LeftOblique)
-                                ? '#d85108'
-                                : 'grey'
+                            getFillColor(BodyPart.LeftOblique)
+
                         }
-                        onPress={() => togglePart(BodyPart.LeftOblique)}
+                        onPress={mode === 'checkin' ? () => togglePart(BodyPart.LeftOblique) : undefined}
                     />
 
                     <Path
                         d={frontLeftLowerAbs}
-                        fill={
-                            selectedBodyParts.includes(BodyPart.LeftLowerAbs)
-                                ? '#d85108'
-                                : 'grey'
-                        }
-                        onPress={() => togglePart(BodyPart.LeftLowerAbs)}
+                        fill={getFillColor(
+                            BodyPart.LeftLowerAbs
+                        )}
+                        // fill={
+                        //     getFillColor(BodyPart.LeftLowerAbs)
+                        //         ? "#d85108"
+                        //         : 'grey'
+                        // }
+                        // onPress={mode === 'checkin' ? () => togglePart(BodyPart.LeftLowerAbs) : undefined}
+                        onPress={mode === 'checkin' ? () => togglePart(BodyPart.LeftLowerAbs) : undefined}
                     />
 
                     <Path
                         d={frontRightLowerAbs}
                         fill={
-                            selectedBodyParts.includes(BodyPart.RightLowerAbs)
-                                ? '#d85108'
-                                : 'grey'
+                            getFillColor(BodyPart.RightLowerAbs)
+
                         }
-                        onPress={() => togglePart(BodyPart.RightLowerAbs)}
+                        onPress={mode === 'checkin' ? () => togglePart(BodyPart.RightLowerAbs) : undefined}
                     />
 
                     <Path
                         d={frontRightForearm}
                         fill={
-                            selectedBodyParts.includes(BodyPart.RightForearm)
-                                ? '#d85108'
-                                : 'grey'
+                            getFillColor(BodyPart.RightForearm)
+
                         }
-                        onPress={() => togglePart(BodyPart.RightForearm)}
+                        onPress={mode === 'checkin' ? () => togglePart(BodyPart.RightForearm) : undefined}
                     />
 
                     <Path
                         d={frontLeftForearm}
                         fill={
-                            selectedBodyParts.includes(BodyPart.LeftForearm)
-                                ? '#d85108'
-                                : 'grey'
+                            getFillColor(BodyPart.LeftForearm)
+
                         }
-                        onPress={() => togglePart(BodyPart.LeftForearm)}
+                        onPress={mode === 'checkin' ? () => togglePart(BodyPart.LeftForearm) : undefined}
                     />
 
 
                     <Path
                         d={frontRightAdductor}
                         fill={
-                            selectedBodyParts.includes(BodyPart.RightAdductor)
-                                ? '#d85108'
-                                : 'grey'
+                            getFillColor(BodyPart.RightAdductor)
+
                         }
-                        onPress={() => togglePart(BodyPart.RightAdductor)}
+                        onPress={mode === 'checkin' ? () => togglePart(BodyPart.RightAdductor) : undefined}
                     />
 
 
                     <Path
                         d={frontLeftAdductor}
                         fill={
-                            selectedBodyParts.includes(BodyPart.LeftAdductor)
-                                ? '#d85108'
-                                : 'grey'
+                            getFillColor(BodyPart.LeftAdductor)
+
                         }
-                        onPress={() => togglePart(BodyPart.LeftAdductor)}
+                        onPress={mode === 'checkin' ? () => togglePart(BodyPart.LeftAdductor) : undefined}
                     />
 
                     <Path
                         d={frontRightQuad}
                         fill={
-                            selectedBodyParts.includes(BodyPart.RightQuad)
-                                ? '#d85108'
-                                : 'grey'
+                            getFillColor(BodyPart.RightQuad)
+
                         }
-                        onPress={() => togglePart(BodyPart.RightQuad)}
+                        onPress={mode === 'checkin' ? () => togglePart(BodyPart.RightQuad) : undefined}
                     />
 
                     <Path
                         d={frontLeftQuad}
                         fill={
-                            selectedBodyParts.includes(BodyPart.LeftQuad)
-                                ? '#d85108'
-                                : 'grey'
+                            getFillColor(BodyPart.LeftQuad)
+
                         }
-                        onPress={() => togglePart(BodyPart.LeftQuad)}
+                        onPress={mode === 'checkin' ? () => togglePart(BodyPart.LeftQuad) : undefined}
                     />
 
                     <Path
                         d={frontLeftKnee}
                         fill={
-                            selectedBodyParts.includes(BodyPart.LeftKnee)
-                                ? '#d85108'
-                                : 'grey'
+                            getFillColor(BodyPart.LeftKnee)
+
                         }
-                        onPress={() => togglePart(BodyPart.LeftKnee)}
+                        onPress={mode === 'checkin' ? () => togglePart(BodyPart.LeftKnee) : undefined}
                     />
 
                     <Path
                         d={frontRightKnee}
                         fill={
-                            selectedBodyParts.includes(BodyPart.RightKnee)
-                                ? '#d85108'
-                                : 'grey'
+                            getFillColor(BodyPart.RightKnee)
+
                         }
-                        onPress={() => togglePart(BodyPart.RightKnee)}
+                        onPress={mode === 'checkin' ? () => togglePart(BodyPart.RightKnee) : undefined}
                     />
 
                     <Path
                         d={frontLeftCalf}
                         fill={
-                            selectedBodyParts.includes(BodyPart.LeftCalf)
-                                ? '#d85108'
-                                : 'grey'
+                            getFillColor(BodyPart.LeftCalf)
+
                         }
-                        onPress={() => togglePart(BodyPart.LeftCalf)}
+                        onPress={mode === 'checkin' ? () => togglePart(BodyPart.LeftCalf) : undefined}
                     />
 
                     <Path
                         d={frontRightCalf}
                         fill={
-                            selectedBodyParts.includes(BodyPart.RightCalf)
-                                ? '#d85108'
-                                : 'grey'
+                            getFillColor(BodyPart.RightCalf)
+
                         }
-                        onPress={() => togglePart(BodyPart.RightCalf)}
+                        onPress={mode === 'checkin' ? () => togglePart(BodyPart.RightCalf) : undefined}
                     />
 
                     <Path
                         d={frontLeftAnkle}
                         fill={
-                            selectedBodyParts.includes(BodyPart.LeftAnkle)
-                                ? '#d85108'
-                                : 'grey'
+                            getFillColor(BodyPart.LeftAnkle)
+
                         }
-                        onPress={() => togglePart(BodyPart.LeftAnkle)}
+                        onPress={mode === 'checkin' ? () => togglePart(BodyPart.LeftAnkle) : undefined}
                     />
 
                     <Path
                         d={frontRightAnkle}
                         fill={
-                            selectedBodyParts.includes(BodyPart.RightAnkle)
-                                ? '#d85108'
-                                : 'grey'
+                            getFillColor(BodyPart.RightAnkle)
+
                         }
-                        onPress={() => togglePart(BodyPart.RightAnkle)}
+                        onPress={mode === 'checkin' ? () => togglePart(BodyPart.RightAnkle) : undefined}
                     />
 
                     <Path
                         d={frontLeftFoot}
                         fill={
-                            selectedBodyParts.includes(BodyPart.LeftFoot)
-                                ? '#d85108'
-                                : 'grey'
+                            getFillColor(BodyPart.LeftFoot)
+
                         }
-                        onPress={() => togglePart(BodyPart.LeftFoot)}
+                        onPress={mode === 'checkin' ? () => togglePart(BodyPart.LeftFoot) : undefined}
                     />
 
                     <Path
                         d={frontRightFoot}
                         fill={
-                            selectedBodyParts.includes(BodyPart.RightFoot)
-                                ? '#d85108'
-                                : 'grey'
+                            getFillColor(BodyPart.RightFoot)
+
                         }
-                        onPress={() => togglePart(BodyPart.RightFoot)}
+                        onPress={mode === 'checkin' ? () => togglePart(BodyPart.RightFoot) : undefined}
                     />
 
                     <Path
@@ -385,161 +388,145 @@ export default function HumanBody({
                     <Path
                         d={backRightShoulder}
                         fill={
-                            selectedBodyParts.includes(BodyPart.RightBackShoulder)
-                                ? '#d85108'
-                                : 'grey'
+                            getFillColor(BodyPart.RightBackShoulder)
+
                         }
-                        onPress={() => togglePart(BodyPart.RightBackShoulder)}
+                        onPress={mode === 'checkin' ? () => togglePart(BodyPart.RightBackShoulder) : undefined}
                     />
 
                     <Path
                         d={backLeftShoulder}
                         fill={
-                            selectedBodyParts.includes(BodyPart.LeftBackShoulder)
-                                ? '#d85108'
-                                : 'grey'
+                            getFillColor(BodyPart.LeftBackShoulder)
+
                         }
-                        onPress={() => togglePart(BodyPart.LeftBackShoulder)}
+                        onPress={mode === 'checkin' ? () => togglePart(BodyPart.LeftBackShoulder) : undefined}
                     />
 
                     <Path
                         d={backRightUpperBack}
                         fill={
-                            selectedBodyParts.includes(BodyPart.RightUpperBack)
-                                ? '#d85108'
-                                : 'grey'
+                            getFillColor(BodyPart.RightUpperBack)
+
                         }
-                        onPress={() => togglePart(BodyPart.RightUpperBack)}
+                        onPress={mode === 'checkin' ? () => togglePart(BodyPart.RightUpperBack) : undefined}
                     />
 
                     <Path
                         d={backLeftUpperBack}
                         fill={
-                            selectedBodyParts.includes(BodyPart.LeftUpperBack)
-                                ? '#d85108'
-                                : 'grey'
+                            getFillColor(BodyPart.LeftUpperBack)
+
                         }
-                        onPress={() => togglePart(BodyPart.LeftUpperBack)}
+                        onPress={mode === 'checkin' ? () => togglePart(BodyPart.LeftUpperBack) : undefined}
                     />
 
                     <Path
                         d={backLeftLowerBack}
                         fill={
-                            selectedBodyParts.includes(BodyPart.LeftLowerBack)
-                                ? '#d85108'
-                                : 'grey'
+                            getFillColor(BodyPart.LeftLowerBack)
+
                         }
-                        onPress={() => togglePart(BodyPart.LeftLowerBack)}
+                        onPress={mode === 'checkin' ? () => togglePart(BodyPart.LeftLowerBack) : undefined}
                     />
 
                     <Path
                         d={backRightLowerBack}
                         fill={
-                            selectedBodyParts.includes(BodyPart.RightLowerBack)
-                                ? '#d85108'
-                                : 'grey'
+                            getFillColor(BodyPart.RightLowerBack)
+
                         }
-                        onPress={() => togglePart(BodyPart.RightLowerBack)}
+                        onPress={mode === 'checkin' ? () => togglePart(BodyPart.RightLowerBack) : undefined}
                     />
 
                     <Path
                         d={backRightForearm}
                         fill={
-                            selectedBodyParts.includes(BodyPart.BackRightForearm)
-                                ? '#d85108'
-                                : 'grey'
+                            getFillColor(BodyPart.BackRightForearm)
+
                         }
-                        onPress={() => togglePart(BodyPart.BackRightForearm)}
+                        onPress={mode === 'checkin' ? () => togglePart(BodyPart.BackRightForearm) : undefined}
                     />
 
                     <Path
                         d={backLeftForearm}
                         fill={
-                            selectedBodyParts.includes(BodyPart.BackLeftForearm)
-                                ? '#d85108'
-                                : 'grey'
+                            getFillColor(BodyPart.BackLeftForearm)
+
                         }
-                        onPress={() => togglePart(BodyPart.BackLeftForearm)}
+                        onPress={mode === 'checkin' ? () => togglePart(BodyPart.BackLeftForearm) : undefined}
                     />
 
                     <Path
                         d={backLeftGlute}
                         fill={
-                            selectedBodyParts.includes(BodyPart.LeftGlute)
-                                ? '#d85108'
-                                : 'grey'
+                            getFillColor(BodyPart.LeftGlute)
+
                         }
-                        onPress={() => togglePart(BodyPart.LeftGlute)}
+                        onPress={mode === 'checkin' ? () => togglePart(BodyPart.LeftGlute) : undefined}
                     />
 
                     <Path
                         d={backRightGlute}
                         fill={
-                            selectedBodyParts.includes(BodyPart.RightGlute)
-                                ? '#d85108'
-                                : 'grey'
+                            getFillColor(BodyPart.RightGlute)
+
                         }
-                        onPress={() => togglePart(BodyPart.RightGlute)}
+                        onPress={mode === 'checkin' ? () => togglePart(BodyPart.RightGlute) : undefined}
                     />
 
                     <Path
                         d={backLeftHamstring}
                         fill={
-                            selectedBodyParts.includes(BodyPart.LeftHamstring)
-                                ? '#d85108'
-                                : 'grey'
+                            getFillColor(BodyPart.LeftHamstring)
+
                         }
-                        onPress={() => togglePart(BodyPart.LeftHamstring)}
+                        onPress={mode === 'checkin' ? () => togglePart(BodyPart.LeftHamstring) : undefined}
                     />
 
                     <Path
                         d={backRightHamstring}
                         fill={
-                            selectedBodyParts.includes(BodyPart.RightHamstring)
-                                ? '#d85108'
-                                : 'grey'
+                            getFillColor(BodyPart.RightHamstring)
+
                         }
-                        onPress={() => togglePart(BodyPart.RightHamstring)}
+                        onPress={mode === 'checkin' ? () => togglePart(BodyPart.RightHamstring) : undefined}
                     />
 
                     <Path
                         d={backRightCalf}
                         fill={
-                            selectedBodyParts.includes(BodyPart.BackRightCalf)
-                                ? '#d85108'
-                                : 'grey'
+                            getFillColor(BodyPart.BackRightCalf)
+
                         }
-                        onPress={() => togglePart(BodyPart.BackRightCalf)}
+                        onPress={mode === 'checkin' ? () => togglePart(BodyPart.BackRightCalf) : undefined}
                     />
 
                     <Path
                         d={backLeftCalf}
                         fill={
-                            selectedBodyParts.includes(BodyPart.BackLeftCalf)
-                                ? '#d85108'
-                                : 'grey'
+                            getFillColor(BodyPart.BackLeftCalf)
+
                         }
-                        onPress={() => togglePart(BodyPart.BackLeftCalf)}
+                        onPress={mode === 'checkin' ? () => togglePart(BodyPart.BackLeftCalf) : undefined}
                     />
 
                     <Path
                         d={backLeftAnkle}
                         fill={
-                            selectedBodyParts.includes(BodyPart.BackLeftAnkle)
-                                ? '#d85108'
-                                : 'grey'
+                            getFillColor(BodyPart.BackLeftAnkle)
+
                         }
-                        onPress={() => togglePart(BodyPart.BackLeftAnkle)}
+                        onPress={mode === 'checkin' ? () => togglePart(BodyPart.BackLeftAnkle) : undefined}
                     />
 
                     <Path
                         d={backRightAnkle}
                         fill={
-                            selectedBodyParts.includes(BodyPart.BackRightAnkle)
-                                ? '#d85108'
-                                : 'grey'
+                            getFillColor(BodyPart.BackRightAnkle)
+                                
                         }
-                        onPress={() => togglePart(BodyPart.BackRightAnkle)}
+                        onPress={mode === 'checkin' ? () => togglePart(BodyPart.BackRightAnkle) : undefined}
                     />
 
                 </Svg>

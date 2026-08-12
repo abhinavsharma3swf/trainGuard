@@ -469,15 +469,7 @@
 //     },
 // });
 
-import {
-    Image,
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
-} from "react-native";
+import {Image, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View,} from "react-native";
 import React, {useMemo, useState} from "react";
 import {lineDataItem} from "react-native-gifted-charts";
 
@@ -488,6 +480,7 @@ import {useDashboardData} from "@/context/DashboardDataContext";
 import {useHistoryData} from "@/context/HistoryDataContext";
 import WeatherAnalysisChart from "@/components/WeatherAnalysisChart";
 import * as Localization from "expo-localization";
+import {BodyPart} from "@/components/PathPoints";
 
 type TimeRange = 7 | 30 | "ALL";
 
@@ -500,7 +493,7 @@ const calculateAverage = (
     values: Array<number | null | undefined>,
 ): number => {
     const validValues = values.filter(
-        (value): value is number=>
+        (value): value is number =>
             value !== null && value !== undefined && value !== 0,
     );
 
@@ -667,33 +660,6 @@ export default function AnalysisScreen() {
         [filteredCheckins],
     );
 
-    // const rpeData = useMemo<lineDataItem[]>(
-    //     () =>
-    //         [...filteredCheckins]
-    //             .filter(
-    //                 (item) =>
-    //                     item.rpe !== null &&
-    //                     item.rpe !== undefined &&
-    //                     item.rpe !== 0,
-    //             )
-    //             .sort(
-    //                 (a, b) =>
-    //                     new Date(a.createdAt).getTime() -
-    //                     new Date(b.createdAt).getTime(),
-    //             )
-    //             .map((item) => ({
-    //                 value: item.rpe as number,
-    //                 label: new Date(item.createdAt).toLocaleDateString(
-    //                     "en-US",
-    //                     {
-    //                         month: "short",
-    //                         day: "numeric",
-    //                     },
-    //                 ),
-    //             })),
-    //     [filteredCheckins],
-    // );
-
     const temperatureData = useMemo<lineDataItem[]>(
         () =>
             [...filteredCheckins]
@@ -775,7 +741,7 @@ export default function AnalysisScreen() {
         [filteredCheckins],
     );
 
-    const painLocationCounts = useMemo(() => {
+    const painLocationCounts1 = useMemo(() => {
         return filteredCheckins.reduce<Record<string, number>>(
             (counts, item) => {
                 if (!item.painLocation) {
@@ -790,13 +756,42 @@ export default function AnalysisScreen() {
         );
     }, [filteredCheckins]);
 
-    const frequentPainLocations = useMemo(
-        () =>
-            Object.entries(painLocationCounts).sort(
-                (a, b) => b[1] - a[1],
-            ),
-        [painLocationCounts],
-    );
+    // const painLocationCountsWithEnum = useMemo(() => {
+    //     const allOfTheEnums = filteredCheckins
+    //         .filter((enums) => enums.painLocationEnum).flatMap((e) => e.painLocationEnum)
+    //
+    //     return allOfTheEnums.map((part) => BodyPart[part]);
+    //
+    // }, [filteredCheckins]);
+    //
+    //
+    // const phoo1 = painLocationCountsWithEnum.reduce(
+    //     (acc, currentLocation) => {
+    //         acc[currentLocation] = (acc[currentLocation] || 0) + 1;
+    //
+    //         return acc;
+    //     },
+    //     {} as Record<string, number>
+    // );
+    //
+    // const phoo = Object.entries(phoo1).map(([name, time]) => ({
+    //     name, time
+    // }))
+
+    const painLocationCounts = useMemo(() => {
+        return filteredCheckins
+            .flatMap((checkin) => checkin.painLocationEnum ?? [])
+            .reduce((acc, part) => {
+                const name = BodyPart[part]
+                    .replace(/([A-Z])/g, " $1")
+                    .trim();
+
+                acc[name] = (acc[name] || 0) + 1;
+
+                return acc;
+            }, {} as Record<string, number>);
+    }, [filteredCheckins]);
+
 
     const moods = useMemo(
         () => [
@@ -977,7 +972,8 @@ export default function AnalysisScreen() {
 
     return (
         <View style={styles.screen}>
-            <ScrollView contentContainerStyle={styles.content} directionalLockEnabled disableScrollViewPanResponder nestedScrollEnabled>
+            <ScrollView contentContainerStyle={styles.content} directionalLockEnabled disableScrollViewPanResponder
+                        nestedScrollEnabled>
                 <View style={styles.headerRow}>
                     <View>
                         <Text style={styles.appName}>Smart Gauge</Text>
@@ -1089,22 +1085,50 @@ export default function AnalysisScreen() {
                                     Most reported pain
                                 </Text>
 
-                                {frequentPainLocations.length === 0 ? (
+                                {painLocationCounts.length === 0 ? (
                                     <Text style={styles.mutedText}>
                                         No pain locations reported
                                     </Text>
                                 ) : (
-                                    frequentPainLocations
-                                        .slice(0, 3)
-                                        .map(([location, count]) => (
+                                    <>
+                                        {Object.entries(painLocationCounts).map(([name, count]) => (
                                             <Text
-                                                key={location}
+                                                key={name}
                                                 style={styles.painLocationText}
                                             >
-                                                {location}: {count} report
-                                                {count === 1 ? "" : "s"}
+                                                {name}: {count} {count === 1 ? "report" : "reports"}
                                             </Text>
-                                        ))
+                                        ))}
+
+                                        {/*{phoo.map((item) => {*/}
+                                        {/*    const name = item.name*/}
+                                        {/*        .replace(/([A-Z])/g, " $1")*/}
+                                        {/*        .trim();*/}
+
+                                        {/*    return (*/}
+                                        {/*        <Text*/}
+                                        {/*            key={item.name}*/}
+                                        {/*            style={styles.painLocationText}*/}
+                                        {/*        >*/}
+                                        {/*            {name}: {item.time} {item.time === 1 ? "report" : "reports"}*/}
+                                        {/*        </Text>*/}
+                                        {/*    );*/}
+                                        {/*})}*/}
+                                    </>
+
+
+
+                                    // frequentPainLocations
+                                    //     .slice(0, 3)
+                                    //     .map(([location, count]) => (
+                                    //         <Text
+                                    //             key={location}
+                                    //             style={styles.painLocationText}
+                                    //         >
+                                    //             {location}: {count} report
+                                    //             {count === 1 ? "" : "s"}
+                                    //         </Text>
+                                    //     ))
                                 )}
                             </View>
                         </View>
@@ -1274,7 +1298,7 @@ export default function AnalysisScreen() {
                 </TouchableOpacity>
             </ScrollView>
 
-            <BottomNav activeRoute="analysis" />
+            <BottomNav activeRoute="analysis"/>
         </View>
     );
 }

@@ -54,4 +54,6 @@ public class RecoveryCheckinEntity {
 
     private Integer dewPoint;
 
+    private Integer trainingLoad;
+
 }

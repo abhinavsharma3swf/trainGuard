@@ -149,6 +149,7 @@ public class RecoveryCheckinService {
             RecoveryCheckinRequestRecord request,
             ActivityEntity activity
     ) {
+        Integer trainingLoad = activity.getElapsedTimeSeconds();
         RecoveryCheckinEntity checkin = recoveryCheckinRepository
                 .findByActivityId(activity.getId())
                 .orElseGet(() -> RecoveryCheckinEntity.builder()
@@ -156,6 +157,12 @@ public class RecoveryCheckinService {
                         .athleteId(athleteId)
                         .createdAt(Instant.now())
                         .build());
+
+        Integer checkinRpe = checkin.getRpe();
+
+        Integer calcTrainingLoad = trainingLoad * checkinRpe;
+
+        System.out.println(calcTrainingLoad + "calculated training load");
 
         checkin.setAthleteId(athleteId);
         checkin.setActivity(activity);
@@ -171,6 +178,7 @@ public class RecoveryCheckinService {
         checkin.setHumidity(request.humidity());
         checkin.setWindSpeed(request.windSpeed());
         checkin.setDewPoint(request.dewPoint());
+        checkin.setTrainingLoad(calcTrainingLoad);
 
         return recoveryCheckinRepository.save(checkin);
     }
@@ -195,7 +203,8 @@ public class RecoveryCheckinService {
                 checkin.getFeelsLikeTemperature(),
                 checkin.getHumidity(),
                 checkin.getWindSpeed(),
-                checkin.getDewPoint()
+                checkin.getDewPoint(),
+                checkin.getTrainingLoad()
         );
     }
 

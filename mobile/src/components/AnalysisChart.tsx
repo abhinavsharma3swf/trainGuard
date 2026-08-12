@@ -143,6 +143,11 @@
 import React, {Dispatch, SetStateAction, useEffect, useRef, useState,} from "react";
 import {LayoutChangeEvent, Pressable, ScrollView, StyleSheet, Text, View,} from "react-native";
 import {LineChart, lineDataItem,} from "react-native-gifted-charts";
+import {router} from "expo-router";
+import HumanBody from "@/components/HumanBody";
+import HumanbodyHeatMap from "@/app/humanbodyHeatMap";
+import {BodyPart} from "@/components/PathPoints";
+import {useHistoryData} from "@/context/HistoryDataContext";
 
 type ChartMetric =
     | "painScore"
@@ -215,6 +220,18 @@ export default function AnalysisChart({
                 stepValue: 2.5,
             };
 
+    const [heatMapFlag, setHeatMapFlag] = useState<boolean>(false)
+    const {recoveryItems} = useHistoryData();
+    const [enumsForHumanBodyHeatMapForAnalysisPage, setEnumsForHumanBodyHeatMapForAnalysisPage] = useState<BodyPart[]>([]);
+
+    useEffect(() => {
+        const getTheEnums = recoveryItems
+            .filter((recordsWithEnum) => recordsWithEnum.painLocationEnum)
+            .flatMap((enums) => enums.painLocationEnum)
+        setEnumsForHumanBodyHeatMapForAnalysisPage(getTheEnums);
+
+    },[recoveryItems]);
+
     return (
         <View style={styles.container}>
             <View style={styles.headerRow}>
@@ -231,6 +248,21 @@ export default function AnalysisChart({
                         Back
                     </Text>
                 </Pressable>
+
+                <Pressable
+                    style={styles.backButton}
+                    onPress={()=> setHeatMapFlag(true)}
+                    hitSlop={10}
+                >
+                    <Text style={styles.backButtonText}>
+                        HeatMap
+                    </Text>
+                </Pressable>
+                {heatMapFlag &&
+                    <HumanbodyHeatMap heatMapFlag={heatMapFlag} setHeatMapFlag={setHeatMapFlag}
+                    enumsForHumanBodyHeatMapForAnalysisPage={enumsForHumanBodyHeatMapForAnalysisPage}
+                    />
+                }
             </View>
 
             <View
