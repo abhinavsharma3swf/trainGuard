@@ -158,7 +158,7 @@ public class RecoveryCheckinService {
                         .createdAt(Instant.now())
                         .build());
 
-        Integer checkinRpe = checkin.getRpe();
+        Integer checkinRpe = request.rpe();
 
         Integer calcTrainingLoad = trainingLoad * checkinRpe;
 
