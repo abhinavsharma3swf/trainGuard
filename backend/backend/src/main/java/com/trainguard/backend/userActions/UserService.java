@@ -32,7 +32,7 @@ public class UserService {
     private final StravaUserRepository stravaUserRepository;
     private final SessionService sessionService;
     private final UserNotificationTokenRepository userNotificationTokenRepository;
-//    private final ActivityRepository activityRepository;
+    private final ActivityRepository activityRepository;
 //    private final RecoveryCheckinRepository recoveryCheckinRepository;
 
 
@@ -115,25 +115,25 @@ public class UserService {
             return;
         }
 
-//        int pendingCheckinCount =
-//                Math.toIntExact(
-//                        activityRepository
-//                                .countActivitiesWithoutCheckin(athleteId)
-//                );
+        int pendingCheckinCount =
+                Math.toIntExact(
+                        activityRepository
+                                .countActivitiesWithoutCheckin(athleteId)
+                );
 
         List<ExpoPushRequest> notifications = targetDevices.stream().map(device ->
                 ExpoPushRequest.builder()
                         .to(device.getNotificationToken())
                         .title("New activity uploaded")
-//                        .body(
-//                                pendingCheckinCount == 1
-//                                        ? "You have 1 pending check-in."
-//                                        : "You have " + pendingCheckinCount
-//                                          + " pending check-ins."
-//                        )
-                        .body("Your activity was imported, Don't forget to check-in")
+                        .body(
+                                pendingCheckinCount == 1
+                                        ? "You have 1 pending check-in."
+                                        : "You have " + pendingCheckinCount
+                                          + " pending check-ins."
+                        )
+//                        .body("Your activity was imported, Don't forget to check-in")
                         .sound("default")
-//                        .notificationCount(pendingCheckinCount)
+                        .notificationCount(pendingCheckinCount)
                         .data(new ExpoPushData("/dashboard")).build()).toList();
 
         RestClient restClient = RestClient.builder()

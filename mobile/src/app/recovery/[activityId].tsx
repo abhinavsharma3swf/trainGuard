@@ -21,6 +21,7 @@ import {getSessionToken} from "@/services/athleteStorage";
 import {fetchWeatherApi} from "openmeteo";
 import HumanBody from "@/components/HumanBody";
 import {BodyPart} from "@/components/PathPoints";
+import ZoomableBody from "@/components/ZoomableBody";
 
 type RecoveryCheckinForm = {
     rpe: number | null;
@@ -387,12 +388,14 @@ export default function RecoveryCheckInScreen() {
                             </>
                         ) : (
                             <>
-                                <View style={styles.bodySelectorScreen}>
+                                {/*<View style={styles.bodySelectorScreen}>*/}
+                                    <ZoomableBody>
                                     <HumanBody
                                         selectedBodyParts={selectedBodyParts}
                                         setSelectedBodyParts={setSelectedBodyParts}
                                     />
-                                </View>
+                                    </ZoomableBody>
+                                {/*</View>*/}
                                 <Controller
                                     control={control}
                                     name="painScore"

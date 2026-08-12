@@ -6,13 +6,14 @@ import { AppState } from 'react-native';
 import { DashboardDataProvider } from '@/context/DashboardDataContext';
 import { HistoryDataProvider } from '@/context/HistoryDataContext';
 import { syncNotificationPermission } from '@/services/notificationService';
+import {GestureHandlerRootView} from "react-native-gesture-handler";
 
 Notifications.setNotificationHandler({
     handleNotification: async () => ({
         shouldShowBanner: true,
         shouldShowList: true,
         shouldPlaySound: true,
-        shouldSetBadge: true,
+        shouldSetBadge: false,
     }),
 });
 
@@ -61,6 +62,7 @@ export default function RootLayout() {
     }, []);
 
     return (
+        <GestureHandlerRootView style={{ flex: 1 }}>
         <DashboardDataProvider>
             <HistoryDataProvider>
                 <Stack
@@ -71,5 +73,6 @@ export default function RootLayout() {
                 />
             </HistoryDataProvider>
         </DashboardDataProvider>
+        </GestureHandlerRootView>
     );
 }
