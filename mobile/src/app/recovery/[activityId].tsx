@@ -391,6 +391,7 @@ export default function RecoveryCheckInScreen() {
                                     <HumanBody
                                         selectedBodyParts={selectedBodyParts}
                                         setSelectedBodyParts={setSelectedBodyParts}
+                                        mode='checkin'
                                     />
                                 </View>
                                 <Controller
