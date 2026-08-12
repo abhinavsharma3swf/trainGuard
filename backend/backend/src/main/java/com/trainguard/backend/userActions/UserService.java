@@ -133,7 +133,7 @@ public class UserService {
                         )
 //                        .body("Your activity was imported, Don't forget to check-in")
                         .sound("default")
-                        .notificationCount(pendingCheckinCount)
+                        .badge(pendingCheckinCount)
                         .data(new ExpoPushData("/dashboard")).build()).toList();
 
         RestClient restClient = RestClient.builder()

@@ -17,7 +17,7 @@ public class ExpoPushRequest {
     private String title;
     private String sound;
     private ExpoPushData data;
-    private Integer notificationCount;
+    private Integer badge;
 }
 
 record ExpoPushData(String route) {
