@@ -20,12 +20,6 @@ export default function HumanbodyHeatMap({
         setHeatMapFlag(false)
     )
 
-    console.log(enumsForHumanBodyHeatMapForAnalysisPage)
-    // const getBodyPartsCount = () => {
-    //     enumsForHumanBodyHeatMapForAnalysisPage.reduce((acc,val)=> {
-    //        acc
-    //     },[])
-    // }
 
 
     return (
@@ -78,6 +72,17 @@ export default function HumanbodyHeatMap({
 <View style={styles.header}>
     <Text style={styles.title}>
         Legend:
+        <View style={{paddingLeft: 15}}>
+        <Text style={styles.label}>
+            🟢 Reported below 3
+        </Text>
+        <Text style={styles.label}>
+            🟡 Reported 3 or above but below 5
+        </Text>
+           <Text style={styles.label}>
+               🔴 Reported 6 or above
+           </Text>
+        </View>
     </Text>
 </View>
                     </View>

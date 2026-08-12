@@ -87,8 +87,9 @@ export default function HumanBody({
 
     const heatMapColor = (count: number) => {
         if(count === 0)return 'grey'
-        if(count === 1)return 'green';
-        if(count === 2)return 'red'
+        if(count > 0 && count < 3)return 'green';
+        if(count >= 3 && count < 5)return 'orange'
+        if(count >= 6)return 'red'
     }
 
     const getFillColor = (part: BodyPart) => {
