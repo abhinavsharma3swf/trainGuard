@@ -108,6 +108,7 @@
 package com.trainguard.backend.recovery;
 
 import com.trainguard.backend.activity.ActivityEntity;
+import com.trainguard.backend.activity.ActivityMetricService;
 import com.trainguard.backend.activity.ActivityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -124,6 +125,7 @@ public class RecoveryCheckinService {
 
     private final RecoveryCheckinRepository recoveryCheckinRepository;
     private final ActivityRepository activityRepository;
+    private final ActivityMetricService activityMetricService;
 
     public RecoveryCheckinResponseRecord saveCheckin(
             Long athleteId,
@@ -150,6 +152,7 @@ public class RecoveryCheckinService {
             ActivityEntity activity
     ) {
         Integer trainingLoad = activity.getElapsedTimeSeconds();
+        Integer secsConvertedToMins = activityMetricService.convertSecondsToMinutes(trainingLoad);
         RecoveryCheckinEntity checkin = recoveryCheckinRepository
                 .findByActivityId(activity.getId())
                 .orElseGet(() -> RecoveryCheckinEntity.builder()
@@ -160,9 +163,8 @@ public class RecoveryCheckinService {
 
         Integer checkinRpe = request.rpe();
 
-        Integer calcTrainingLoad = trainingLoad * checkinRpe;
+        Integer calcTrainingLoad = secsConvertedToMins * checkinRpe;
 
-        System.out.println(calcTrainingLoad + "calculated training load");
 
         checkin.setAthleteId(athleteId);
         checkin.setActivity(activity);
