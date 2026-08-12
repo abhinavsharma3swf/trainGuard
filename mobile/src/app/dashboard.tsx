@@ -1,4 +1,4 @@
-import {Image, Modal, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
+import {Image, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import React, {useCallback, useEffect, useState} from "react";
 import {ActivityCard} from "@/components/ActivityCard";
 import {SummaryCard} from "@/components/SummaryCard";
@@ -8,9 +8,7 @@ import {useDashboardData} from "@/context/DashboardDataContext";
 import {useFocusEffect} from "expo-router";
 import SummaryProgressBar from "@/components/SummaryProgressBar";
 import {acceptedUserDisclaimers} from "@/services/agreementService";
-import {
-    registerForRemoteNotifications
-} from "@/services/notificationService";
+import {registerForRemoteNotifications} from "@/services/notificationService";
 
 export default function HomeScreen() {
 
@@ -59,7 +57,7 @@ export default function HomeScreen() {
             try {
                 await acceptedUserDisclaimers();
 
-                await registerForRemoteNotifications().catch((error)=> {
+                await registerForRemoteNotifications().catch((error) => {
                     console.error("push registration failed", error)
                 });
 
@@ -187,8 +185,12 @@ export default function HomeScreen() {
                     </Text>
                     {/*<Pressable*/}
                     {/*    style={styles.notificationButton}*/}
-                    {/*    onPress={() => {*/}
-                    {/*        void requestTestPush().catch(console.error)*/}
+                    {/*    onPress={async () => {*/}
+                    {/*        const success = await Notifications.setBadgeCountAsync(5);*/}
+                    {/*        const count = await Notifications.getBadgeCountAsync();*/}
+
+                    {/*        console.log('success:', success);*/}
+                    {/*        console.log('count:', count);*/}
                     {/*    }}*/}
                     {/*>*/}
                     {/*    <Text style={styles.notificationButtonText}>*/}
