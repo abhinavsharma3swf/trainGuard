@@ -117,6 +117,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @Service
@@ -165,6 +167,9 @@ public class RecoveryCheckinService {
 
         Integer calcTrainingLoad = secsConvertedToMins * checkinRpe;
 
+        LocalDateTime activityTime = activity.getStartDate();
+        ZonedDateTime zonedDateTime = activityTime.atZone(ZoneId.systemDefault());
+        Instant activityStartTime = Instant.from(zonedDateTime);
 
         checkin.setAthleteId(athleteId);
         checkin.setActivity(activity);
@@ -181,6 +186,7 @@ public class RecoveryCheckinService {
         checkin.setWindSpeed(request.windSpeed());
         checkin.setDewPoint(request.dewPoint());
         checkin.setTrainingLoad(calcTrainingLoad);
+        checkin.setActivityDate(activityStartTime);
 
         return recoveryCheckinRepository.save(checkin);
     }

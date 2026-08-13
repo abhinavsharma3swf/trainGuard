@@ -56,4 +56,6 @@ public class RecoveryCheckinEntity {
 
     private Integer trainingLoad;
 
+    private Instant activityDate;
+
 }
