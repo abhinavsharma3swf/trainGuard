@@ -596,8 +596,8 @@ export default function AnalysisScreen() {
         filteredCheckins.map((item) => item.feelsLikeTemperature),
     );
 
-    const averageHumidity = calculateAverage(
-        filteredCheckins.map((item) => item.humidity),
+    const averageDewPoint = calculateAverage(
+        filteredCheckins.map((item) => item.dewPoint),
     );
 
 
@@ -715,14 +715,14 @@ export default function AnalysisScreen() {
         [filteredCheckins],
     );
 
-    const humidityData = useMemo<lineDataItem[]>(
+    const dewPoint = useMemo<lineDataItem[]>(
         () =>
             [...filteredCheckins]
                 .filter(
                     (item) =>
-                        item.humidity !== null &&
-                        item.humidity !== undefined &&
-                        item.humidity !== 0,
+                        item.dewPoint !== null &&
+                        item.dewPoint !== undefined &&
+                        item.dewPoint !== 0,
                 )
                 .sort(
                     (a, b) =>
@@ -730,7 +730,7 @@ export default function AnalysisScreen() {
                         new Date(b.createdAt).getTime(),
                 )
                 .map((item) => ({
-                    value: item.humidity as number,
+                    value: item.dewPoint as number,
                     label: new Date(item.createdAt).toLocaleDateString(
                         "en-US",
                         {
@@ -1036,14 +1036,15 @@ export default function AnalysisScreen() {
                     </View>
                 )}
 
-                <View style={styles.card}>
+                {filteredCheckins.length > 7 ? null :
+                    <View style={styles.card}>
                     <Text style={styles.subtitle}>Analysis quality</Text>
                     <Text style={styles.cardTitle}>
                         {filteredCheckins.length} completed check-in
                         {filteredCheckins.length === 1 ? "" : "s"}
                     </Text>
                     <Text style={styles.cardMessage}>{dataQuality}</Text>
-                </View>
+                </View>}
 
                 {painScoreGraphFlag ? (
                     <Pressable
@@ -1194,10 +1195,10 @@ export default function AnalysisScreen() {
 
                             <View style={styles.weatherMetric}>
                                 <Text style={styles.weatherValue}>
-                                    {averageHumidity.toFixed(0)}%
+                                    {averageDewPoint.toFixed(0)}°
                                 </Text>
                                 <Text style={styles.weatherLabel}>
-                                    Humidity
+                                    Dew Point
                                 </Text>
                             </View>
                         </View>
@@ -1224,7 +1225,7 @@ export default function AnalysisScreen() {
                 ) : (
                     <WeatherAnalysisChart temperatureData={temperatureData}
                                           feelsLikeData={feelsLikeData}
-                                          humidityData={humidityData}
+                                          dewPointData={dewPoint}
                                           setGraphFlag={setTemperatureFlag}
                     />
                 )}

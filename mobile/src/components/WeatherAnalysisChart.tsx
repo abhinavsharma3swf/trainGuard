@@ -11,14 +11,14 @@ import { LineChart, lineDataItem } from 'react-native-gifted-charts';
 type WeatherAnalysisChartProps = {
     temperatureData: lineDataItem[];
     feelsLikeData: lineDataItem[];
-    humidityData: lineDataItem[];
+    dewPointData: lineDataItem[];
     setGraphFlag: Dispatch<SetStateAction<boolean>>;
 };
 
 export default function WeatherAnalysisChart({
                                                  temperatureData,
                                                  feelsLikeData,
-                                                 humidityData,
+                                                 dewPointData,
                                                  setGraphFlag,
                                              }: WeatherAnalysisChartProps) {
     const [chartWidth, setChartWidth] = useState(0);
@@ -30,7 +30,7 @@ export default function WeatherAnalysisChart({
     const values = [
         ...temperatureData,
         ...feelsLikeData,
-        ...humidityData,
+        ...dewPointData,
     ]
         .map((item) => item.value)
         .filter((value): value is number => typeof value === 'number');
@@ -55,7 +55,7 @@ export default function WeatherAnalysisChart({
             <View style={styles.legend}>
                 <Legend color="#FC4C02" label="Temperature" />
                 <Legend color="#F5B942" label="Feels like" />
-                <Legend color="#4EA8DE" label="Humidity" />
+                <Legend color="#4EA8DE" label="Dew Point" />
             </View>
 
             <View style={styles.chart} onLayout={handleLayout}>
@@ -63,7 +63,7 @@ export default function WeatherAnalysisChart({
                     <LineChart
                         data={temperatureData}
                         data2={feelsLikeData}
-                        data3={humidityData}
+                        data3={dewPointData}
                         width={chartWidth - 20}
                         height={180}
                         spacing={55}
@@ -130,8 +130,7 @@ export default function WeatherAnalysisChart({
             </View>
 
             <Text style={styles.notice}>
-                Temperature and feels-like values are in °F. Humidity is shown as a
-                percentage.
+                Temperature, feels-like and dew points values are in °F.
             </Text>
         </View>
     );

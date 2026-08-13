@@ -152,7 +152,6 @@ import {useHistoryData} from "@/context/HistoryDataContext";
 type ChartMetric =
     | "painScore"
     | "rpe"
-    | "temperature";
 
 type AnalysisChartProps = {
     checkinData: lineDataItem[];
@@ -209,16 +208,7 @@ export default function AnalysisChart({
                 ? "RPE"
                 : "Temperature";
 
-    const chartSettings =
-        metric === "temperature"
-            ? {
-                sections: 4,
-                stepValue: 10,
-            }
-            : {
-                sections: 4,
-                stepValue: 2.5,
-            };
+
 
     const [heatMapFlag, setHeatMapFlag] = useState<boolean>(false)
     const {recoveryItems} = useHistoryData();
@@ -282,12 +272,8 @@ export default function AnalysisChart({
                         initialSpacing={16}
                         endSpacing={20}
                         spacing={55}
-                        noOfSections={
-                            chartSettings.sections
-                        }
-                        stepValue={
-                            chartSettings.stepValue
-                        }
+                        stepValue={2.5}
+                        noOfSections={4}
                         areaChart
                         color="#FC4C02"
                         startFillColor="rgba(252, 76, 2, 0.35)"
