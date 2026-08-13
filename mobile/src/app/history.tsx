@@ -16,10 +16,6 @@ export default function History() {
                     <View>
                         <Text style={styles.appName}>Smart Gauge</Text>
                         <Text style={styles.subtitle}>Recovery History</Text>
-                        <View style={{flexDirection: 'row'}}>
-                            <Ionicons name={"mail"} style={{color: 'orange', width: 6, height: 16, marginRight: 16}}/>
-                            <Text style={styles.subtitle}>Share it with your coach</Text>
-                        </View>
                     </View>
                     <Image source={require("@/assets/images/smartGaugeAppIcon.png")}
                            resizeMode="contain"

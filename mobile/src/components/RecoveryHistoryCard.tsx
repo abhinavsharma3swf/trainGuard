@@ -1,8 +1,7 @@
-import {StyleSheet, Text, View} from "react-native";
+import {Pressable, StyleSheet, Text, View} from "react-native";
 import {RecoveryCheckin} from "@/services/recoveryApi";
 import {BodyPart} from "@/components/PathPoints";
 import {AnimatedCircularProgress} from 'react-native-circular-progress';
-
 
 type RecoveryHistoryCardProps = {
     item: RecoveryCheckin;
@@ -25,8 +24,8 @@ export function RecoveryHistoryCard({item}: RecoveryHistoryCardProps) {
     const score: number = (item.trainingLoad / 10).toFixed(0) as unknown as number;
 
     const getScoreColor = (score: number) => {
-        if (score >= 80) return "#EF4444"; // green
-        if (score >= 60) return "#F59E0B"; // orange
+        if (score >= 90) return "#EF4444"; // green
+        if (score >= 65) return "#F59E0B"; // orange
         return "#22C55E"; // red
     };
 
@@ -55,6 +54,7 @@ export function RecoveryHistoryCard({item}: RecoveryHistoryCardProps) {
                 {item.trainingLoad &&
 
                     <View style={styles.trainingLoad}>
+                        <Pressable>
                         <AnimatedCircularProgress
                             size={50}
                             width={5}
@@ -92,12 +92,13 @@ export function RecoveryHistoryCard({item}: RecoveryHistoryCardProps) {
                             style={{
                                 fontSize: 10,
                                 color: "#777",
-                                zIndex: 28,
+                                // zIndex: 28,
                                 top: -20
                             }}
                         >
-                            Training Score
+                            sRPE Score
                         </Text>
+                        </Pressable>
                     </View>
                 }
             </View>
