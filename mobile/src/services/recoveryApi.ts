@@ -19,6 +19,7 @@ export type RecoveryCheckin = {
     feelsLikeTemperature: number;
     windSpeed: number;
     dewPoint: number;
+    trainingLoad: number;
 };
 
 export async function getRecoveryCheckins(

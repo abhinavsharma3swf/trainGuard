@@ -554,7 +554,7 @@ export default function AnalysisScreen() {
 
     const bikeHours =
         lastSevenDayFeedItems
-            .filter((item) => item.sportType === "RIDE")
+            .filter((item) => item.sportType === "RIDE" || item.sportType === "VIRTUALRIDE")
             .reduce(
                 (total, item) => total + item.movingTimeMinutes,
                 0,

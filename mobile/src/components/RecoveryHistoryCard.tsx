@@ -1,6 +1,7 @@
 import {StyleSheet, Text, View} from "react-native";
 import {RecoveryCheckin} from "@/services/recoveryApi";
 import {BodyPart} from "@/components/PathPoints";
+import {AnimatedCircularProgress} from 'react-native-circular-progress';
 
 
 type RecoveryHistoryCardProps = {
@@ -15,33 +16,99 @@ export function RecoveryHistoryCard({item}: RecoveryHistoryCardProps) {
     });
 
     const convertingEnumToString = (bodyPartEnum: BodyPart[]) => {
-        const bodyPartsEnumStrings = bodyPartEnum.map((part) => BodyPart[part]).join(", ");
-        return bodyPartsEnumStrings.replace(/([A-Z])/g, " $1").trim();
+        if (bodyPartEnum !== null && bodyPartEnum !== undefined) {
+            const bodyPartsEnumStrings = bodyPartEnum.map((part) => BodyPart[part]).join(", ");
+            return bodyPartsEnumStrings.replace(/([A-Z])/g, " $1").trim();
+        }
     }
+
+    const score: number = (item.trainingLoad / 10).toFixed(0) as unknown as number;
+
+    const getScoreColor = (score: number) => {
+        if (score >= 80) return "#EF4444"; // green
+        if (score >= 60) return "#F59E0B"; // orange
+        return "#22C55E"; // red
+    };
 
     return (
         <View style={styles.card}>
-            {item.sportType === "RUN" && <Text style={styles.title}>🏃 {item.sportType} - Check-in</Text>}
-            {item.sportType === "RIDE" && <Text style={styles.title}>🚴 {item.sportType} - Check-in</Text>}
-            {item.sportType === "VIRTUALRIDE" && <Text style={styles.title}>🚴 {item.sportType} - Check-in</Text>}
-            {item.sportType === "WALK" && <Text style={styles.title}>🚶 {item.sportType} - Check-in</Text>}
-            {item.sportType === "WEIGHTTRAINING" && <Text style={styles.title}>🏋 {item.sportType} - Check-in</Text>}
-            {item.sportType === "WORKOUT" && <Text style={styles.title}>💪 {item.sportType} - Check-in</Text>}
-            {item.sportType === "YOGA" && <Text style={styles.title}>🧘 {item.sportType} - Check-in</Text>}
-            {item.sportType === "TENNIS" && <Text style={styles.title}>🎾 {item.sportType} - Check-in</Text>}
-            {item.sportType === "PICKLEBALL" && <Text style={styles.title}>🏓 {item.sportType} - Check-in</Text>}
-            {item.sportType === "PILATES" && <Text style={styles.title}>🤸‍♂️ {item.sportType} - Check-in</Text>}
-            {item.sportType === "TRAILRUN" && <Text style={styles.title}>🏃‍♂️ {item.sportType} - Check-in</Text>}
-            {item.sportType === "SWIM" && <Text style={styles.title}>🏊‍♂️ {item.sportType} - Check-in</Text>}
-            {item.sportType === "OTHER" && <Text style={styles.title}>🏆 {item.sportType} - Check-in</Text>}
-            <Text style={styles.date}>{date}</Text>
+            <View style={{flex: 1, flexDirection: "row", justifyContent: 'space-between'}}>
+                <View>
+                    {item.sportType === "RUN" && <Text style={styles.title}>🏃 {item.sportType} - Check-in</Text>}
+                    {item.sportType === "RIDE" && <Text style={styles.title}>🚴 {item.sportType} - Check-in</Text>}
+                    {item.sportType === "VIRTUALRIDE" &&
+                        <Text style={styles.title}>🚴 {item.sportType} - Check-in</Text>}
+                    {item.sportType === "WALK" && <Text style={styles.title}>🚶 {item.sportType} - Check-in</Text>}
+                    {item.sportType === "WEIGHTTRAINING" &&
+                        <Text style={styles.title}>🏋 {item.sportType} - Check-in</Text>}
+                    {item.sportType === "WORKOUT" && <Text style={styles.title}>💪 {item.sportType} - Check-in</Text>}
+                    {item.sportType === "YOGA" && <Text style={styles.title}>🧘 {item.sportType} - Check-in</Text>}
+                    {item.sportType === "TENNIS" && <Text style={styles.title}>🎾 {item.sportType} - Check-in</Text>}
+                    {item.sportType === "PICKLEBALL" && <Text style={styles.title}>🏓 {item.sportType} - Check-in</Text>}
+                    {item.sportType === "PILATES" && <Text style={styles.title}>🤸‍♂️ {item.sportType} - Check-in</Text>}
+                    {item.sportType === "TRAILRUN" &&
+                        <Text style={styles.title}>🏃‍♂️ {item.sportType} - Check-in</Text>}
+                    {item.sportType === "SWIM" && <Text style={styles.title}>🏊‍♂️ {item.sportType} - Check-in</Text>}
+                    {item.sportType === "OTHER" && <Text style={styles.title}>🏆 {item.sportType} - Check-in</Text>}
+                    <Text style={styles.date}>{date}</Text>
+                </View>
+                {item.trainingLoad &&
+
+                    <View style={styles.trainingLoad}>
+                        <AnimatedCircularProgress
+                            size={50}
+                            width={5}
+                            fill={score}
+                            // tintColor="#4CAF50"
+                            tintColor={getScoreColor(score)}
+                            backgroundColor="#E5E5E5"
+                            rotation={270}
+                            arcSweepAngle={180}
+                            lineCap="round"
+                        >
+                            {() => (
+                                <View
+                                    style={{
+                                        alignItems: "center",
+                                        marginTop: 45,
+                                    }}
+                                >
+                                    <Text
+                                        style={{
+                                            fontSize: 14,
+                                            paddingBottom: 70,
+                                            fontWeight: "700",
+                                            color: 'white',
+                                            height: 1,
+                                        }}
+                                    >
+                                        {item.trainingLoad}
+                                    </Text>
+
+                                </View>
+                            )}
+                        </AnimatedCircularProgress>
+                        <Text
+                            style={{
+                                fontSize: 10,
+                                color: "#777",
+                                zIndex: 28,
+                                top: -20
+                            }}
+                        >
+                            Training Score
+                        </Text>
+                    </View>
+                }
+            </View>
 
             <View style={styles.chipRow}>
                 <Chip label={`RPE ${item.rpe}`}/>
-                <Chip label={`Pain ${item.painScore}`}/>
+                {item.painScore ? <Chip label={`Pain ${item.painScore}`}/> : null}
                 {item.mood ? <Chip label={item.mood}/> : null}
                 {item.painLocation ? <Chip label={item.painLocation}/> : null}
-                {item.painLocationEnum ? <Chip label={convertingEnumToString(item.painLocationEnum)}/> : null}
+                {item.painLocationEnum.length > 0 &&
+                    <Chip label={convertingEnumToString(item.painLocationEnum) ?? ''}/>}
             </View>
 
             {item.note?.trim() ? (
@@ -110,5 +177,12 @@ const styles = StyleSheet.create({
         color: "#adadf1",
         fontSize: 12,
         paddingTop: 12,
-    }
+    },
+    trainingLoad: {
+        alignItems: "center",
+        color: "#8f9097",
+        fontSize: 13,
+        marginTop: 4,
+        marginBottom: -20,
+    },
 });

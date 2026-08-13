@@ -160,15 +160,8 @@ export default function RecoveryCheckInScreen() {
             return;
         }
         if (currentActivity.sportType === "RIDE" || currentActivity.sportType === "RUN") fetchWeatherData()
-
-        // reset({
-        //     // rpe: currentActivity.rpe ?? null,
-        //     // painScore: currentActivity.painScore ?? null,
-        //     // painLocation: currentActivity.painLocation ?? "",
-        //     // mood: currentActivity.mood ?? "",
-        //     // note: currentActivity.note ?? "",
-        // });
     }, [currentActivity, reset]);
+
 
     const handleSave = async (formValues: RecoveryCheckinForm) => {
         if (formValues.rpe === null) {
@@ -207,7 +200,7 @@ export default function RecoveryCheckInScreen() {
             feelsLikeTemperature: weatherData.feelsLikeTemperature.toFixed(0),
             humidity: weatherData.humidity.toFixed(0),
             windSpeed: weatherData.windSpeed.toFixed(0),
-            dewPoint: weatherData.dewPoint.toFixed(0),
+            dewPoint: weatherData.dewPoint.toFixed(0)
 
         };
         try {

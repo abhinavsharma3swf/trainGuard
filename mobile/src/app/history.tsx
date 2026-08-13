@@ -3,6 +3,7 @@ import {Image, Pressable, ScrollView, StyleSheet, Text, View} from "react-native
 import {BottomNav} from "@/components/BottomNav";
 import {RecoveryHistoryCard} from "@/components/RecoveryHistoryCard";
 import {useHistoryData} from "@/context/HistoryDataContext";
+import {Ionicons} from "@expo/vector-icons";
 
 export default function History() {
 
@@ -15,6 +16,10 @@ export default function History() {
                     <View>
                         <Text style={styles.appName}>Smart Gauge</Text>
                         <Text style={styles.subtitle}>Recovery History</Text>
+                        <View style={{flexDirection: 'row'}}>
+                            <Ionicons name={"mail"} style={{color: 'orange', width: 6, height: 16, marginRight: 16}}/>
+                            <Text style={styles.subtitle}>Share it with your coach</Text>
+                        </View>
                     </View>
                     <Image source={require("@/assets/images/smartGaugeAppIcon.png")}
                            resizeMode="contain"
@@ -34,7 +39,7 @@ export default function History() {
                                 id: item.id,
                                 activityId: item.id,
                                 createdAt: item.createdAt,
-                                painScore: item.painScore ?? 0,
+                                painScore: item.painScore,
                                 painLocation: item.painLocation,
                                 painLocationEnum: item.painLocationEnum,
                                 rpe: item.rpe ?? 0,
@@ -45,7 +50,8 @@ export default function History() {
                                 humidity: item.humidity,
                                 feelsLikeTemperature: item.feelsLikeTemperature,
                                 windSpeed: item.windSpeed,
-                                dewPoint: item.dewPoint
+                                dewPoint: item.dewPoint,
+                                trainingLoad: item.trainingLoad,
                             }}
                         />
                     ))}
