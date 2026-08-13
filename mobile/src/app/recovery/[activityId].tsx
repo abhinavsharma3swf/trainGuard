@@ -334,28 +334,28 @@ export default function RecoveryCheckInScreen() {
                                                 <Text style={styles.weatherText}>
                                                     Temp:{" "}
                                                     {weatherData?.temperature !== undefined
-                                                        ? `${weatherData.temperature.toFixed(0)}°F`
+                                                        ? `${weatherData.temperature.toFixed(0)}°F, `
                                                         : "N/A"}
                                                 </Text>
 
                                                 <Text style={styles.weatherText}>
                                                     Feels Like Temp:{" "}
                                                     {weatherData?.feelsLikeTemperature !== undefined
-                                                        ? `${weatherData.feelsLikeTemperature.toFixed(0)}°F`
+                                                        ? `${weatherData.feelsLikeTemperature.toFixed(0)}°F, `
                                                         : "N/A"}
                                                 </Text>
 
                                                 <Text style={styles.weatherText}>
                                                     Humidity:{" "}
                                                     {weatherData?.humidity !== undefined
-                                                        ? `${weatherData.humidity.toFixed(0)}%`
+                                                        ? `${weatherData.humidity.toFixed(0)}%, `
                                                         : "N/A"}
                                                 </Text>
 
                                                 <Text style={styles.weatherText}>
                                                     Wind:{""}
                                                     {weatherData?.windSpeed !== undefined
-                                                        ? `${weatherData.windSpeed.toFixed(0)} mph`
+                                                        ? `${weatherData.windSpeed.toFixed(0)} mph, `
                                                         : "N/A"}
                                                 </Text>
 
