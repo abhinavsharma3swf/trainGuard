@@ -1,4 +1,4 @@
-import {KeyboardAvoidingView, Modal, Platform, Pressable, StyleSheet, Text, View} from "react-native";
+import {Modal, Pressable, StyleSheet, Text, View} from "react-native";
 import {Ionicons} from "@expo/vector-icons";
 import React from "react";
 import HumanBody from "@/components/HumanBody";
@@ -21,7 +21,6 @@ export default function HumanbodyHeatMap({
     )
 
 
-
     return (
         <Modal
             visible={heatMapFlag}
@@ -30,13 +29,12 @@ export default function HumanbodyHeatMap({
             statusBarTranslucent
             onRequestClose={handleClose}
         >
-            <KeyboardAvoidingView
+            <View
                 style={styles.overlay}
-                behavior={Platform.OS === "ios" ? "padding" : undefined}
+
             >
                 <View
                     style={styles.card}
-                    // accessibilityViewIsModal
                 >
                     <View style={styles.header}>
                         <View style={styles.titleContainer}>
@@ -58,36 +56,32 @@ export default function HumanbodyHeatMap({
                             </Pressable>
                         </View>
                     </View>
-
-                    {/*<ScrollView*/}
-                    {/*    contentContainerStyle={styles.form}*/}
-                    {/*    keyboardShouldPersistTaps="handled"*/}
-                    {/*    showsVerticalScrollIndicator={false}*/}
-                    {/*>*/}
-                    <HumanBody selectedBodyParts={enumsForHumanBodyHeatMapForAnalysisPage}
-                               setSelectedBodyParts={() => null}
-                    mode='heatmap'/>
+                    <View style={{height: 375}}>
+                        <HumanBody selectedBodyParts={enumsForHumanBodyHeatMapForAnalysisPage}
+                                   setSelectedBodyParts={() => null}
+                                   mode='heatmap'/>
+                    </View>
                     {/*</ScrollView>*/}
                     <View style={styles.card}>
-<View style={styles.header}>
-    <Text style={styles.title}>
-        Legend:
-        <View style={{paddingLeft: 15}}>
-        <Text style={styles.label}>
-            🟢 Reported below 3
-        </Text>
-        <Text style={styles.label}>
-            🟡 Reported 3 or above but below 5
-        </Text>
-           <Text style={styles.label}>
-               🔴 Reported 6 or above
-           </Text>
-        </View>
-    </Text>
-</View>
+                        <View style={styles.header}>
+                            <Text style={styles.title}>
+                                Legend:
+                                <View style={{paddingLeft: 15, paddingTop: 15}}>
+                                    <Text style={styles.label}>
+                                        🟢 Reported below 3
+                                    </Text>
+                                    <Text style={styles.label}>
+                                        🟡 Reported 3 or above but below 5
+                                    </Text>
+                                    <Text style={styles.label}>
+                                        🔴 Reported 6 or above
+                                    </Text>
+                                </View>
+                            </Text>
+                        </View>
                     </View>
                 </View>
-            </KeyboardAvoidingView>
+            </View>
         </Modal>
     )
 }
@@ -105,7 +99,7 @@ const styles = StyleSheet.create({
     card: {
         width: "100%",
         maxWidth: 520,
-        maxHeight: "90%",
+        // maxHeight: "90%",
         backgroundColor: "#151b1f",
         borderRadius: 20,
         borderWidth: 1,

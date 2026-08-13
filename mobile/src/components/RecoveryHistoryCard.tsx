@@ -74,7 +74,7 @@ export function RecoveryHistoryCard({item}: RecoveryHistoryCardProps) {
                     {item.sportType === "SWIM" && <Text style={styles.title}>🏊‍♂️ {item.sportType} - Check-in</Text>}
                     {item.sportType === "OTHER" && <Text style={styles.title}>🏆 {item.sportType} - Check-in</Text>}
                     {item.activityDate && <Text style={styles.date}>Activity Date: {activityDate}</Text>}
-                    <Text style={styles.date}>Check-in Date: {date}</Text>
+                    {item.createdAt && <Text style={styles.date}>Check-in Date: {date}</Text>}
                 </View>
                 {item.trainingLoad &&
 
