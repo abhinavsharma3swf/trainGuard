@@ -244,32 +244,6 @@ export function ContactModal({contactUsModal, setContactUsModal}: ContactModalPr
                             returnKeyType="next"
                             maxLength={100}
                         />
-
-
-                        {/*<View style={styles.pickerContainer}>*/}
-                        {/*    <Picker*/}
-                        {/*        selectedValue={category}*/}
-                        {/*        onValueChange={(value) =>*/}
-                        {/*            setCategory(*/}
-                        {/*                value as ContactCategory,*/}
-                        {/*            )*/}
-                        {/*        }*/}
-                        {/*    >*/}
-                        {/*        <Picker.Item*/}
-                        {/*            label="Feedback"*/}
-                        {/*            value="feedback"*/}
-                        {/*        />*/}
-                        {/*        <Picker.Item*/}
-                        {/*            label="Question"*/}
-                        {/*            value="question"*/}
-                        {/*        />*/}
-                        {/*        <Picker.Item*/}
-                        {/*            label="Feature request"*/}
-                        {/*            value="feature_request"*/}
-                        {/*        />*/}
-                        {/*    </Picker>*/}
-                        {/*</View>*/}
-
                         <Text
                             nativeID="contact-message-label"
                             style={styles.label}

@@ -3,6 +3,7 @@ import {RecoveryCheckin} from "@/services/recoveryApi";
 import {BodyPart} from "@/components/PathPoints";
 import {AnimatedCircularProgress} from 'react-native-circular-progress';
 import {useState} from "react";
+import {Srpe} from "@/components/SrpeModal";
 
 type RecoveryHistoryCardProps = {
     item: RecoveryCheckin;
@@ -24,11 +25,11 @@ export function RecoveryHistoryCard({item}: RecoveryHistoryCardProps) {
 
     const convertingEnumToStringForFirstThreeAndThenRest = (bodyPartEnum: BodyPart[]) => {
         if (bodyPartEnum !== null && bodyPartEnum !== undefined && !enumFlag) {
-            const firstThreePainEnums = bodyPartEnum.slice(0,3)
+            const firstThreePainEnums = bodyPartEnum.slice(0, 3)
             const bodyPartsEnumStrings = firstThreePainEnums.map((part) => BodyPart[part]).join(", ");
             return bodyPartsEnumStrings.replace(/([A-Z])/g, " $1").trim();
         }
-        if(enumFlag) {
+        if (enumFlag) {
             convertingEnumToString(bodyPartEnum);
         }
     }
@@ -42,6 +43,7 @@ export function RecoveryHistoryCard({item}: RecoveryHistoryCardProps) {
     };
 
     const [enumFlag, setEnumFlag] = useState<boolean>(false);
+    const [srpeFlag, setSrpeFlag] = useState<boolean>(false)
 
 
     return (
@@ -69,50 +71,50 @@ export function RecoveryHistoryCard({item}: RecoveryHistoryCardProps) {
                 {item.trainingLoad &&
 
                     <View style={styles.trainingLoad}>
-                        <Pressable>
-                        <AnimatedCircularProgress
-                            size={50}
-                            width={5}
-                            fill={score}
-                            // tintColor="#4CAF50"
-                            tintColor={getScoreColor(score)}
-                            backgroundColor="#E5E5E5"
-                            rotation={270}
-                            arcSweepAngle={180}
-                            lineCap="round"
-                        >
-                            {() => (
-                                <View
-                                    style={{
-                                        alignItems: "center",
-                                        marginTop: 45,
-                                    }}
-                                >
-                                    <Text
+                        <Pressable onPress={() => setSrpeFlag(true)}>
+                            <Srpe setSrpeFlag={setSrpeFlag} srpeFlag={srpeFlag}></Srpe>
+                            <AnimatedCircularProgress
+                                size={50}
+                                width={5}
+                                fill={score}
+                                // tintColor="#4CAF50"
+                                tintColor={getScoreColor(score)}
+                                backgroundColor="#E5E5E5"
+                                rotation={270}
+                                arcSweepAngle={180}
+                                lineCap="round"
+                            >
+                                {() => (
+                                    <View
                                         style={{
-                                            fontSize: 14,
-                                            paddingBottom: 70,
-                                            fontWeight: "700",
-                                            color: 'white',
-                                            height: 1,
+                                            alignItems: "center",
+                                            marginTop: 45,
                                         }}
                                     >
-                                        {item.trainingLoad}
-                                    </Text>
+                                        <Text
+                                            style={{
+                                                fontSize: 14,
+                                                paddingBottom: 70,
+                                                fontWeight: "700",
+                                                color: 'white',
+                                                height: 1,
+                                            }}
+                                        >
+                                            {item.trainingLoad}
+                                        </Text>
 
-                                </View>
-                            )}
-                        </AnimatedCircularProgress>
-                        <Text
-                            style={{
-                                fontSize: 10,
-                                color: "#777",
-                                // zIndex: 28,
-                                top: -20
-                            }}
-                        >
-                            sRPE Score
-                        </Text>
+                                    </View>
+                                )}
+                            </AnimatedCircularProgress>
+                            <Text
+                                style={{
+                                    fontSize: 10,
+                                    color: "#777",
+                                    top: -20
+                                }}
+                            >
+                                sRPE Score
+                            </Text>
                         </Pressable>
                     </View>
                 }
@@ -128,14 +130,15 @@ export function RecoveryHistoryCard({item}: RecoveryHistoryCardProps) {
                 {item.painLocationEnum.length > 3 &&
                     <>
 
-                    {!enumFlag && <Chip label={convertingEnumToStringForFirstThreeAndThenRest(item.painLocationEnum) as unknown as string}/>}
+                        {!enumFlag && <Chip
+                            label={convertingEnumToStringForFirstThreeAndThenRest(item.painLocationEnum) as unknown as string}/>}
 
                         <Pressable
-                        onPress={()=> setEnumFlag(true)}>
+                            onPress={() => setEnumFlag(true)}>
                             {!enumFlag && <Chip label={"Click For More"}/>}
                         </Pressable>
-                        {enumFlag &&  <Pressable onPress={()=> setEnumFlag(false)} style={{width: 360}}>
-                            <Chip label={convertingEnumToString(item.painLocationEnum) ?? ''} />
+                        {enumFlag && <Pressable onPress={() => setEnumFlag(false)} style={{width: 360}}>
+                            <Chip label={convertingEnumToString(item.painLocationEnum) ?? ''}/>
                         </Pressable>}
                     </>
                 }
