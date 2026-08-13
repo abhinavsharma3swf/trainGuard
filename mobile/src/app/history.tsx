@@ -35,6 +35,7 @@ export default function History() {
                                 id: item.id,
                                 activityId: item.id,
                                 createdAt: item.createdAt,
+                                activityDate: item.activityDate ?? "",
                                 painScore: item.painScore,
                                 painLocation: item.painLocation,
                                 painLocationEnum: item.painLocationEnum,

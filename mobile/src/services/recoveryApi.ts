@@ -20,6 +20,7 @@ export type RecoveryCheckin = {
     windSpeed: number;
     dewPoint: number;
     trainingLoad: number;
+    activityDate?: string;
 };
 
 export async function getRecoveryCheckins(

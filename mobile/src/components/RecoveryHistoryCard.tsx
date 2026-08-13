@@ -45,6 +45,13 @@ export function RecoveryHistoryCard({item}: RecoveryHistoryCardProps) {
     const [enumFlag, setEnumFlag] = useState<boolean>(false);
     const [srpeFlag, setSrpeFlag] = useState<boolean>(false)
 
+        const activityDate = new Date(item.activityDate ?? "").toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+        });
+
+
 
     return (
         <View style={styles.card}>
@@ -66,7 +73,8 @@ export function RecoveryHistoryCard({item}: RecoveryHistoryCardProps) {
                         <Text style={styles.title}>🏃‍♂️ {item.sportType} - Check-in</Text>}
                     {item.sportType === "SWIM" && <Text style={styles.title}>🏊‍♂️ {item.sportType} - Check-in</Text>}
                     {item.sportType === "OTHER" && <Text style={styles.title}>🏆 {item.sportType} - Check-in</Text>}
-                    <Text style={styles.date}>{date}</Text>
+                    {item.activityDate && <Text style={styles.date}>Activity Date: {activityDate}</Text>}
+                    <Text style={styles.date}>Check-in Date: {date}</Text>
                 </View>
                 {item.trainingLoad &&
 
@@ -182,7 +190,7 @@ const styles = StyleSheet.create({
         color: "#8f9097",
         fontSize: 13,
         marginTop: 4,
-        marginBottom: 12,
+        marginBottom: 8,
     },
     chipRow: {
         flexDirection: "row",
