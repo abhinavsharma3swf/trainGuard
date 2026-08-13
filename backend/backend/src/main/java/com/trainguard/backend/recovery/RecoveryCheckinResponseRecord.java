@@ -19,6 +19,7 @@ public record RecoveryCheckinResponseRecord(
         Integer humidity,
         Integer windSpeed,
         Integer dewPoint,
-        Integer trainingLoad
+        Integer trainingLoad,
+        Instant activityDate
 ) {
 }

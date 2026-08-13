@@ -212,7 +212,8 @@ public class RecoveryCheckinService {
                 checkin.getHumidity(),
                 checkin.getWindSpeed(),
                 checkin.getDewPoint(),
-                checkin.getTrainingLoad()
+                checkin.getTrainingLoad(),
+                checkin.getActivityDate()
         );
     }
 
