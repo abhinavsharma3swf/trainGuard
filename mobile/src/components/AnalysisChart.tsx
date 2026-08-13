@@ -239,6 +239,24 @@ export default function AnalysisChart({
                     {chartTitle}
                 </Text>
 
+                {metric === 'painScore' &&
+                    <Pressable
+                    style={styles.backButton}
+                    onPress={()=> setHeatMapFlag(true)}
+                    hitSlop={10}
+                >
+
+                        <Text style={styles.backButtonText}>
+                        HeatMap
+                    </Text>
+                </Pressable>}
+
+                {heatMapFlag &&
+                    <HumanbodyHeatMap heatMapFlag={heatMapFlag} setHeatMapFlag={setHeatMapFlag}
+                    enumsForHumanBodyHeatMapForAnalysisPage={enumsForHumanBodyHeatMapForAnalysisPage}
+                    />
+                }
+
                 <Pressable
                     style={styles.backButton}
                     onPress={() => setGraphFlag(true)}
@@ -248,21 +266,6 @@ export default function AnalysisChart({
                         Back
                     </Text>
                 </Pressable>
-
-                <Pressable
-                    style={styles.backButton}
-                    onPress={()=> setHeatMapFlag(true)}
-                    hitSlop={10}
-                >
-                    <Text style={styles.backButtonText}>
-                        HeatMap
-                    </Text>
-                </Pressable>
-                {heatMapFlag &&
-                    <HumanbodyHeatMap heatMapFlag={heatMapFlag} setHeatMapFlag={setHeatMapFlag}
-                    enumsForHumanBodyHeatMapForAnalysisPage={enumsForHumanBodyHeatMapForAnalysisPage}
-                    />
-                }
             </View>
 
             <View

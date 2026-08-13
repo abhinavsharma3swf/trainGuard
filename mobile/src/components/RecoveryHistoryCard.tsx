@@ -2,6 +2,7 @@ import {Pressable, StyleSheet, Text, View} from "react-native";
 import {RecoveryCheckin} from "@/services/recoveryApi";
 import {BodyPart} from "@/components/PathPoints";
 import {AnimatedCircularProgress} from 'react-native-circular-progress';
+import {useState} from "react";
 
 type RecoveryHistoryCardProps = {
     item: RecoveryCheckin;
@@ -21,6 +22,17 @@ export function RecoveryHistoryCard({item}: RecoveryHistoryCardProps) {
         }
     }
 
+    const convertingEnumToStringForFirstThreeAndThenRest = (bodyPartEnum: BodyPart[]) => {
+        if (bodyPartEnum !== null && bodyPartEnum !== undefined && !enumFlag) {
+            const firstThreePainEnums = bodyPartEnum.slice(0,3)
+            const bodyPartsEnumStrings = firstThreePainEnums.map((part) => BodyPart[part]).join(", ");
+            return bodyPartsEnumStrings.replace(/([A-Z])/g, " $1").trim();
+        }
+        if(enumFlag) {
+            convertingEnumToString(bodyPartEnum);
+        }
+    }
+
     const score: number = (item.trainingLoad / 10).toFixed(0) as unknown as number;
 
     const getScoreColor = (score: number) => {
@@ -28,6 +40,9 @@ export function RecoveryHistoryCard({item}: RecoveryHistoryCardProps) {
         if (score >= 65) return "#F59E0B"; // orange
         return "#22C55E"; // red
     };
+
+    const [enumFlag, setEnumFlag] = useState<boolean>(false);
+
 
     return (
         <View style={styles.card}>
@@ -108,8 +123,22 @@ export function RecoveryHistoryCard({item}: RecoveryHistoryCardProps) {
                 {item.painScore ? <Chip label={`Pain ${item.painScore}`}/> : null}
                 {item.mood ? <Chip label={item.mood}/> : null}
                 {item.painLocation ? <Chip label={item.painLocation}/> : null}
-                {item.painLocationEnum.length > 0 &&
-                    <Chip label={convertingEnumToString(item.painLocationEnum) ?? ''}/>}
+                {item.painLocationEnum.length > 0 && item.painLocationEnum.length < 3 ?
+                    <Chip label={convertingEnumToString(item.painLocationEnum) ?? ''}/> : null}
+                {item.painLocationEnum.length > 3 &&
+                    <>
+
+                    {!enumFlag && <Chip label={convertingEnumToStringForFirstThreeAndThenRest(item.painLocationEnum) as unknown as string}/>}
+
+                        <Pressable
+                        onPress={()=> setEnumFlag(true)}>
+                            {!enumFlag && <Chip label={"Click For More"}/>}
+                        </Pressable>
+                        {enumFlag &&  <Pressable onPress={()=> setEnumFlag(false)} style={{width: 360}}>
+                            <Chip label={convertingEnumToString(item.painLocationEnum) ?? ''} />
+                        </Pressable>}
+                    </>
+                }
             </View>
 
             {item.note?.trim() ? (
@@ -162,6 +191,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         paddingVertical: 6,
         borderRadius: 999,
+        flexWrap: "wrap",
     },
     chipText: {
         color: "#e0e3e5",

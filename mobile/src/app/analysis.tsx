@@ -560,6 +560,7 @@ export default function AnalysisScreen() {
                 0,
             ) / 60;
 
+
     const bikeDistance = lastSevenDayFeedItems
         .filter((item) => item.sportType === "RIDE")
         .reduce((total, item) => total + item.distanceMiles, 0);
@@ -755,28 +756,6 @@ export default function AnalysisScreen() {
             {},
         );
     }, [filteredCheckins]);
-
-    // const painLocationCountsWithEnum = useMemo(() => {
-    //     const allOfTheEnums = filteredCheckins
-    //         .filter((enums) => enums.painLocationEnum).flatMap((e) => e.painLocationEnum)
-    //
-    //     return allOfTheEnums.map((part) => BodyPart[part]);
-    //
-    // }, [filteredCheckins]);
-    //
-    //
-    // const phoo1 = painLocationCountsWithEnum.reduce(
-    //     (acc, currentLocation) => {
-    //         acc[currentLocation] = (acc[currentLocation] || 0) + 1;
-    //
-    //         return acc;
-    //     },
-    //     {} as Record<string, number>
-    // );
-    //
-    // const phoo = Object.entries(phoo1).map(([name, time]) => ({
-    //     name, time
-    // }))
 
     const painLocationCounts = useMemo(() => {
         return filteredCheckins
