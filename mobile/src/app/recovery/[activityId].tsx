@@ -133,6 +133,7 @@ export default function RecoveryCheckInScreen() {
         setError,
         clearErrors,
         watch,
+        getValues,
         formState: {errors, isSubmitting},
     } = useForm<RecoveryCheckinForm>({
         values: {
@@ -175,10 +176,10 @@ export default function RecoveryCheckInScreen() {
             return;
         }
 
-        if (formValues.painScore === null) {
-            setError("painScore", {message: "Select a pain score."});
-            return;
-        }
+        // if(selectedBodyParts.length > 0 || formValues.painScore === null) {
+        //     setError("painScore", {message: "Select a pain score."});
+        //     return;
+        // }
 
         if (!formValues.mood) {
             setError("mood", {message: "Select a mood."});
@@ -285,10 +286,7 @@ export default function RecoveryCheckInScreen() {
 
                                     <Pressable
                                         style={[styles.option, selectedBodyParts.length > 0 && styles.selectedOption]}
-                                        onPress={() => {
-                                            setHavePain(true)
-                                        }
-                                        }
+                                        onPress={() => setHavePain(true)}
                                     >
                                         <Text
                                             style={[styles.optionText, selectedBodyParts.length > 0 && styles.selectedOptionText]}>Yes</Text>
@@ -403,19 +401,46 @@ export default function RecoveryCheckInScreen() {
                                     render={({field: {onChange, value}}) => (
                                         <NumberSelector
                                             label="Pain Score"
-                                            helper="Pain level from 0–10"
+                                            helper="Pain level from 1–10"
                                             values={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}
                                             selectedValue={value}
                                             onSelect={(selectedValue) => {
-                                                onChange(selectedValue);
-                                                clearErrors("painScore");
+                                                    onChange(selectedValue);
+                                                if (selectedValue !== null) {
+                                                    clearErrors("painScore");
+                                                }
+                                                // clearErrors("painScore");
                                             }}
                                         />
                                     )}
                                 />
 
-                                <Pressable style={[styles.saveButton, isSubmitting && styles.disabledButton]}
-                                           onPress={() => setHavePain(false)}>
+                                {errors.painScore?.message ? (
+                                    <Text style={styles.errorText}>
+                                        {errors.painScore.message}
+                                    </Text>
+                                ) : null}
+
+                                <Pressable
+                                    style={[
+                                        styles.saveButton,
+                                        isSubmitting && styles.disabledButton,
+                                    ]}
+                                    onPress={() => {
+                                        const painScore = getValues("painScore");
+
+                                        if (selectedBodyParts.length > 0 && !painScore) {
+                                            setError("painScore", {
+                                                type: "manual",
+                                                message: "Select a pain score before continuing.",
+                                            });
+
+                                            return;
+                                        }
+
+                                        setHavePain(false);
+                                    }}
+                                >
                                     <Text style={styles.saveButtonText}>
                                         Done
                                     </Text>

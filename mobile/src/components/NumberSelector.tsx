@@ -5,8 +5,8 @@ type NumberSelectorProps = {
     label: string;
     helper?: string;
     values: number[];
-    selectedValue: number | null;
-    onSelect: (value: number) => void;
+    selectedValue?: number | null;
+    onSelect: (value: number | null) => void;
 };
 
 export function NumberSelector({
@@ -28,8 +28,17 @@ export function NumberSelector({
                     return (
                         <Pressable
                             key={value}
-                            style={[styles.option, selected && styles.selectedOption]}
-                            onPress={() => onSelect(value)}
+                            style={[
+                                styles.option,
+                                selected && styles.selectedOption
+                            ]}
+                            onPress={() => {
+                                if (selected) {
+                                    onSelect(null);
+                                } else {
+                                    onSelect(value);
+                                }
+                            }}
                         >
                             <Text style={[styles.optionText, selected && styles.selectedOptionText]}>
                                 {value}

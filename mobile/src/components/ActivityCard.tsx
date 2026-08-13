@@ -74,7 +74,7 @@ export function ActivityCard({activity}: ActivityCardProps) {
                     <View style={styles.completedSection}>
                         <View style={styles.chipRow}>
                             <Chip label={`RPE ${activity.rpe}`}/>
-                            <Chip label={`Pain ${activity.pain}`}/>
+                            {activity.pain && <Chip label={`Pain ${activity.pain}`}/>}
                             <Chip label={activity.mood}/>
 
                             {activity.note?.trim() ? <Chip label="Note"/> : null}
