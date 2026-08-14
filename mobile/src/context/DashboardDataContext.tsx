@@ -70,7 +70,7 @@ export function DashboardDataProvider({ children }: { children: ReactNode }) {
     }
 
     // useEffect(() => {
-    //     refreshDashboardFeed();
+    //      void refreshDashboardFeed();
     // }, []);
 
     useEffect(() => {

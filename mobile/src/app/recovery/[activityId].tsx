@@ -22,6 +22,7 @@ import {fetchWeatherApi} from "openmeteo";
 import HumanBody from "@/components/HumanBody";
 import {BodyPart} from "@/components/PathPoints";
 import ZoomableBody from "@/components/ZoomableBody";
+import {useHistoryData} from "@/context/HistoryDataContext";
 
 type RecoveryCheckinForm = {
     rpe: number | null;
@@ -43,6 +44,7 @@ type WeatherData = {
 export default function RecoveryCheckInScreen() {
     const {activityId} = useLocalSearchParams<{ activityId: string }>();
     const {feedItems, refreshDashboardFeed} = useDashboardData();
+    const {loadRecoveryHistory} = useHistoryData();
 
     const [havePain, setHavePain] = useState<boolean>(false);
     const [selectedBodyParts, setSelectedBodyParts] = useState<BodyPart[]>([]);
@@ -218,8 +220,9 @@ export default function RecoveryCheckInScreen() {
             }
 
             await refreshDashboardFeed();
+            loadRecoveryHistory();
 
-            router.push("/dashboard");
+            router.replace("/dashboard");
         } catch (error) {
             console.error(error);
             setError("root", {
@@ -422,10 +425,10 @@ export default function RecoveryCheckInScreen() {
                                     onPress={() => {
                                         const painScore = getValues("painScore");
 
-                                        if (selectedBodyParts.length > 0 && !painScore) {
+                                        if (selectedBodyParts.length > 0 && !painScore || selectedBodyParts.length <= 0 && painScore) {
                                             setError("painScore", {
                                                 type: "manual",
-                                                message: "Select a pain score before continuing.",
+                                                message: "You must make selection for both before continuing.",
                                             });
 
                                             return;

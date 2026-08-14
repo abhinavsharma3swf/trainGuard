@@ -33,7 +33,7 @@ export default function History() {
                             key={item.id}
                             item={{
                                 id: item.id,
-                                activityId: item.id,
+                                activityId: item.activityId,
                                 createdAt: item.createdAt,
                                 activityDate: item.activityDate ?? "",
                                 painScore: item.painScore,

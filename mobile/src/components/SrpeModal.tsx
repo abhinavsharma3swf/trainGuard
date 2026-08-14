@@ -5,7 +5,6 @@ import {globalStyles} from "@/components/PrivacyStatement";
 
 interface SrpeProps {
     setSrpeFlag(isVisible: boolean): void;
-
     srpeFlag: boolean;
 }
 

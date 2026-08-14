@@ -59,24 +59,21 @@ export function RecoveryHistoryCard({item}: RecoveryHistoryCardProps) {
                 <View>
                     {item.sportType === "RUN" && <Text style={styles.title}>🏃 {item.sportType} - Check-in</Text>}
                     {item.sportType === "RIDE" && <Text style={styles.title}>🚴 {item.sportType} - Check-in</Text>}
-                    {item.sportType === "VIRTUALRIDE" &&
-                        <Text style={styles.title}>🚴 {item.sportType} - Check-in</Text>}
+                    {item.sportType === "VIRTUALRIDE" && <Text style={styles.title}>🚴 {item.sportType} - Check-in</Text>}
                     {item.sportType === "WALK" && <Text style={styles.title}>🚶 {item.sportType} - Check-in</Text>}
-                    {item.sportType === "WEIGHTTRAINING" &&
-                        <Text style={styles.title}>🏋 {item.sportType} - Check-in</Text>}
+                    {item.sportType === "WEIGHTTRAINING" && <Text style={styles.title}>🏋 {item.sportType} - Check-in</Text>}
                     {item.sportType === "WORKOUT" && <Text style={styles.title}>💪 {item.sportType} - Check-in</Text>}
                     {item.sportType === "YOGA" && <Text style={styles.title}>🧘 {item.sportType} - Check-in</Text>}
                     {item.sportType === "TENNIS" && <Text style={styles.title}>🎾 {item.sportType} - Check-in</Text>}
                     {item.sportType === "PICKLEBALL" && <Text style={styles.title}>🏓 {item.sportType} - Check-in</Text>}
                     {item.sportType === "PILATES" && <Text style={styles.title}>🤸‍♂️ {item.sportType} - Check-in</Text>}
-                    {item.sportType === "TRAILRUN" &&
-                        <Text style={styles.title}>🏃‍♂️ {item.sportType} - Check-in</Text>}
+                    {item.sportType === "TRAILRUN" && <Text style={styles.title}>🏃‍♂️ {item.sportType} - Check-in</Text>}
                     {item.sportType === "SWIM" && <Text style={styles.title}>🏊‍♂️ {item.sportType} - Check-in</Text>}
                     {item.sportType === "OTHER" && <Text style={styles.title}>🏆 {item.sportType} - Check-in</Text>}
-                    {item.activityDate && <Text style={styles.date}>Activity Date: {activityDate}</Text>}
-                    {item.createdAt && <Text style={styles.date}>Check-in Date: {date}</Text>}
+                    {item.activityDate ? <Text style={styles.date}>Activity Date: {activityDate}</Text> : null}
+                    {item.createdAt ? <Text style={styles.date}>Check-in Date: {date}</Text> : null}
                 </View>
-                {item.trainingLoad &&
+                {item.trainingLoad > 0 &&
 
                     <View style={styles.trainingLoad}>
                         <Pressable onPress={() => setSrpeFlag(true)}>
