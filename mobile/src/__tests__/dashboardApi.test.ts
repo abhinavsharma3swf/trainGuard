@@ -18,11 +18,11 @@ describe("dashboardApi.getDashboardFeed", () => {
 
     const fakeResponse = [{ activityId: 1, sportType: "RIDE", name: "Ride 1", startDate: "2026-01-01T00:00:00Z", distanceMiles: 10, movingTimeMinutes: 60, pacePerMile: "6:00", checkinStatus: "COMPLETED", rpe: null, painScore: null, painLocation: null, averageWatts: "150", description: "" }];
 
-    (global as any).fetch = jest.fn().mockResolvedValue({ ok: true, json: () => Promise.resolve(fakeResponse) });
+    (globalThis as any).fetch = jest.fn().mockResolvedValue({ ok: true, json: () => Promise.resolve(fakeResponse) });
 
     const result = await getDashboardFeed();
 
-    expect(global.fetch).toHaveBeenCalled();
+    expect((globalThis as any).fetch).toHaveBeenCalled();
     expect(result).toEqual(fakeResponse);
   });
 });

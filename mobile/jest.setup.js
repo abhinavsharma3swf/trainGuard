@@ -14,7 +14,7 @@ jest.mock('@react-native-async-storage/async-storage', () => {
 });
 
 // Provide a minimal global.fetch mock so tests can override it per-suite
-if (!global.fetch) {
+if (!globalThis.fetch) {
   // @ts-ignore
-  global.fetch = jest.fn(() => Promise.resolve({ ok: true, json: () => Promise.resolve({}) }));
+  globalThis.fetch = jest.fn(() => Promise.resolve({ ok: true, json: () => Promise.resolve({}) }));
 }
