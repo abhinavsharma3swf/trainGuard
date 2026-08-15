@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -49,8 +50,8 @@ class ActivityCleanupServiceTest {
                 .movingTimeSeconds(2400)
                 .elapsedTimeSeconds(2450)
                 .totalElevationGain(50.0)
-                .averageHeartbeat(145.0)
-                .maxHeartbeat(170.0)
+                .averageWatts(145.0)
+                .weightedAverageWatts(170.0)
                 .athleteId(12345L)
                 .build();
 
@@ -63,7 +64,7 @@ class ActivityCleanupServiceTest {
                         .painLocation("Knee")
                         .mood("Good")
                         .sportType("RUN")
-                        .createdAt(activityTime)
+                        .createdAt(Instant.parse("2026-07-10T08:00:00Z"))
                         .build();
 
         when(activityRepository.findAllByImportedAtBefore(

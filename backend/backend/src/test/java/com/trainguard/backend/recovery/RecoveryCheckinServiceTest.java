@@ -5,6 +5,7 @@ import com.trainguard.backend.activity.ActivityRepository;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -20,8 +21,10 @@ class RecoveryCheckinServiceTest {
     private final ActivityRepository activityRepository =
             mock(ActivityRepository.class);
 
+    private final com.trainguard.backend.activity.ActivityMetricService activityMetricService = new com.trainguard.backend.activity.ActivityMetricService();
+
     private final RecoveryCheckinService recoveryCheckinService =
-            new RecoveryCheckinService(recoveryCheckinRepository, activityRepository);
+            new RecoveryCheckinService(recoveryCheckinRepository, activityRepository, activityMetricService);
 
     @Test
     void shouldCreateRecoveryCheckinForActivity() {
@@ -35,6 +38,7 @@ class RecoveryCheckinServiceTest {
                 .startDate(LocalDateTime.of(2026, 7, 7, 6, 30))
                 .distanceMeters(8046.72)
                 .movingTimeSeconds(2400)
+                .elapsedTimeSeconds(2450)
                 .build();
 
         RecoveryCheckinRequestRecord request = RecoveryCheckinRequestRecord.builder()
@@ -56,7 +60,7 @@ class RecoveryCheckinServiceTest {
                 .mood("great")
                 .note("Felt tight after cooldown")
                 .sportType("RUN")
-                .createdAt(LocalDateTime.of(2026, 7, 7, 8, 0))
+                .createdAt(Instant.parse("2026-07-07T08:00:00Z"))
                 .build();
 
         when(activityRepository.findByIdAndAthleteId(1L, 1L))

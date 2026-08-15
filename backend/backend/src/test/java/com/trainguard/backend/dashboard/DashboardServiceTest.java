@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -63,7 +64,7 @@ class DashboardServiceTest {
                 .painLocation("hip")
                 .mood("Good")
                 .note("Felt fine")
-                .createdAt(LocalDateTime.of(2026, 7, 7, 9, 0))
+                .createdAt(Instant.parse("2026-07-07T09:00:00Z"))
                 .athleteId(12345L)
                 .build();
 

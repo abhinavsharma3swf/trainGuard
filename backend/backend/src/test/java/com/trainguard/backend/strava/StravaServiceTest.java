@@ -32,6 +32,10 @@ class StravaServiceTest {
     private ActivityService activityService;
     @Mock
     private StravaUserRepository stravaUserRepository;
+        @Mock
+        private com.trainguard.backend.userActions.UserNotificationTokenRepository userNotificationTokenRepository;
+        @Mock
+        private com.trainguard.backend.userActions.UserService userService;
 
     @InjectMocks
     private StravaService stravaService;
@@ -51,8 +55,6 @@ class StravaServiceTest {
                 50.0,
                 145.0,
                 170.0,
-                null,
-                null,
                 new StravaAthleteSummaryRecord(12345L),
                 "I am description",
                 start_latlng
@@ -82,7 +84,10 @@ class StravaServiceTest {
         when(stravaUserRepository.findById(12345L))
                 .thenReturn(Optional.of(stravaUser));
 
-        when(stravaClient.fetchLastSevenActivities("refreshToken"))
+        when(stravaClient.refreshAccessToken("refreshToken"))
+                .thenReturn(new StravaTokenResponseRecord("access-token", "refreshToken", 0L, null));
+
+        when(stravaClient.fetchLastSevenActivities("access-token"))
                 .thenReturn(List.of(stravaActivity));
 
         when(activityService.importActivity(any(ActivityImportRequestRecord.class)))
@@ -105,7 +110,7 @@ class StravaServiceTest {
         assertEquals("8:00", response.pacePerMile());
 
         verify(stravaUserRepository).findById(12345L);
-        verify(stravaClient).fetchLastSevenActivities("refreshToken");
+        verify(stravaClient).fetchLastSevenActivities("access-token");
         verify(activityService).importActivity(any(ActivityImportRequestRecord.class));
     }
 
@@ -124,8 +129,6 @@ class StravaServiceTest {
                 50.0,
                 145.0,
                 170.0,
-                null,
-                null,
                 new StravaAthleteSummaryRecord(12345L),
                 "description",
                 start_latlng
@@ -153,7 +156,10 @@ class StravaServiceTest {
         when(stravaUserRepository.findById(12345L))
                 .thenReturn(Optional.of(stravaUser));
 
-        when(stravaClient.fetchLastSevenActivities("ref"))
+        when(stravaClient.refreshAccessToken("ref"))
+                .thenReturn(new StravaTokenResponseRecord("access-token-2", "ref", 0L, null));
+
+        when(stravaClient.fetchLastSevenActivities("access-token-2"))
                 .thenReturn(List.of(stravaActivity));
 
         when(activityService.importActivity(any(ActivityImportRequestRecord.class)))
@@ -178,10 +184,8 @@ class StravaServiceTest {
         assertEquals(2400, request.movingTimeSeconds());
         assertEquals(2500, request.elapsedTimeSeconds());
         assertEquals(50.0, request.totalElevationGain());
-        assertEquals(145.0, request.averageHeartbeat());
-        assertEquals(170.0, request.maxHeartbeat());
-        assertNull(request.averageWatts());
-        assertNull(request.weightedAverageWatts());
+        assertEquals(145.0, request.averageWatts());
+        assertEquals(170.0, request.weightedAverageWatts());
     }
 
     @Test
@@ -197,7 +201,9 @@ class StravaServiceTest {
                 stravaClient,
                 activityService,
                 stravaProperties,
-                stravaUserRepository
+                stravaUserRepository,
+                userNotificationTokenRepository,
+                userService
         );
 
         String authorizationUrl = stravaService.getAuthorizationUrl();

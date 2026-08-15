@@ -9,7 +9,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import tools.jackson.databind.ObjectMapper;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -55,15 +55,18 @@ class RecoveryCheckinControllerTest {
                 4,
                 0,
                 "hip",
+                List.of(),
                 "Good",
                 "Felt fine",
                 "Run",
-                LocalDateTime.of(2026, 7, 7, 8, 0),
+                Instant.parse("2026-07-07T08:00:00Z"),
                 80,
                 85,
                 90,
                 8,
-                85
+                85,
+                100,
+                Instant.parse("2026-07-07T08:00:00Z")
         );
 
         when(sessionService.getAthleteIdFromAuthorizationHeader("Bearer test-token"))
@@ -105,15 +108,18 @@ class RecoveryCheckinControllerTest {
                 4,
                 0,
                 "hip",
+                List.of(),
                 "Good",
                 "Felt fine",
                 "Run",
-                LocalDateTime.of(2026, 7, 7, 8, 0),
+                Instant.parse("2026-07-07T08:00:00Z"),
                 80,
                 85,
                 90,
                 8,
-                85
+                85,
+                100,
+                Instant.parse("2026-07-07T08:00:00Z")
         );
 
         RecoveryCheckinResponseRecord response1 = new RecoveryCheckinResponseRecord(
@@ -122,15 +128,18 @@ class RecoveryCheckinControllerTest {
                 4,
                 0,
                 "Knee",
+                List.of(),
                 "Low",
                 "Okay",
                 "Run",
-                LocalDateTime.of(2026, 7, 8, 8, 0),
+                Instant.parse("2026-07-08T08:00:00Z"),
                 80,
                 85,
                 90,
                 8,
-                85
+                85,
+                100,
+                Instant.parse("2026-07-08T08:00:00Z")
         );
 
         when(sessionService.getAthleteIdFromAuthorizationHeader("Bearer test-token"))

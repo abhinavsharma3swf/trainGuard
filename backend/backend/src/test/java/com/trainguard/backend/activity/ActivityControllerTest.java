@@ -43,8 +43,8 @@ public class ActivityControllerTest {
                 .movingTimeSeconds(2400)
                 .elapsedTimeSeconds(2450)
                 .totalElevationGain(50.0)
-                .averageHeartbeat(145.0)
-                .maxHeartbeat(170.0)
+                .averageWatts(145.0)
+                .weightedAverageWatts(170.0)
                 .build();
 
         ActivityResponseRecord response = new ActivityResponseRecord(
