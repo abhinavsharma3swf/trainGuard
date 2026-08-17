@@ -23,14 +23,16 @@ public class DeletingDataControllerTest {
     private SessionService sessionService;
 
     @MockitoBean
-    private DeletionService deletionService;
+    private com.trainguard.backend.deletion.LocalDeletionService localDeletionService;
+    @MockitoBean
+    private com.trainguard.backend.deletion.DeletionService deletionService;
 
     @Test
     void shouldDeleteDataUserData() throws Exception {
 
         String token = "testToken";
-        when(sessionService.getAthleteIdFromToken(token)).thenReturn(12345L);
-        doNothing().when(deletionService).deleteUserData("12345");
+        when(sessionService.getAthleteIdFromAuthorizationHeader(token)).thenReturn(12345L);
+        doNothing().when(localDeletionService).deleteLocalAccount(12345L);
 
         mockMvc.perform(delete("/api/deleteData").header("Authorization", "testToken"))
                 .andExpect(status().isOk());
