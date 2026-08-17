@@ -153,7 +153,7 @@ public class RecoveryCheckinService {
             RecoveryCheckinRequestRecord request,
             ActivityEntity activity
     ) {
-        Integer trainingLoad = activity.getElapsedTimeSeconds();
+        Integer trainingLoad = activity.getMovingTimeSeconds();
         Integer secsConvertedToMins = activityMetricService.convertSecondsToMinutes(trainingLoad);
         RecoveryCheckinEntity checkin = recoveryCheckinRepository
                 .findByActivityId(activity.getId())
