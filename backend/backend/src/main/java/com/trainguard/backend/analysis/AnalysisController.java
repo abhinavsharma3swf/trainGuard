@@ -17,4 +17,10 @@ public class AnalysisController {
         Long athleteId = sessionService.getAthleteIdFromAuthorizationHeader(authorizationHeader);
         return analysisService.getAnalysisInformation(athleteId, days);
     }
+
+    @GetMapping("/message/{days}")
+    public String getAnalysisMessage(@RequestHeader("Authorization") String authorizationHeader, @PathVariable Integer days) {
+        Long athleteId = sessionService.getAthleteIdFromAuthorizationHeader(authorizationHeader);
+        return analysisService.getAnalysisMessage(athleteId, days);
+    }
 }

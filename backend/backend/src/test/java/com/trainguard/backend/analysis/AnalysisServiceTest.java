@@ -69,4 +69,53 @@ public class AnalysisServiceTest {
         verify(recoveryCheckinRepository, times(1)).findByAthleteIdAndActivityDateGreaterThanEqualAndActivityDateLessThan(eq(12345L), any(Instant.class), any(Instant.class));
         assertThat(response).isEqualTo(analysisFeedRecordAsResponse);
     }
+
+    @Test
+    void shouldReturnTheAnalysisMessageBasedOnTheUserInformation() {
+        AnalysisForCurrentSevenDays analysisForCurrentSevenDays = AnalysisForCurrentSevenDays.builder()
+                .trainingLoad(600)
+                .averageRpe(3.5)
+                .averagePainScore(6.5)
+                .averageTemperature(0.0)
+                .build();
+
+        AnalysisRecordForSevenDaysComparison analysisRecordForSevenDaysComparison = AnalysisRecordForSevenDaysComparison.builder()
+                .trainingLoad(0)
+                .averageRpe(0.0)
+                .averagePainScore(0.0)
+                .averageTemperature(0.0)
+                .build();
+
+        AnalysisFeedRecord analysisFeedRecordAsResponse = AnalysisFeedRecord.builder()
+                .analysisForCurrentSevenDays(analysisForCurrentSevenDays)
+                .analysisRecordForSevenDaysComparison(analysisRecordForSevenDaysComparison)
+                .build();
+
+
+        RecoveryCheckinEntity recoveryCheckinResponseRecord = RecoveryCheckinEntity.builder()
+                .rpe(5)
+                .painScore(5)
+                .trainingLoad(200)
+                .activityDate(Instant.now())
+                .build();
+
+        RecoveryCheckinEntity recoveryCheckinResponseRecord1 = RecoveryCheckinEntity.builder()
+                .rpe(2)
+                .painScore(8)
+                .trainingLoad(400)
+                .activityDate(Instant.now())
+                .build();
+
+        when(recoveryCheckinRepository.findByAthleteIdAndActivityDateGreaterThanEqual(eq(12345L), any()))
+                .thenReturn(List.of(recoveryCheckinResponseRecord, recoveryCheckinResponseRecord1));
+
+        String response = analysisService.getAnalysisMessage(12345L, 7);
+        AnalysisFeedRecord analysisFeedRecord = analysisService.getAnalysisInformation(12345L, 7);
+//        verify(recoveryCheckinRepository, times(1)).findByAthleteIdAndActivityDateGreaterThanEqual(eq(12345L), any(Instant.class));
+        assertThat(response).isEqualTo("Your average rpe is greater than 3.0");
+        assertThat(analysisFeedRecord).isEqualTo(analysisFeedRecordAsResponse);
+
+
+
+    }
 }

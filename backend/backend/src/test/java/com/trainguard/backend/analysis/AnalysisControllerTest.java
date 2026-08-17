@@ -44,4 +44,16 @@ public class AnalysisControllerTest {
 
         verify(analysisService).getAnalysisInformation(12345L, 7);
     }
+
+    @Test
+    void shouldReturnAMessageBasedOnTheAnalysisInformation() throws Exception {
+        String expectedMessage = "Analysis Information";
+
+        when(sessionService.getAthleteIdFromAuthorizationHeader("testToken")).thenReturn(12345L);
+        when(analysisService.getAnalysisMessage(12345L, 7)).thenReturn(expectedMessage);
+        mockMvc.perform(get("/api/analysis/message/7").header("Authorization", "testToken"))
+                .andExpect(status().isOk());
+        verify(sessionService).getAthleteIdFromAuthorizationHeader("testToken");
+        verify(analysisService).getAnalysisMessage(12345L, 7);
+    }
 }

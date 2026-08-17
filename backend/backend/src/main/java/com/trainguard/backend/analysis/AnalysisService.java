@@ -101,4 +101,13 @@ public class AnalysisService {
                 .analysisRecordForSevenDaysComparison(analysisForPreviousSevenDays)
                 .build();
     }
+
+   public String getAnalysisMessage(Long athleteId, Integer days) {
+
+        AnalysisFeedRecord analysisFeedRecord = getAnalysisInformation(athleteId, days);
+        if(analysisFeedRecord != null && analysisFeedRecord.analysisForCurrentSevenDays().averageRpe() > 3.0) {
+            return "Your average rpe is greater than 3.0";
+        }
+        return "";
+   }
 }
