@@ -1,5 +1,5 @@
 import {Image, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View,} from "react-native";
-import React, {useMemo, useState} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import type {lineDataItem} from "react-native-gifted-charts";
 
 import {BottomNav} from "@/components/BottomNav";
@@ -17,6 +17,14 @@ type Insight = {
     title: string;
     message: string;
 };
+
+type OpenApiType = {
+    averagePain: number;
+    averageRpe: number;
+    averageTemperature: number;
+    averageFeelsLikeTemperature: number;
+    painLocationAndCounts: {}
+}
 
 // Calculates the average only from values that were actually reported.
 // In this app, pain/RPE scores are 1–10. Missing values mean the metric
@@ -481,6 +489,11 @@ export default function AnalysisScreen() {
         selectedRange === "ALL"
             ? "all check-ins"
             : `the last ${selectedRange} days`;
+
+
+    useEffect(() => {
+        console.log(averagePain, averageRpe, averageTemperature, averageFeelsLike, painData, painLocationCounts);
+    }, []);
 
     return (
         <View style={styles.screen}>
