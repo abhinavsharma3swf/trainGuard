@@ -23,4 +23,6 @@ public interface RecoveryCheckinRepository extends JpaRepository<RecoveryCheckin
     void deleteAllByAthleteId(Long athleteId);
 
     List<RecoveryCheckinEntity> findByAthleteIdAndActivityDateGreaterThanEqual(Long athleteIdAfter, Instant activityDate);
+
+    List<RecoveryCheckinEntity> findByAthleteIdAndActivityDateGreaterThanEqualAndActivityDateLessThan(Long athleteId, Instant previousStart, Instant currentStart);
 }

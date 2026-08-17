@@ -25,10 +25,24 @@ public class AnalysisServiceTest {
 
     @Test
     void shouldCalculateAverageForTrainingLoadRpeAndPainForLastSevenDays() {
-        AnalysisFeedRecord analysisFeedRecordAsResponse = AnalysisFeedRecord.builder()
+
+        AnalysisForCurrentSevenDays analysisForCurrentSevenDays = AnalysisForCurrentSevenDays.builder()
                 .trainingLoad(600)
                 .averageRpe(3.5)
                 .averagePainScore(6.5)
+                .averageTemperature(0.0)
+                .build();
+
+        AnalysisRecordForSevenDaysComparison analysisRecordForSevenDaysComparison = AnalysisRecordForSevenDaysComparison.builder()
+                .trainingLoad(0)
+                .averageRpe(0.0)
+                .averagePainScore(0.0)
+                .averageTemperature(0.0)
+                .build();
+
+        AnalysisFeedRecord analysisFeedRecordAsResponse = AnalysisFeedRecord.builder()
+                .analysisForCurrentSevenDays(analysisForCurrentSevenDays)
+                .analysisRecordForSevenDaysComparison(analysisRecordForSevenDaysComparison)
                 .build();
 
         RecoveryCheckinEntity recoveryCheckinResponseRecord = RecoveryCheckinEntity.builder()
@@ -51,6 +65,8 @@ public class AnalysisServiceTest {
         AnalysisFeedRecord response = analysisService.getAnalysisInformation(12345L, 7);
 
         verify(recoveryCheckinRepository, times(1)).findByAthleteIdAndActivityDateGreaterThanEqual(eq(12345L), any(Instant.class));
+        assertThat(response).isEqualTo(analysisFeedRecordAsResponse);
+        verify(recoveryCheckinRepository, times(1)).findByAthleteIdAndActivityDateGreaterThanEqualAndActivityDateLessThan(eq(12345L), any(Instant.class), any(Instant.class));
         assertThat(response).isEqualTo(analysisFeedRecordAsResponse);
     }
 }

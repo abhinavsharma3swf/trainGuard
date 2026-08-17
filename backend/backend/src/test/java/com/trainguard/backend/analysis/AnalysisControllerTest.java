@@ -28,14 +28,15 @@ public class AnalysisControllerTest {
     @Test
     void shouldGetTheActivitiesForAnalysis() throws Exception {
 
-        AnalysisFeedRecord analysisFeedRecord = AnalysisFeedRecord.builder()
-                .trainingLoad(100)
-                .averageRpe(2.3)
-                .averagePainScore(4.5)
+        AnalysisForCurrentSevenDays analysisForCurrentSevenDays = AnalysisForCurrentSevenDays.builder().build();
+        AnalysisRecordForSevenDaysComparison analysisRecordForSevenDaysComparison = AnalysisRecordForSevenDaysComparison.builder().build();
+        AnalysisFeedRecord analysisFeedRecordAsResponse = AnalysisFeedRecord.builder()
+                .analysisForCurrentSevenDays(analysisForCurrentSevenDays)
+                .analysisRecordForSevenDaysComparison(analysisRecordForSevenDaysComparison)
                 .build();
 
         when(sessionService.getAthleteIdFromAuthorizationHeader("testToken")).thenReturn(12345L);
-        when(analysisService.getAnalysisInformation(12345L, 7)).thenReturn(analysisFeedRecord);
+        when(analysisService.getAnalysisInformation(12345L, 7)).thenReturn(analysisFeedRecordAsResponse);
 
         mockMvc.perform(get("/api/analysis/7").header("Authorization", "testToken"))
                 .andExpect(status().isOk());
