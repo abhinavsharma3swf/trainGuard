@@ -1,6 +1,7 @@
 package com.trainguard.backend.deletion;
 
 import com.trainguard.backend.session.SessionService;
+import com.trainguard.backend.strava.StravaClient;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -23,16 +24,20 @@ public class DeletingDataControllerTest {
     private SessionService sessionService;
 
     @MockitoBean
-    private com.trainguard.backend.deletion.LocalDeletionService localDeletionService;
+    private DeletionService deletionService;
+
     @MockitoBean
-    private com.trainguard.backend.deletion.DeletionService deletionService;
+    private StravaClient stravaClient;
+
+    @MockitoBean
+    private LocalDeletionService localDeletionService;
 
     @Test
     void shouldDeleteDataUserData() throws Exception {
 
         String token = "testToken";
-        when(sessionService.getAthleteIdFromAuthorizationHeader(token)).thenReturn(12345L);
-        doNothing().when(localDeletionService).deleteLocalAccount(12345L);
+        when(sessionService.getAthleteIdFromToken(token)).thenReturn(12345L);
+        doNothing().when(deletionService).deleteUserAccount("12345");
 
         mockMvc.perform(delete("/api/deleteData").header("Authorization", "testToken"))
                 .andExpect(status().isOk());

@@ -1,8 +1,11 @@
 package com.trainguard.backend.recovery;
 
+import lombok.Builder;
+
 import java.time.Instant;
 import java.util.List;
 
+@Builder
 public record RecoveryCheckinResponseRecord(
         Long id,
         Long activityId,
