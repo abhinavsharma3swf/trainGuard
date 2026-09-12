@@ -39,16 +39,21 @@ public class StravaController {
     @GetMapping("/callback")
     public ResponseEntity<Void> handleCallback(@RequestParam String code) {
         Long athleteId = stravaService.exchangeAuthorizationCode(code);
-        String sessionToken = sessionService.createSessionForAthlete(athleteId);
+        String handoffCode = sessionService.createSessionHandoffForAthlete(athleteId);
 
         URI redirectUri = URI.create(
-                smartGaugeProperties.appRedirectUri() + "?token=" + sessionToken
+            smartGaugeProperties.appRedirectUri() + "?code=" + handoffCode
         );
 
         return ResponseEntity
                 .status(HttpStatus.FOUND)
                 .location(redirectUri)
                 .build();
+    }
+
+    @GetMapping("/session-exchange")
+    public String exchangeSessionHandoff(@RequestParam String code) {
+        return sessionService.exchangeSessionHandoff(code);
     }
 
 }

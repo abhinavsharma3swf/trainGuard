@@ -7,6 +7,7 @@ import {
     useState,
 } from "react";
 import { getDashboardFeed } from "@/services/dashboardApi";
+import { getSessionToken, SessionExpiredError } from "@/services/athleteStorage";
 import {AppState} from "react-native";
 import {BodyPart} from "@/components/PathPoints";
 
@@ -15,9 +16,9 @@ export type DashboardFeedItem = {
     sportType: string;
     name: string;
     startDate: string;
-    distanceMiles: number;
-    movingTimeMinutes: number;
-    pacePerMile: string;
+    distanceMiles: number | null;
+    movingTimeMinutes: number | null;
+    pacePerMile: string | null;
     checkinStatus: "COMPLETED" | "PENDING";
     rpe?: number |null;
     painScore?: number | null;
@@ -25,9 +26,9 @@ export type DashboardFeedItem = {
     painLocationEnum?: BodyPart[] | [];
     mood?: string | null;
     note?: string | null;
-    averageWatts: string;
-    start_latlng?: number;
-    description?: string;
+    averageWatts: number | null;
+    start_latlng?: number | null;
+    description?: string | null;
 };
 
 type DashboardDataContextType = {
@@ -52,7 +53,13 @@ export function DashboardDataProvider({ children }: { children: ReactNode }) {
             setIsLoading(true);
             setError("");
 
-            const data = await getDashboardFeed();
+            const token = await getSessionToken();
+            if (!token) {
+                setFeedItems([]);
+                return;
+            }
+
+            const data = await getDashboardFeed(0, 100);
 
             const sortedData = [...data].sort(
                 (a, b) =>
@@ -62,8 +69,11 @@ export function DashboardDataProvider({ children }: { children: ReactNode }) {
             setFeedItems(sortedData);
         } catch (error) {
             console.error(error);
+            if (error instanceof SessionExpiredError) {
+                router.replace("/");
+                return;
+            }
             setError("Could not load dashboard data.");
-            router.replace("/");
         } finally {
             setIsLoading(false);
         }
@@ -83,7 +93,7 @@ export function DashboardDataProvider({ children }: { children: ReactNode }) {
             },
         );
         return () => subscription.remove();
-    }, [feedItems]);
+    }, []);
 
     const clearDashboardData = useCallback(() => {
         setFeedItems([]);

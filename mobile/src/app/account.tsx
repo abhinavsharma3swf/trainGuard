@@ -12,7 +12,7 @@ import {Ionicons} from "@expo/vector-icons";
 
 import {BottomNav} from "@/components/BottomNav";
 import {clearSessionToken} from "@/services/athleteStorage";
-import {deleteAccount, deleteApi} from "@/services/deleteApi";
+import {deleteAccount, deleteApi, logout} from "@/services/deleteApi";
 import {About} from "@/components/About"
 import {useDashboardData} from "@/context/DashboardDataContext";
 import {useHistoryData} from "@/context/HistoryDataContext";
@@ -29,7 +29,7 @@ export default function AccountScreen() {
         try {
             setIsProcessing(true);
 
-            await clearSessionToken();
+            await logout();
 
             router.replace("/");
         } catch (error) {

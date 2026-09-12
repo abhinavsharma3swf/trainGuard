@@ -14,7 +14,13 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "activities")
+@Table(
+    name = "activities",
+    uniqueConstraints = @UniqueConstraint(
+        name = "uk_activity_external_identity",
+        columnNames = {"athlete_id", "external_source", "external_activity_id"}
+    )
+)
 public class ActivityEntity {
 
     @Id

@@ -22,6 +22,7 @@
     "expo-media-library": "~57.0.3",
     "expo-notifications": "~57.0.10",
     "expo-router": "~57.0.12",
+    "expo-secure-store": "~57.0.4",
     "expo-splash-screen": "~57.0.6",
     "expo-status-bar": "~57.0.1",
     "expo-symbols": "~57.0.1",
@@ -51,8 +52,7 @@
     "@testing-library/react-native": "^14.0.1",
     "jest-expo": "*",
     "@testing-library/jest-native": "^5.4.0",
-    "react-test-renderer": "19.2.3"
-    ,
+    "react-test-renderer": "19.2.3",
     "@types/jest": "^29.5.3"
   },
   "scripts": {
@@ -68,11 +68,12 @@
     "react-native-svg": "15.15.4",
     "glob": "^8.1.0"
   },
-  "private": true
-  ,
+  "private": true,
   "jest": {
     "preset": "jest-expo",
     "testEnvironment": "node",
-    "setupFiles": ["<rootDir>/jest.setup.js"]
+    "setupFiles": [
+      "<rootDir>/jest.setup.js"
+    ]
   }
 }

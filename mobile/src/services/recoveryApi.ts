@@ -1,5 +1,5 @@
 import {API_BASE_URL} from "@/constants/api";
-import {getSessionToken} from "@/services/athleteStorage";
+import {clearSessionToken, getSessionToken, SessionExpiredError} from "@/services/athleteStorage";
 import {BodyPart} from "@/components/PathPoints";
 
 
@@ -43,6 +43,10 @@ export async function getRecoveryCheckins(
     );
 
     if (!response.ok) {
+        if (response.status === 401) {
+            await clearSessionToken();
+            throw new SessionExpiredError();
+        }
         throw new Error("Failed to fetch recovery check-ins.");
     }
 

@@ -41,7 +41,8 @@ public class StravaService {
 //                .toList();
 //    }
 
-    public List<ActivityResponseRecord> syncLastSevenActivities(
+        @Transactional
+        public List<ActivityResponseRecord> syncLastSevenActivities(
             Long athleteId
     ) {
         StravaUserEntity stravaUser =
@@ -163,7 +164,8 @@ public class StravaService {
     }
 
 
-    public void updateSingleActivityFromWebhook(
+        @Transactional
+        public void updateSingleActivityFromWebhook(
             Long athleteId,
             Long stravaActivityId
     ) {
@@ -248,17 +250,20 @@ public class StravaService {
     private String getCurrentAccessToken(
             StravaUserEntity stravaUser
     ) {
+        StravaUserEntity lockedUser = stravaUserRepository.findByAthleteIdForUpdate(
+                stravaUser.getAthleteId()
+        );
         StravaTokenResponseRecord tokenResponse =
                 stravaClient.refreshAccessToken(
-                        stravaUser.getRefreshToken()
+                        lockedUser.getRefreshToken()
                 );
 
-        stravaUser.setRefreshToken(
+        lockedUser.setRefreshToken(
                 tokenResponse.refreshToken()
         );
-        stravaUser.setUpdatedAt(LocalDateTime.now());
+        lockedUser.setUpdatedAt(LocalDateTime.now());
 
-        stravaUserRepository.save(stravaUser);
+        stravaUserRepository.save(lockedUser);
 
         return tokenResponse.accessToken();
     }

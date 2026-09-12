@@ -62,17 +62,18 @@ export default function RecoveryCheckInScreen() {
     );
 
 
-    if (currentActivity?.startDate === undefined) return
-    const activityStart = new Date(currentActivity.startDate);
+    const activityStart = currentActivity?.startDate
+        ? new Date(currentActivity.startDate)
+        : null;
 
     const locales = Localization.getCalendars();
     const deviceTimeZone = locales[0].timeZone ?? "America/Los_Angeles";
-    const activityEnd = new Date(activityStart);
-    activityEnd.setHours(activityEnd.getHours() + 1);
+    const activityEnd = activityStart ? new Date(activityStart) : null;
+    activityEnd?.setHours(activityEnd.getHours() + 1);
     const url = "https://api.open-meteo.com/v1/forecast";
-    const params = {
-        latitude: currentActivity?.start_latlng,
-        longitude: currentActivity?.start_latlng,
+    const params = activityStart && activityEnd && currentActivity?.start_latlng != null ? {
+        latitude: currentActivity.start_latlng,
+        longitude: currentActivity.start_latlng,
         hourly: [
             "temperature_2m",
             "relative_humidity_2m",
@@ -85,10 +86,13 @@ export default function RecoveryCheckInScreen() {
         temperature_unit: "fahrenheit",
         wind_speed_unit: "mph",
         timezone: deviceTimeZone,
-    };
+    } : null;
 
 
     async function fetchWeatherData() {
+        if (!params) {
+            return;
+        }
 
         try {
             const response = await fetchWeatherApi(url, params);
@@ -132,6 +136,7 @@ export default function RecoveryCheckInScreen() {
         control,
         handleSubmit,
         reset,
+        setValue,
         setError,
         clearErrors,
         watch,
@@ -139,16 +144,17 @@ export default function RecoveryCheckInScreen() {
         formState: {errors, isSubmitting},
     } = useForm<RecoveryCheckinForm>({
         values: {
-            rpe: currentActivity.rpe ?? null,
-            painScore: currentActivity.painScore ?? null,
-            painLocation: currentActivity.painLocation ?? "",
-            painLocationEnum: currentActivity.painLocationEnum ?? [],
-            mood: currentActivity.mood ?? "",
-            note: currentActivity.note ? currentActivity.note : currentActivity.description ?? "",
+            rpe: currentActivity?.rpe ?? null,
+            painScore: currentActivity?.painScore ?? null,
+            painLocation: currentActivity?.painLocation ?? "",
+            painLocationEnum: currentActivity?.painLocationEnum ?? [],
+            mood: currentActivity?.mood ?? "",
+            note: currentActivity?.note ? currentActivity.note : currentActivity?.description ?? "",
         },
     });
 
     const painEnum = watch('painLocationEnum')
+    const painScore = watch('painScore')
 
 
     useEffect(() => {
@@ -158,11 +164,19 @@ export default function RecoveryCheckInScreen() {
         if (!currentActivity) {
             return;
         }
-        if (currentActivity.start_latlng === null) {
+        if (currentActivity.start_latlng == null) {
             return;
         }
         if (currentActivity.sportType === "RIDE" || currentActivity.sportType === "RUN") fetchWeatherData()
     }, [currentActivity, reset]);
+
+    if (!currentActivity) {
+        return (
+            <View style={styles.screen}>
+                <Text style={styles.errorText}>Loading activity...</Text>
+            </View>
+        );
+    }
 
 
     const handleSave = async (formValues: RecoveryCheckinForm) => {
@@ -171,10 +185,10 @@ export default function RecoveryCheckInScreen() {
             return;
         }
 
-        // if(selectedBodyParts.length > 0 || formValues.painScore === null) {
-        //     setError("painScore", {message: "Select a pain score."});
-        //     return;
-        // }
+        if (formValues.painScore === null) {
+            setError("painScore", {message: "Select a pain score, or choose no pain."});
+            return;
+        }
 
         if (!formValues.mood) {
             setError("mood", {message: "Select a mood."});
@@ -198,11 +212,11 @@ export default function RecoveryCheckInScreen() {
             mood: formValues.mood ?? '',
             note: formValues.note.trim() ?? '',
             sportType: currentActivity?.sportType,
-            temperature: weatherData.temperature.toFixed(0),
-            feelsLikeTemperature: weatherData.feelsLikeTemperature.toFixed(0),
-            humidity: weatherData.humidity.toFixed(0),
-            windSpeed: weatherData.windSpeed.toFixed(0),
-            dewPoint: weatherData.dewPoint.toFixed(0)
+            temperature: Math.round(weatherData.temperature),
+            feelsLikeTemperature: Math.round(weatherData.feelsLikeTemperature),
+            humidity: Math.round(weatherData.humidity),
+            windSpeed: Math.round(weatherData.windSpeed),
+            dewPoint: Math.round(weatherData.dewPoint)
 
         };
         try {
@@ -286,6 +300,16 @@ export default function RecoveryCheckInScreen() {
                                     >
                                         <Text
                                             style={[styles.optionText, selectedBodyParts.length > 0 && styles.selectedOptionText]}>Yes</Text>
+                                    </Pressable>
+                                    <Pressable
+                                        style={[styles.option, painScore === 0 && styles.selectedOption]}
+                                        onPress={() => {
+                                            setSelectedBodyParts([]);
+                                            setValue("painScore", 0);
+                                            clearErrors("painScore");
+                                        }}
+                                    >
+                                        <Text style={[styles.optionText, painScore === 0 && styles.selectedOptionText]}>No</Text>
                                     </Pressable>
                                 </View>
 

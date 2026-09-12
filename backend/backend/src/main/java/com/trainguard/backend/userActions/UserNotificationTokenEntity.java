@@ -13,7 +13,13 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name="user_notification_token_table")
+@Table(
+    name = "user_notification_token_table",
+    uniqueConstraints = @UniqueConstraint(
+        name = "uk_notification_token_athlete",
+        columnNames = {"athlete_id", "notification_token"}
+    )
+)
 public class UserNotificationTokenEntity {
 
     @Id
@@ -24,7 +30,7 @@ public class UserNotificationTokenEntity {
 
     private LocalDateTime createdAt;
 
-    @OneToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "athlete_id", nullable = false)
     private StravaUserEntity stravaUser;
 

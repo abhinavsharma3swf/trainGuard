@@ -10,6 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.PageImpl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -150,10 +151,10 @@ public class ActivityServiceTest {
                 .elapsedTimeSeconds(1850)
                 .build();
 
-        when(activityRepository.findAll())
-                .thenReturn(List.of(activityOne, activityTwo));
+        when(activityRepository.findByAthleteIdOrderByStartDateDesc(eq(12345L), any()))
+                .thenReturn(new PageImpl<>(List.of(activityOne, activityTwo)));
 
-        List<ActivityResponseRecord> response = activityService.getAllActivities();
+        List<ActivityResponseRecord> response = activityService.getActivitiesForAthlete(12345L, 0, 50);
 
         assertEquals(2, response.size());
 
@@ -175,6 +176,6 @@ public class ActivityServiceTest {
         assertEquals(30, response.get(1).movingTimeMinutes());
         assertEquals("15:00", response.get(1).pacePerMile());
 
-        verify(activityRepository).findAll();
+        verify(activityRepository).findByAthleteIdOrderByStartDateDesc(eq(12345L), any());
     }
 }

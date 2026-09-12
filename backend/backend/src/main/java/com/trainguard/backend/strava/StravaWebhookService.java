@@ -14,6 +14,7 @@ public class StravaWebhookService {
             LoggerFactory.getLogger(StravaWebhookService.class);
 
     private final StravaService stravaService;
+    private final StravaWebhookProperties webhookProperties;
 
     @Async("webhookExecutor")
     public void handleWebhookEvent(StravaWebhookEventRecord event) {
@@ -81,6 +82,8 @@ public class StravaWebhookService {
                 && event.objectType() != null
                 && event.aspectType() != null
                 && event.ownerId() != null
-                && event.objectId() != null;
+                && event.objectId() != null
+                && webhookProperties.subscriptionId() != null
+                && webhookProperties.subscriptionId().equals(event.subscriptionId());
     }
 }

@@ -25,4 +25,8 @@ public class SessionEntity {
     private LocalDateTime createdAt;
 
     private LocalDateTime expiresAt;
+
+    private String handoffCode;
+
+    private LocalDateTime handoffExpiresAt;
 }

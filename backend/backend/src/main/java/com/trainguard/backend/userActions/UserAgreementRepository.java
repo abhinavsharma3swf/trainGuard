@@ -8,4 +8,6 @@ public interface UserAgreementRepository extends JpaRepository<UserAgreementsEnt
 //    Optional<Long> findByStravaUser_AthleteId(java.lang.Long athleteId);
 
     Optional<UserAgreementsEntity> findByStravaUser_AthleteId(Long athleteId);
+
+    void deleteAllByStravaUser_AthleteId(Long athleteId);
 }

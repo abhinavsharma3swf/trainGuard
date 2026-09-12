@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestTemplate;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/contactUs")
@@ -17,7 +18,7 @@ public class UserController {
     private final SessionService sessionService;
 
     @PostMapping
-    public UserContactUsResponseRecord contactUsModal(@RequestBody UserContactUsRecord contactUsRecord) {
+    public UserContactUsResponseRecord contactUsModal(@Valid @RequestBody UserContactUsRecord contactUsRecord) {
         return userService.contactUsInformation(contactUsRecord);
     }
 
@@ -28,7 +29,7 @@ public class UserController {
     }
 
     @PostMapping("/notification")
-    public void userNotificationToken(@RequestHeader("Authorization") String authorizationHeader, @RequestBody NotificationTokenRecord notificationToken) {
+    public void userNotificationToken(@RequestHeader("Authorization") String authorizationHeader, @Valid @RequestBody NotificationTokenRecord notificationToken) {
         userService.notificationToken(authorizationHeader, notificationToken.notificationToken());
     }
 
@@ -44,7 +45,7 @@ public class UserController {
 //    }
 
     @DeleteMapping("/token_deletion")
-    public ResponseEntity<Void> tokenDeletion(@RequestHeader("Authorization") String authorizationHeader, @RequestBody NotificationTokenRecord notificationToken) {
+    public ResponseEntity<Void> tokenDeletion(@RequestHeader("Authorization") String authorizationHeader, @Valid @RequestBody NotificationTokenRecord notificationToken) {
         userService.deleteUserNotificationToken(authorizationHeader, notificationToken.notificationToken());
         return ResponseEntity.noContent().build();
     }

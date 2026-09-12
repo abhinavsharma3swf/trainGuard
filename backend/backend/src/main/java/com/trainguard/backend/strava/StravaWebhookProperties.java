@@ -5,6 +5,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "strava.webhook")
 public record StravaWebhookProperties(
-        String verifyToken
+        String verifyToken,
+        Long subscriptionId
 ) {
 }

@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -20,6 +22,30 @@ public class ActivityService {
     private final ActivityMetricService activityMetricService;
     private final ActivityRepository activityRepository;
 
+        public ActivityResponseRecord importActivityForAthlete(
+            Long athleteId,
+            ActivityImportRequestRecord requestRecord
+        ) {
+        ActivityImportRequestRecord ownedRequest = new ActivityImportRequestRecord(
+            requestRecord.externalSource(),
+            requestRecord.externalActivityId(),
+            requestRecord.sportType(),
+            requestRecord.name(),
+            requestRecord.startDate(),
+            requestRecord.distanceMeters(),
+            requestRecord.movingTimeSeconds(),
+            requestRecord.elapsedTimeSeconds(),
+            requestRecord.totalElevationGain(),
+            requestRecord.averageWatts(),
+            requestRecord.weightedAverageWatts(),
+            athleteId,
+            requestRecord.description(),
+            requestRecord.start_latlng()
+        );
+        return importActivity(ownedRequest);
+        }
+
+    @Transactional
     public ActivityResponseRecord importActivity(ActivityImportRequestRecord requestRecord) {
         ActivityEntity activity = activityRepository
                 .findByAthleteIdAndExternalSourceAndExternalActivityId(
@@ -82,10 +108,20 @@ public class ActivityService {
         );
     }
 
-    public List<ActivityResponseRecord> getAllActivities() {
-        return activityRepository.findAll().stream()
+    public List<ActivityResponseRecord> getActivitiesForAthlete(Long athleteId, int page, int size) {
+        validatePage(page, size);
+        return activityRepository.findByAthleteIdOrderByStartDateDesc(
+                        athleteId,
+                        PageRequest.of(page, size)
+                ).stream()
                 .map(this::toResponse)
                 .toList();
+    }
+
+    private void validatePage(int page, int size) {
+        if (page < 0 || size < 1 || size > 100) {
+            throw new IllegalArgumentException("Page must be non-negative and size must be between 1 and 100.");
+        }
     }
 
     public void deleteActivityFromWebhook(Long athleteId, String externalActivityId) {

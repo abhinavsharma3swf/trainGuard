@@ -18,6 +18,9 @@ public class AnalysisService {
     private final RecoveryCheckinRepository recoveryCheckinRepository;
 
     public AnalysisFeedRecord getAnalysisInformation(Long athleteId, Integer days) {
+                if (days == null || days < 1 || days > 90) {
+                        throw new IllegalArgumentException("Days must be between 1 and 90.");
+                }
 
         Instant now = Instant.now();
         Instant currentStart = now.minus(days, ChronoUnit.DAYS);

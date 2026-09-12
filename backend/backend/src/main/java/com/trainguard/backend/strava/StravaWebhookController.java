@@ -3,6 +3,7 @@ package com.trainguard.backend.strava;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
+import org.springframework.core.task.TaskRejectedException;
 
 @RestController
 @RequestMapping("/api/strava/webhook")
@@ -33,7 +34,11 @@ public class StravaWebhookController {
     public ResponseEntity<Void> receiveWebhookEvent(
             @RequestBody StravaWebhookEventRecord event
     ){
-        stravaWebhookService.handleWebhookEvent(event);
-        return ResponseEntity.ok().build();
+        try {
+            stravaWebhookService.handleWebhookEvent(event);
+            return ResponseEntity.ok().build();
+        } catch (TaskRejectedException exception) {
+            return ResponseEntity.status(503).build();
+        }
     }
 }

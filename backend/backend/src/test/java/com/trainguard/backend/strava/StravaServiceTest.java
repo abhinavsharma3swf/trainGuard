@@ -83,6 +83,8 @@ class StravaServiceTest {
 
         when(stravaUserRepository.findById(12345L))
                 .thenReturn(Optional.of(stravaUser));
+        when(stravaUserRepository.findByAthleteIdForUpdate(12345L))
+                .thenReturn(stravaUser);
 
         when(stravaClient.refreshAccessToken("refreshToken"))
                 .thenReturn(new StravaTokenResponseRecord("access-token", "refreshToken", 0L, null));
@@ -155,6 +157,8 @@ class StravaServiceTest {
 
         when(stravaUserRepository.findById(12345L))
                 .thenReturn(Optional.of(stravaUser));
+        when(stravaUserRepository.findByAthleteIdForUpdate(12345L))
+                .thenReturn(stravaUser);
 
         when(stravaClient.refreshAccessToken("ref"))
                 .thenReturn(new StravaTokenResponseRecord("access-token-2", "ref", 0L, null));

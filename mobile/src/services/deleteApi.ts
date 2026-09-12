@@ -1,4 +1,4 @@
-import {getSessionToken} from "@/services/athleteStorage";
+import {clearSessionToken, getSessionToken} from "@/services/athleteStorage";
 import {API_BASE_URL} from "@/constants/api";
 
 export async function deleteApi() {
@@ -37,5 +37,28 @@ export async function deleteAccount(): Promise<void> {
         throw new Error(
             errorData?.message ?? "Unable to delete account"
         );
+    }
+}
+
+export async function logout(): Promise<void> {
+    const token = await getSessionToken();
+
+    if (!token) {
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/session`, {
+            method: "DELETE",
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        if (!response.ok && response.status !== 401) {
+            throw new Error("Unable to revoke session.");
+        }
+    } finally {
+        await clearSessionToken();
     }
 }

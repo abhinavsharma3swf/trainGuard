@@ -14,6 +14,8 @@ public interface UserNotificationTokenRepository extends JpaRepository<UserNotif
 
     List<UserNotificationTokenEntity> findByStravaUser_AthleteId(Long athleteId);
 
+    void deleteAllByStravaUser_AthleteId(Long athleteId);
+
     void deleteByStravaUser_AthleteIdAndNotificationToken(Long athleteId, String notificationToken);
 
     void deleteByStravaUserAndNotificationToken(StravaUserEntity stravaUser, String notificationToken);

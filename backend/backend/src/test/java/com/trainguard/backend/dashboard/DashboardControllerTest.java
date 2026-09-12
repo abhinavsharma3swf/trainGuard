@@ -48,7 +48,7 @@ public class DashboardControllerTest {
                 .build();
         sessionService.getAthleteIdFromAuthorizationHeader("testToken");
         when(sessionService.getAthleteIdFromAuthorizationHeader("testToken")).thenReturn(12345L);
-        when(dashboardService.getAllActivitiesForDashboard(12345L)).thenReturn(List.of(dashboardFeedRecord));
+        when(dashboardService.getAllActivitiesForDashboard(12345L, 0, 50)).thenReturn(List.of(dashboardFeedRecord));
 
         mockMvc.perform(get("/api/dashboard/feed").header("Authorization", "testToken"))
                 .andExpect(status().isOk())
@@ -66,6 +66,6 @@ public class DashboardControllerTest {
                 .andExpect(jsonPath("$[0].mood").value("Good"))
                 .andExpect(jsonPath("$[0].note").value("Felt fine"));
 
-        verify(dashboardService).getAllActivitiesForDashboard(12345L);
+        verify(dashboardService).getAllActivitiesForDashboard(12345L, 0, 50);
     }
 }

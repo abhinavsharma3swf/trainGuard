@@ -1,11 +1,14 @@
 import React, {createContext, useCallback, useContext, useState} from "react";
 import {getRecoveryCheckins, RecoveryCheckin} from "@/services/recoveryApi";
+import {getSessionToken, SessionExpiredError} from "@/services/athleteStorage";
+import {router} from "expo-router";
 import {useDashboardData} from "@/context/DashboardDataContext";
 import {useFocusEffect} from "expo-router";
 
 type HistoryDataContextType = {
     recoveryItems: RecoveryCheckin[];
     isLoading: boolean;
+    error: string;
     hasMore: boolean;
     handleLoadMore: () => void;
     clearHistoricalData: () => void;
@@ -21,6 +24,7 @@ export function HistoryDataProvider({children}: { children: React.ReactNode }) {
     const [isLoading, setIsLoading] = useState(false);
     const [page, setPage] = useState(0);
     const [hasMore, setHasMore] = useState(true);
+    const [error, setError] = useState("");
     const {feedItems} = useDashboardData()
 
     const pageSize = 20;
@@ -32,6 +36,14 @@ export function HistoryDataProvider({children}: { children: React.ReactNode }) {
 
         try {
             setIsLoading(true);
+            setError("");
+
+            const token = await getSessionToken();
+            if (!token) {
+                setRecoveryHistory([]);
+                setHasMore(false);
+                return;
+            }
 
             const data = await getRecoveryCheckins(pageToLoad, pageSize);
 
@@ -54,6 +66,11 @@ export function HistoryDataProvider({children}: { children: React.ReactNode }) {
             }
         } catch (error) {
             console.error("Could not load recovery history:", error);
+            if (error instanceof SessionExpiredError) {
+                router.replace("/");
+                return;
+            }
+            setError("Could not load recovery history. Please try again.");
         } finally {
             setIsLoading(false);
         }
@@ -81,6 +98,7 @@ export function HistoryDataProvider({children}: { children: React.ReactNode }) {
             value={{
                 recoveryItems: recoveryHistory,
                 isLoading,
+                error,
                 hasMore,
                 handleLoadMore,
                 clearHistoricalData,

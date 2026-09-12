@@ -99,13 +99,13 @@ export default function AnalysisScreen() {
 
     const runMiles = lastSevenDayFeedItems
         .filter((item) => item.sportType === "RUN")
-        .reduce((total, item) => total + item.distanceMiles, 0);
+        .reduce((total, item) => total + (item.distanceMiles ?? 0), 0);
 
     const runHours =
         lastSevenDayFeedItems
             .filter((item) => item.sportType === "RUN")
             .reduce(
-                (total, item) => total + item.movingTimeMinutes,
+                (total, item) => total + (item.movingTimeMinutes ?? 0),
                 0,
             ) / 60;
 
@@ -113,7 +113,7 @@ export default function AnalysisScreen() {
         lastSevenDayFeedItems
             .filter((item) => item.sportType === "RIDE" || item.sportType === "VIRTUALRIDE")
             .reduce(
-                (total, item) => total + item.movingTimeMinutes,
+                (total, item) => total + (item.movingTimeMinutes ?? 0),
                 0,
             ) / 60;
 
@@ -124,7 +124,7 @@ export default function AnalysisScreen() {
                 item.sportType === "RIDE" ||
                 item.sportType === "VIRTUALRIDE",
         )
-        .reduce((total, item) => total + item.distanceMiles, 0);
+        .reduce((total, item) => total + (item.distanceMiles ?? 0), 0);
 
     // Limit recovery check-ins to the range selected by the user.
     // "ALL" skips date filtering entirely.

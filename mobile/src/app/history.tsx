@@ -7,7 +7,7 @@ import {Ionicons} from "@expo/vector-icons";
 
 export default function History() {
 
-    const {recoveryItems, isLoading, hasMore, handleLoadMore} = useHistoryData();
+    const {recoveryItems, isLoading, hasMore, handleLoadMore, error, loadRecoveryHistory} = useHistoryData();
 
     return (
         <View style={styles.screen}>
@@ -28,6 +28,18 @@ export default function History() {
                 </View>
 
                 <View style={styles.activityList}>
+                    {error ? (
+                        <View style={styles.errorPanel}>
+                            <Text style={styles.errorText}>{error}</Text>
+                            <Pressable
+                                style={styles.retryButton}
+                                onPress={() => void loadRecoveryHistory()}
+                                disabled={isLoading}
+                            >
+                                <Text style={styles.retryText}>Retry</Text>
+                            </Pressable>
+                        </View>
+                    ) : null}
                     {recoveryItems.map((item) => (
                         <RecoveryHistoryCard
                             key={item.id}
@@ -116,6 +128,25 @@ const styles = StyleSheet.create({
         textAlign: "center",
         marginTop: 20,
         fontSize: 13,
+    },
+    errorPanel: {
+        alignItems: "center",
+        gap: 12,
+        paddingVertical: 24,
+    },
+    errorText: {
+        color: "#ffb4ab",
+        textAlign: "center",
+    },
+    retryButton: {
+        backgroundColor: "#fd5900",
+        borderRadius: 12,
+        paddingHorizontal: 18,
+        paddingVertical: 10,
+    },
+    retryText: {
+        color: "#501600",
+        fontWeight: "900",
     },
     appName: {
         color: "#fd5900",

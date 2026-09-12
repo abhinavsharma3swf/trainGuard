@@ -21,9 +21,8 @@ public class AsyncConfig {
         executor.setQueueCapacity(50);
         executor.setThreadNamePrefix("strava-webhook-");
 
-        // Prevent an unbounded increase in queued webhook work.
         executor.setRejectedExecutionHandler(
-                new ThreadPoolExecutor.CallerRunsPolicy()
+            new ThreadPoolExecutor.AbortPolicy()
         );
 
         executor.initialize();

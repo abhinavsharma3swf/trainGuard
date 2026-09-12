@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.PageImpl;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -68,10 +69,10 @@ class DashboardServiceTest {
                 .athleteId(12345L)
                 .build();
 
-        when(activityRepository.findByAthleteId(12345L))
-                .thenReturn(List.of(activityWithCheckin, activityWithoutCheckin));
+        when(activityRepository.findByAthleteIdOrderByStartDateDesc(eq(12345L), any()))
+                .thenReturn(new PageImpl<>(List.of(activityWithCheckin, activityWithoutCheckin)));
 
-        when(recoveryCheckinRepository.findByAthleteId(12345L))
+        when(recoveryCheckinRepository.findByAthleteIdAndActivity_IdIn(eq(12345L), any()))
                 .thenReturn(List.of(checkin));
 
         when(activityMetricService.convertMetersToMiles(8046.72))
@@ -93,7 +94,7 @@ class DashboardServiceTest {
                 .thenReturn("4:30");
 
         List<DashboardFeedRecord> result =
-                dashboardService.getAllActivitiesForDashboard(12345L);
+                dashboardService.getAllActivitiesForDashboard(12345L, 0, 50);
 
         assertEquals(2, result.size());
 
@@ -127,8 +128,8 @@ class DashboardServiceTest {
         assertNull(pendingActivity.mood());
         assertNull(pendingActivity.note());
 
-        verify(activityRepository).findByAthleteId(12345L);
-        verify(recoveryCheckinRepository).findByAthleteId(12345L);
+        verify(activityRepository).findByAthleteIdOrderByStartDateDesc(eq(12345L), any());
+        verify(recoveryCheckinRepository).findByAthleteIdAndActivity_IdIn(eq(12345L), any());
 
         verify(activityMetricService).convertMetersToMiles(8046.72);
         verify(activityMetricService).convertSecondsToMinutes(2400);

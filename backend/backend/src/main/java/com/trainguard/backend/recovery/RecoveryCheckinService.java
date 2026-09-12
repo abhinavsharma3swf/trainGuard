@@ -222,6 +222,9 @@ public class RecoveryCheckinService {
             int page,
             int size
     ) {
+                if (page < 0 || size < 1 || size > 100) {
+                        throw new IllegalArgumentException("Page must be non-negative and size must be between 1 and 100.");
+                }
         Page<RecoveryCheckinEntity> checkins =
                 recoveryCheckinRepository.findByAthleteIdOrderByCreatedAtDesc(
                         athleteId,

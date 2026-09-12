@@ -16,7 +16,7 @@ describe("dashboardApi.getDashboardFeed", () => {
   it("fetches and returns feed items when token is present", async () => {
     jest.spyOn(athleteStorage, "getSessionToken").mockResolvedValue("fake-token");
 
-    const fakeResponse = [{ activityId: 1, sportType: "RIDE", name: "Ride 1", startDate: "2026-01-01T00:00:00Z", distanceMiles: 10, movingTimeMinutes: 60, pacePerMile: "6:00", checkinStatus: "COMPLETED", rpe: null, painScore: null, painLocation: null, averageWatts: "150", description: "" }];
+    const fakeResponse = [{ activityId: 1, sportType: "RIDE", name: "Ride 1", startDate: "2026-01-01T00:00:00Z", distanceMiles: 10, movingTimeMinutes: 60, pacePerMile: "6:00", checkinStatus: "COMPLETED", rpe: null, painScore: null, painLocation: null, averageWatts: 150, description: "" }];
 
     (globalThis as any).fetch = jest.fn().mockResolvedValue({ ok: true, json: () => Promise.resolve(fakeResponse) });
 
@@ -24,5 +24,20 @@ describe("dashboardApi.getDashboardFeed", () => {
 
     expect((globalThis as any).fetch).toHaveBeenCalled();
     expect(result).toEqual(fakeResponse);
+    expect((globalThis as any).fetch).toHaveBeenCalledWith(
+      expect.stringContaining("/api/dashboard/feed?page=0&size=100"),
+      expect.objectContaining({
+        headers: {Authorization: "Bearer fake-token"},
+      }),
+    );
+  });
+
+  it("clears the token when the backend reports an expired session", async () => {
+    jest.spyOn(athleteStorage, "getSessionToken").mockResolvedValue("expired-token");
+    const clearSessionToken = jest.spyOn(athleteStorage, "clearSessionToken").mockResolvedValue();
+    (globalThis as any).fetch = jest.fn().mockResolvedValue({ok: false, status: 401});
+
+    await expect(getDashboardFeed()).rejects.toThrow("Your session has expired.");
+    expect(clearSessionToken).toHaveBeenCalledTimes(1);
   });
 });

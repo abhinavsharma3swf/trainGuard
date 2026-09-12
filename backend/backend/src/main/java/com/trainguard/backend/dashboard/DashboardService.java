@@ -7,6 +7,7 @@ import com.trainguard.backend.recovery.RecoveryCheckinEntity;
 import com.trainguard.backend.recovery.RecoveryCheckinRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,9 +20,19 @@ public class DashboardService {
     private final RecoveryCheckinRepository recoveryCheckinRepository;
     private final ActivityMetricService activityMetricService;
 
-    public List<DashboardFeedRecord> getAllActivitiesForDashboard(Long athleteId) {
-        List<ActivityEntity> activities = activityRepository.findByAthleteId(athleteId);
-        List<RecoveryCheckinEntity> checkins = recoveryCheckinRepository.findByAthleteId(athleteId);
+    public List<DashboardFeedRecord> getAllActivitiesForDashboard(Long athleteId, int page, int size) {
+                if (page < 0 || size < 1 || size > 100) {
+                        throw new IllegalArgumentException("Page must be non-negative and size must be between 1 and 100.");
+                }
+        List<ActivityEntity> activities = activityRepository
+                .findByAthleteIdOrderByStartDateDesc(athleteId, PageRequest.of(page, size))
+                .getContent();
+        List<Long> activityIds = activities.stream()
+                .map(ActivityEntity::getId)
+                .toList();
+        List<RecoveryCheckinEntity> checkins = activityIds.isEmpty()
+                ? List.of()
+                : recoveryCheckinRepository.findByAthleteIdAndActivity_IdIn(athleteId, activityIds);
 
         return activities.stream()
                 .map(activity -> {

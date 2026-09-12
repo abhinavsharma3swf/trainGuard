@@ -40,4 +40,4 @@ POST http://localhost:8080/api/strava/sync
 POST https://www.strava.com/oauth/token
 Content-Type: application/x-www-form-urlencoded
 
-client_id=264043&client_secret=a532a1874e113353b0de6c0e81af99405554fa24&code=046f8cfc1de6a9d3b2ff8698655d7a7a8f207b62&grant_type=authorization_code
+client_id={{STRAVA_CLIENT_ID}}&client_secret={{STRAVA_CLIENT_SECRET}}&code={{STRAVA_AUTHORIZATION_CODE}}&grant_type=authorization_code

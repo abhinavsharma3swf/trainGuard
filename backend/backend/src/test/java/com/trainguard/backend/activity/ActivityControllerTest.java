@@ -6,11 +6,13 @@ import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import tools.jackson.databind.ObjectMapper;
+import com.trainguard.backend.session.SessionService;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -30,6 +32,9 @@ public class ActivityControllerTest {
 
     @MockitoBean
     private ActivityService activityService;
+
+        @MockitoBean
+        private SessionService sessionService;
 
     @Test
     void shouldImportActivity() throws Exception {
@@ -61,10 +66,13 @@ public class ActivityControllerTest {
                 "I am description"
         );
 
-        when(activityService.importActivity(any(ActivityImportRequestRecord.class)))
+        when(sessionService.getAthleteIdFromAuthorizationHeader("Bearer test-token"))
+                .thenReturn(12345L);
+        when(activityService.importActivityForAthlete(any(Long.class), any(ActivityImportRequestRecord.class)))
                 .thenReturn(response);
 
         mockMvc.perform(post("/api/activities/import")
+                        .header("Authorization", "Bearer test-token")
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
@@ -77,7 +85,7 @@ public class ActivityControllerTest {
                 .andExpect(jsonPath("$.movingTimeMinutes").value(40))
                 .andExpect(jsonPath("$.pacePerMile").value("8:00"));
 
-        verify(activityService).importActivity(any(ActivityImportRequestRecord.class));
+        verify(activityService).importActivityForAthlete(eq(12345L), any(ActivityImportRequestRecord.class));
     }
 
     @Test
@@ -111,8 +119,10 @@ public class ActivityControllerTest {
                 "I am description"
         );
 
-        when(activityService.getAllActivities()).thenReturn(List.of(activityOne, activityTwo));
-       mockMvc.perform(get("/api/activities"))
+        when(sessionService.getAthleteIdFromAuthorizationHeader("Bearer test-token"))
+                .thenReturn(12345L);
+        when(activityService.getActivitiesForAthlete(12345L, 0, 50)).thenReturn(List.of(activityOne, activityTwo));
+       mockMvc.perform(get("/api/activities").header("Authorization", "Bearer test-token"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(2))
 
@@ -134,7 +144,7 @@ public class ActivityControllerTest {
                 .andExpect(jsonPath("$[1].movingTimeMinutes").value(90))
                 .andExpect(jsonPath("$[1].pacePerMile").value("3:36"));
 
-        verify(activityService).getAllActivities();
+        verify(activityService).getActivitiesForAthlete(12345L, 0, 50);
     }
 
 }
