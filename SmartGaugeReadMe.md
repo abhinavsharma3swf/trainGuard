@@ -374,7 +374,7 @@ The backend defines uniqueness for:
 - External activity identity per athlete/source/activity ID.
 - Notification token per athlete/token pair.
 
-The pain-location list uses a separate JPA element-collection table.
+The pain-location enum list is stored in the `recovery_checkins.pain_location_enum` column and converted back to `List<Integer>` by the backend. The mobile frontend converts those enum values into heatmap/body-part display data.
 
 ### HTTP resilience
 

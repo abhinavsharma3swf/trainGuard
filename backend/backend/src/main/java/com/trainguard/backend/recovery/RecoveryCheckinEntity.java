@@ -1,7 +1,6 @@
 package com.trainguard.backend.recovery;
 
 import com.trainguard.backend.activity.ActivityEntity;
-import com.trainguard.backend.strava.StravaUserEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -34,13 +33,9 @@ public class RecoveryCheckinEntity {
 
     private String painLocation;
 
-        @ElementCollection
-        @CollectionTable(
-            name = "recovery_checkin_pain_locations",
-            joinColumns = @JoinColumn(name = "checkin_id")
-        )
-        @Column(name = "pain_location")
-        private List<Integer> painLocationEnum;
+    @Convert(converter = PainLocationEnumConverter.class)
+    @Column(name = "pain_location_enum", columnDefinition = "text")
+    private List<Integer> painLocationEnum;
 
     private String mood;
 
